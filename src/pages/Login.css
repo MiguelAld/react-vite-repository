@@ -1,9 +1,9 @@
-/* src/pages/Login.css */
+/* Fondo general */
 .lg-page {
   min-height: 100vh;
   display: flex;
-  justify-content: center;   /* centra horizontal */
-  align-items: center;       /* centra vertical */
+  align-items: center;      /* centra vertical */
+  justify-content: center;  /* centra horizontal */
   padding: 40px 20px;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background:
@@ -12,120 +12,99 @@
     linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
 }
 
+/* Contenedor central */
 .lg-container {
   width: 100%;
-  max-width: 520px;
+  max-width: 520px; /* más grande */
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 24px;
 }
 
-.lg-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.lg-logo {
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(15,23,42,0.12);
-  box-shadow: 0 18px 40px rgba(15,23,42,0.12);
-  font-size: 22px;
-}
-
-.lg-title { margin: 0; font-size: 22px; }
-.lg-subtitle { margin: 2px 0 0; font-size: 13px; color: #64748b; }
-
+/* Card */
 .lg-card {
-  background: rgba(255,255,255,0.86);
-  border: 1px solid rgba(15,23,42,0.10);
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
   border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 26px 70px rgba(15,23,42,0.16);
+  padding: 36px; /* más aire */
+  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.18);
   backdrop-filter: blur(10px);
 }
 
-.lg-card-title { margin: 0; font-size: 18px; }
-.lg-card-help { margin: 6px 0 14px; color: #64748b; font-size: 13px; }
+/* Títulos */
+.lg-title {
+  font-size: 28px;
+  margin-bottom: 6px;
+}
 
-.lg-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-.lg-label { font-size: 12px; font-weight: 800; }
+.lg-subtitle {
+  color: #64748b;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+/* Campos */
+.lg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 18px;
+}
+
+.lg-label {
+  font-size: 13px;
+  font-weight: 600;
+}
 
 .lg-input {
   padding: 12px 14px;
   border-radius: 12px;
-  border: 1px solid rgba(15,23,42,0.16);
-  background: rgba(255,255,255,0.96);
-  font-size: 14px;
-  font-weight: 600;
-  outline: none;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
 }
 
 .lg-input:focus {
-  border-color: rgba(99,102,241,0.8);
-  box-shadow: 0 0 0 4px rgba(99,102,241,0.18);
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+  outline: none;
 }
 
+/* Botón */
 .lg-btn {
   width: 100%;
   padding: 14px;
   border-radius: 12px;
   border: none;
-  font-weight: 900;
-  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
   color: white;
+  cursor: pointer;
   background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-  box-shadow: 0 18px 34px rgba(37,99,235,0.22);
+  transition: all 0.2s ease;
 }
 
+.lg-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+}
+
+/* Footer */
 .lg-footer {
-  margin-top: 10px;
+  margin-top: 14px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  font-size: 12px;
+  font-size: 13px;
   color: #64748b;
 }
 
 .lg-link {
+  background: none;
   border: none;
-  background: transparent;
   color: #2563eb;
-  font-weight: 900;
   cursor: pointer;
-  padding: 0;
+  font-weight: 600;
 }
 
-.lg-version { font-weight: 800; }
-
-.lg-note {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #64748b;
-  font-size: 12px;
-}
-
-.lg-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-}
-
-.lg-error{
-  background:#fff1f2;
-  border:1px solid #fecdd3;
-  color:#9f1239;
-  border-radius:12px;
-  padding:10px 12px;
-  font-weight:800;
-  font-size:13px;
-  margin-bottom:12px;
+.lg-link:hover {
+  text-decoration: underline;
 }
