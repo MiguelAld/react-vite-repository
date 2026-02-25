@@ -1,12 +1,7 @@
-import Register from './Register';
+import Login from "./pages/Login";
 
 function App() {
-
-  return (
-    <main className="App">
-      <Register/>
-    </main>
-  )
+  return <Login />;
 }
 
-export default App
+export default App;
