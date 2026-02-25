@@ -8,16 +8,15 @@ export default function Login() {
 
   const submit = (e) => {
     e.preventDefault();
-    // UI only (sin backend)
     alert("Login UI listo ✅ (más adelante conectamos con backend)");
   };
 
   return (
     <div className="lg-page">
-      <div className="lg-bg" />
+      <div className="lg-container">
 
-      <div className="lg-wrap">
-        <header className="lg-brand">
+        {/* Cabecera */}
+        <div className="lg-header">
           <div className="lg-logo">🏡</div>
           <div>
             <h1 className="lg-title">Portal de la Comunidad</h1>
@@ -25,37 +24,35 @@ export default function Login() {
               Reuniones · Incidencias · Documentos · Avisos
             </p>
           </div>
-        </header>
+        </div>
 
-        <section className="lg-card" aria-label="Formulario de inicio de sesión">
+        {/* Card Login */}
+        <div className="lg-card">
           <h2 className="lg-card-title">Iniciar sesión</h2>
           <p className="lg-card-help">
             Introduce tu DNI y contraseña para acceder.
           </p>
 
-          <form onSubmit={submit} className="lg-form">
+          <form onSubmit={submit}>
+
             <div className="lg-field">
-              <label className="lg-label" htmlFor="dni">DNI</label>
+              <label className="lg-label">DNI</label>
               <input
-                id="dni"
                 className="lg-input"
                 value={dni}
                 onChange={(e) => setDni(e.target.value)}
                 placeholder="Ej: 12345678A"
-                autoComplete="username"
               />
             </div>
 
             <div className="lg-field">
-              <label className="lg-label" htmlFor="pwd">Contraseña</label>
+              <label className="lg-label">Contraseña</label>
               <input
-                id="pwd"
+                type="password"
                 className="lg-input"
                 value={pwd}
                 onChange={(e) => setPwd(e.target.value)}
                 placeholder="••••••••"
-                type="password"
-                autoComplete="current-password"
               />
             </div>
 
@@ -72,17 +69,20 @@ export default function Login() {
                 ¿Olvidaste tu contraseña?
               </button>
 
-              <span className="lg-muted">v0.1 TFG</span>
+              <span className="lg-version">v0.1 TFG</span>
             </div>
-          </form>
-        </section>
 
-        <footer className="lg-note">
-          <span className="lg-dot" />
+          </form>
+        </div>
+
+        {/* Nota inferior */}
+        <div className="lg-note">
+          <span className="lg-dot"></span>
           <span>
             Acceso privado para vecinos y administración de la urbanización.
           </span>
-        </footer>
+        </div>
+
       </div>
     </div>
   );
