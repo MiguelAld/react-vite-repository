@@ -1,110 +1,15 @@
-/* Fondo general */
-.lg-page {
+.login-page {
   min-height: 100vh;
-  display: flex;
-  align-items: center;      /* centra vertical */
-  justify-content: center;  /* centra horizontal */
-  padding: 40px 20px;
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background:
-    radial-gradient(900px 520px at 15% 10%, rgba(59, 130, 246, 0.28), transparent 60%),
-    radial-gradient(900px 520px at 85% 0%, rgba(168, 85, 247, 0.22), transparent 55%),
-    linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  display: grid;
+  place-items: center;
+  padding: 24px;
 }
 
-/* Contenedor central */
-.lg-container {
+.login-shell {
+  max-width: 520px;
   width: 100%;
-  max-width: 520px; /* más grande */
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
 }
 
-/* Card */
-.lg-card {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 20px;
-  padding: 36px; /* más aire */
-  box-shadow: 0 30px 70px rgba(15, 23, 42, 0.18);
-  backdrop-filter: blur(10px);
-}
-
-/* Títulos */
-.lg-title {
-  font-size: 28px;
-  margin-bottom: 6px;
-}
-
-.lg-subtitle {
-  color: #64748b;
-  margin-bottom: 24px;
-  font-size: 14px;
-}
-
-/* Campos */
-.lg-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 18px;
-}
-
-.lg-label {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.lg-input {
-  padding: 12px 14px;
-  border-radius: 12px;
-  border: 1px solid #d1d5db;
-  font-size: 15px;
-}
-
-.lg-input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
-  outline: none;
-}
-
-/* Botón */
-.lg-btn {
-  width: 100%;
-  padding: 14px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 700;
-  font-size: 15px;
-  color: white;
-  cursor: pointer;
-  background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-  transition: all 0.2s ease;
-}
-
-.lg-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
-}
-
-/* Footer */
-.lg-footer {
-  margin-top: 14px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  color: #64748b;
-}
-
-.lg-link {
-  background: none;
-  border: none;
-  color: #2563eb;
-  cursor: pointer;
-  font-weight: 600;
-}
-
-.lg-link:hover {
-  text-decoration: underline;
+.login-card {
+  border-radius: 18px;
 }

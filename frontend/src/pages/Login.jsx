@@ -1,81 +1,32 @@
-// src/pages/Login.jsx
-import { useState } from "react";
+import Background from "../../components/Background/Background";
+import LoginForm from "../../components/LoginForm/LoginForm";
 import "./Login.css";
 
 export default function Login() {
-  const [dni, setDni] = useState("");
-  const [pwd, setPwd] = useState("");
-  const [error, setError] = useState("");
-
-  const submit = async (e) => {
-    e.preventDefault();
-    setError("");
-
-    // de momento solo llamamos al backend (lo haremos en el paso 2)
-    alert("UI lista. Ahora conectamos con backend.");
-  };
-
   return (
-    <div className="lg-page">
-      <div className="lg-container">
-        <div className="lg-header">
-          <div className="lg-logo">🏡</div>
-          <div>
-            <h1 className="lg-title">Portal de la Comunidad</h1>
-            <p className="lg-subtitle">
-              Reuniones · Incidencias · Documentos · Avisos
+    <div className="login-page">
+      <Background />
+
+      <div className="container login-shell">
+        <div className="login-card card shadow-sm">
+          <div className="card-body p-4">
+            <div className="d-flex align-items-center gap-2 mb-3">
+              <div className="badge bg-light text-dark border">🏡</div>
+              <div>
+                <h1 className="h5 mb-0">Portal de la Comunidad</h1>
+                <small className="text-secondary">
+                  Reuniones · Incidencias · Documentos
+                </small>
+              </div>
+            </div>
+
+            <h2 className="h4 mb-1">Iniciar sesión</h2>
+            <p className="text-secondary mb-3">
+              Accede con tu DNI (vecino) o credenciales de administración.
             </p>
+
+            <LoginForm />
           </div>
-        </div>
-
-        <div className="lg-card">
-          <h2 className="lg-card-title">Iniciar sesión</h2>
-          <p className="lg-card-help">Introduce tu DNI y contraseña.</p>
-
-          {error && <div className="lg-error">{error}</div>}
-
-          <form onSubmit={submit}>
-            <div className="lg-field">
-              <label className="lg-label">DNI</label>
-              <input
-                className="lg-input"
-                value={dni}
-                onChange={(e) => setDni(e.target.value)}
-                placeholder="Ej: 12345678A"
-                autoComplete="username"
-                required
-              />
-            </div>
-
-            <div className="lg-field">
-              <label className="lg-label">Contraseña</label>
-              <input
-                type="password"
-                className="lg-input"
-                value={pwd}
-                onChange={(e) => setPwd(e.target.value)}
-                placeholder="••••••••"
-                autoComplete="current-password"
-                required
-              />
-            </div>
-
-            <button className="lg-btn" type="submit">
-              Entrar
-            </button>
-
-            <div className="lg-footer">
-              <button type="button" className="lg-link">
-                ¿Olvidaste tu contraseña?
-              </button>
-              <span className="lg-version">v0.1 TFG</span>
-            </div>
-          </form>
-        </div>
-
-        <div className="lg-note">
-          <span className="lg-dot"></span>
-          <span>Acceso privado para vecinos y administración.</span>
         </div>
       </div>
     </div>
