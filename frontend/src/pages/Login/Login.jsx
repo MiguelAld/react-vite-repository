@@ -1,5 +1,5 @@
-import Background from "../components/Background/Background.jsx";
-import LoginForm from "../components/LoginForm/LoginForm.jsx";
+import Background from "../../components/Background/Bckground";
+import LoginForm from "../../components/LoginForm/LoginForm";
 import "./Login.css";
 
 export default function Login() {
