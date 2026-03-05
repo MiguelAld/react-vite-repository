@@ -1,4 +1,4 @@
-import Background from "../components/Background/Background";
+import Background from "../components/Background/Background.jsx";
 import LoginForm from "../components/LoginForm/LoginForm.jsx";
 import "./Login.css";
 
