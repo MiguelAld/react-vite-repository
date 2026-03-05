@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import Login from "./pages/Login/Login";
-import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
-import UserDashboard from "./pages/UserDashboard/UserDashboard";
-import { useAuth } from "./context/AuthContext";
+import Login from "./pages/Login/Login.jsx";
+import AdminDashboard from "./pages/AdminDashboard/AdminDashboard.jsx";
+import UserDashboard from "./pages/UserDashboard/UserDashboard.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
 
 function RequireAuth({ children, role }) {
   const { user } = useAuth();
