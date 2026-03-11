@@ -1,30 +1,31 @@
 import { createContext, useContext, useMemo, useState } from "react";
 
-const AuthContext = createContext(undefined);
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
-  const login = async ({ dni, password }) => {
-    // De momento (demo). Luego lo conectamos al backend.
-    // Ejemplo: si DNI empieza por "A" lo tratamos como ADMIN.
-    const role = dni?.toUpperCase().startsWith("A") ? "ADMIN" : "VECINO";
-
-    setUser({ dni, role });
-    return { ok: true, role };
+  const login = (data) => {
+    setUser(data.user);
+    setToken(data.token);
   };
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+  };
 
-  const value = useMemo(() => ({ user, login, logout }), [user]);
+  const value = useMemo(() => ({
+    user,
+    token,
+    login,
+    logout
+  }), [user, token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
-    throw new Error("useAuth() debe usarse dentro de <AuthProvider>.");
-  }
-  return ctx;
+  return useContext(AuthContext);
 }
