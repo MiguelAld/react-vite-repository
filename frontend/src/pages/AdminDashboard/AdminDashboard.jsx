@@ -1,104 +1,114 @@
 import { useState } from "react";
+import SidebarAdmin from "../../components/layout/SidebarAdmin";
+import CreateMeeting from "./CreateMeeting";
+import "../../assets/dashboard.css";
 
 export default function AdminDashboard() {
   const [section, setSection] = useState("inicio");
 
   return (
-    <div className="container-fluid">
-      <div className="row min-vh-100">
-        
-        {/* Sidebar */}
-        <aside className="col-12 col-md-3 col-lg-2 bg-dark text-white p-3">
-          <h4 className="mb-4">Admin Panel</h4>
+    <div className="dashboard-shell">
+      <SidebarAdmin activeSection={section} setActiveSection={setSection} />
 
-          <div className="d-grid gap-2">
-            <button className="btn btn-outline-light text-start" onClick={() => setSection("inicio")}>
-              Inicio
-            </button>
-            <button className="btn btn-outline-light text-start" onClick={() => setSection("incidencias")}>
-              Incidencias
-            </button>
-            <button className="btn btn-outline-light text-start" onClick={() => setSection("reportes")}>
-              Reportes
-            </button>
-            <button className="btn btn-outline-light text-start" onClick={() => setSection("documentos")}>
-              Documentos
-            </button>
-            <button className="btn btn-outline-light text-start" onClick={() => setSection("reuniones")}>
-              Reuniones
-            </button>
-            <button className="btn btn-outline-light text-start" onClick={() => setSection("usuarios")}>
-              Usuarios
-            </button>
-          </div>
-        </aside>
-
-        {/* Main content */}
-        <main className="col-12 col-md-9 col-lg-10 p-4 bg-light">
+      <div className="dashboard-content">
+        <main className="dashboard-main">
           {section === "inicio" && (
-            <>
-              <h2 className="mb-4">Resumen general</h2>
-              <div className="row g-3">
-                <div className="col-md-4">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5>Incidencias pendientes</h5>
-                      <p className="display-6">4</p>
-                    </div>
-                  </div>
+            <section className="dashboard-panel">
+              <h1 className="dashboard-title">Resumen general</h1>
+              <p className="dashboard-subtitle">
+                Consulta rápidamente el estado de la comunidad.
+              </p>
+
+              <div className="dashboard-cards">
+                <div className="dashboard-card summary-accent-yellow">
+                  <h5>Incidencias pendientes</h5>
+                  <p className="summary-number">4</p>
                 </div>
-                <div className="col-md-4">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5>Documentos subidos</h5>
-                      <p className="display-6">12</p>
-                    </div>
-                  </div>
+
+                <div className="dashboard-card summary-accent-blue">
+                  <h5>Documentos subidos</h5>
+                  <p className="summary-number">12</p>
                 </div>
-                <div className="col-md-4">
-                  <div className="card shadow-sm">
-                    <div className="card-body">
-                      <h5>Próximas reuniones</h5>
-                      <p className="display-6">2</p>
-                    </div>
-                  </div>
+
+                <div className="dashboard-card summary-accent-green">
+                  <h5>Próximas reuniones</h5>
+                  <p className="summary-number">2</p>
                 </div>
               </div>
-            </>
+            </section>
           )}
 
           {section === "incidencias" && (
-            <>
-              <h2 className="mb-4">Gestión de incidencias</h2>
-              <div className="card shadow-sm">
-                <div className="card-body">
-                  <table className="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Zona</th>
-                        <th>Estado</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>Luz rota en garaje</td>
-                        <td>Garaje</td>
-                        <td><span className="badge bg-warning text-dark">Pendiente</span></td>
-                      </tr>
-                    </tbody>
-                  </table>
+            <section className="dashboard-panel">
+              <div className="dashboard-header-row">
+                <div>
+                  <h1 className="dashboard-title">Gestión de incidencias</h1>
+                  <p className="dashboard-subtitle">
+                    Revisa incidencias, estados y zonas afectadas.
+                  </p>
                 </div>
               </div>
-            </>
+
+              <div className="dashboard-table-wrap">
+                <table className="table table-striped align-middle">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Título</th>
+                      <th>Zona</th>
+                      <th>Estado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>Luz rota en garaje</td>
+                      <td>Garaje</td>
+                      <td><span className="badge bg-warning text-dark">Pendiente</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
           )}
 
-          {section === "reportes" && <h2>Sección Reportes</h2>}
-          {section === "documentos" && <h2>Sección Documentos</h2>}
-          {section === "reuniones" && <h2>Sección Reuniones</h2>}
-          {section === "usuarios" && <h2>Sección Usuarios</h2>}
+          {section === "reportes" && (
+            <section className="dashboard-panel">
+              <h1 className="dashboard-title">Reportes</h1>
+              <p className="dashboard-subtitle">
+                Aquí irán estadísticas y reportes de la comunidad.
+              </p>
+            </section>
+          )}
+
+          {section === "documentos" && (
+            <section className="dashboard-panel">
+              <h1 className="dashboard-title">Documentos</h1>
+              <p className="dashboard-subtitle">
+                Aquí gestionarás los PDFs y documentos oficiales.
+              </p>
+            </section>
+          )}
+
+          {section === "reuniones" && (
+            <section className="dashboard-panel">
+              <h1 className="dashboard-title">Reuniones</h1>
+              <p className="dashboard-subtitle">
+                Crea y organiza reuniones para la comunidad.
+              </p>
+
+              <CreateMeeting />
+            </section>
+          )}
+
+          {section === "usuarios" && (
+            <section className="dashboard-panel">
+              <h1 className="dashboard-title">Usuarios</h1>
+              <p className="dashboard-subtitle">
+                Aquí podrás gestionar vecinos y administración.
+              </p>
+            </section>
+          )}
         </main>
       </div>
     </div>

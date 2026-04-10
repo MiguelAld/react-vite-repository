@@ -2,12 +2,14 @@
 import cors from "cors";
 import { sequelize } from "./config/sequelize.js";
 import authRoutes from "./routes/auth.js";
+import meetingsRoutes from "./routes/meetings.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use("/auth", authRoutes);
+app.use("/meetings", meetingsRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });
