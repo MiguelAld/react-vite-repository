@@ -5,6 +5,70 @@ import { User } from "../models/User.js";
 
 const router = express.Router();
 
+/* 1) Comprobar DNI */
+router.post("/check-dni", async (req, res) => {
+  try {
+    const { dni } = req.body;
+
+    if (!dni) {
+      return res.status(400).json({ error: "Falta el DNI" });
+    }
+
+    const user = await User.findOne({ where: { dni } });
+
+    if (!user) {
+      return res.status(404).json({ error: "DNI no encontrado" });
+    }
+
+    return res.json({
+      exists: true,
+      hasPassword: !!user.password_hash,
+      user: {
+        id: user.id,
+        dni: user.dni,
+        name: user.name,
+        role: user.role,
+        vivienda: user.vivienda,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Error comprobando DNI" });
+  }
+});
+
+/* 2) Crear contraseña la primera vez */
+router.post("/set-password", async (req, res) => {
+  try {
+    const { dni, password } = req.body;
+
+    if (!dni || !password) {
+      return res.status(400).json({ error: "Faltan datos" });
+    }
+
+    const user = await User.findOne({ where: { dni } });
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    if (user.password_hash) {
+      return res.status(400).json({ error: "Este usuario ya tiene contraseña" });
+    }
+
+    const hash = await bcrypt.hash(password, 10);
+
+    user.password_hash = hash;
+    await user.save();
+
+    return res.json({ message: "Contraseña creada correctamente" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Error creando contraseña" });
+  }
+});
+
+/* 3) Login normal */
 router.post("/login", async (req, res) => {
   try {
     const { dni, password } = req.body;
@@ -15,7 +79,7 @@ router.post("/login", async (req, res) => {
 
     const user = await User.findOne({ where: { dni } });
 
-    if (!user) {
+    if (!user || !user.password_hash) {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }
 
@@ -38,10 +102,9 @@ router.post("/login", async (req, res) => {
         dni: user.dni,
         name: user.name,
         role: user.role,
-        vivienda: user.vivienda
-      }
+        vivienda: user.vivienda,
+      },
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error de login" });
