@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import SidebarUser from "../../components/layout/SidebarUser";
-import Topbar from "../../components/layout/Topbar";
 import { getMeetings } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
@@ -31,7 +30,6 @@ export default function UserDashboard() {
       />
 
       <div className="dashboard-content">
-        <Topbar />
 
         <main className="dashboard-main">
           {activeSection === "inicio" && (
