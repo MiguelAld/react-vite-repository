@@ -75,3 +75,15 @@ export async function createMeeting(meetingData) {
 
   return data;
 }
+
+export async function getUsers() {
+  const res = await fetch(`${API_URL}/users`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando usuarios");
+  }
+
+  return data;
+}
