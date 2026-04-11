@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export default function LoginForm() {
   const [step, setStep] = useState("dni");
   const [dni, setDni] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPasswordValue] = useState("");
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -40,7 +40,7 @@ export default function LoginForm() {
 
     try {
       await setPassword(dni.trim(), password);
-      setPassword("");
+      setPasswordValue("");
       setStep("login");
     } catch (e) {
       setErr(e.message || "Error creando contraseña");
@@ -58,8 +58,11 @@ export default function LoginForm() {
       const data = await apiLogin(dni.trim(), password);
       login(data);
 
-      if (data.user.role === "ADMIN") navigate("/admin");
-      else navigate("/vecino");
+      if (data.user.role === "ADMIN") {
+        navigate("/admin");
+      } else {
+        navigate("/vecino");
+      }
     } catch (e) {
       setErr(e.message || "Error al iniciar sesión");
     } finally {
@@ -99,12 +102,12 @@ export default function LoginForm() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Crear contraseña</label>
+            <label className="form-label">Nueva contraseña</label>
             <input
               className="form-control"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPasswordValue(e.target.value)}
               placeholder="Crea tu contraseña"
               required
             />
@@ -129,7 +132,7 @@ export default function LoginForm() {
               className="form-control"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => setPasswordValue(e.target.value)}
               placeholder="Introduce tu contraseña"
               autoComplete="current-password"
               required
