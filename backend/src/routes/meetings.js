@@ -1,5 +1,5 @@
 import express from "express";
-import Meeting from "../models/Meeting.js";
+import Meeting from "../models/meeting.js";
 
 const router = express.Router();
 
