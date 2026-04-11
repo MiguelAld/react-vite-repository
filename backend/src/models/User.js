@@ -13,15 +13,20 @@ export const User = sequelize.define("User", {
   },
   email: {
     type: DataTypes.STRING(120),
+    allowNull: true,
   },
   password_hash: {
     type: DataTypes.STRING(255),
-    allowNull: false,
+    allowNull: true, // <- ESTO ES LO IMPORTANTE
   },
   role: {
     type: DataTypes.ENUM("VECINO", "ADMIN"),
     allowNull: false,
     defaultValue: "VECINO",
+  },
+  vivienda: {
+    type: DataTypes.STRING(100),
+    allowNull: true,
   },
 }, {
   tableName: "users",
