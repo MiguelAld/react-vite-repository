@@ -47,3 +47,31 @@ export async function apiLogin(dni, password) {
 
   return data;
 }
+
+export async function getMeetings() {
+  const res = await fetch(`${API_URL}/meetings`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando reuniones");
+  }
+
+  return data;
+}
+
+export async function createMeeting(meetingData) {
+  const res = await fetch(`${API_URL}/meetings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(meetingData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando reunión");
+  }
+
+  return data;
+}
