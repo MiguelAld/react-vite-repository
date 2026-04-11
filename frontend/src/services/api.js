@@ -48,6 +48,7 @@ export async function apiLogin(dni, password) {
   return data;
 }
 
+              //sección MEETINGS
 export async function getMeetings() {
   const res = await fetch(`${API_URL}/meetings`);
 
@@ -76,6 +77,7 @@ export async function createMeeting(meetingData) {
   return data;
 }
 
+              //sección USERS
 export async function getUsers() {
   const res = await fetch(`${API_URL}/users`);
 
@@ -83,6 +85,36 @@ export async function getUsers() {
 
   if (!res.ok) {
     throw new Error(data?.error || "Error cargando usuarios");
+  }
+
+  return data;
+}
+
+              //sección INCIDENTS
+export async function getIncidents() {
+  const res = await fetch(`${API_URL}/incidents`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando incidencias");
+  }
+
+  return data;
+}
+
+
+export async function updateIncidentStatus(id, status) {
+  const res = await fetch(`${API_URL}/incidents/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando incidencia");
   }
 
   return data;

@@ -1,14 +1,23 @@
 import { useEffect, useState } from "react";
 import SidebarAdmin from "../../components/layout/SidebarAdmin";
 import CreateMeeting from "./CreateMeeting";
-import { getUsers } from "../../services/api";
+import {
+  getUsers,
+  getIncidents,
+  updateIncidentStatus,
+} from "../../services/api";
 import "../../assets/dashboard.css";
 
 export default function AdminDashboard() {
   const [section, setSection] = useState("inicio");
+
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersError, setUsersError] = useState("");
+
+  const [incidents, setIncidents] = useState([]);
+  const [incidentsLoading, setIncidentsLoading] = useState(false);
+  const [incidentsError, setIncidentsError] = useState("");
 
   useEffect(() => {
     if (section === "usuarios") {
@@ -26,6 +35,45 @@ export default function AdminDashboard() {
         });
     }
   }, [section]);
+
+  useEffect(() => {
+    if (section === "incidencias") {
+      setIncidentsLoading(true);
+      setIncidentsError("");
+
+      getIncidents()
+        .then(setIncidents)
+        .catch((err) => {
+          console.error(err);
+          setIncidentsError(err.message || "Error al cargar incidencias");
+        })
+        .finally(() => {
+          setIncidentsLoading(false);
+        });
+    }
+  }, [section]);
+
+  const handleStatusChange = async (incidentId, newStatus) => {
+    try {
+      await updateIncidentStatus(incidentId, newStatus);
+
+      setIncidents((prev) =>
+        prev.map((incident) =>
+          incident.id === incidentId
+            ? {
+                ...incident,
+                status: newStatus,
+                closed_at:
+                  newStatus === "RESUELTA" ? new Date().toISOString() : null,
+              }
+            : incident
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error actualizando estado");
+    }
+  };
 
   return (
     <div className="dashboard-shell">
@@ -71,31 +119,80 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Gestión de incidencias</h1>
                   <p className="dashboard-subtitle">
-                    Revisa incidencias, estados y zonas afectadas.
+                    Aquí puedes revisar quién envió cada incidencia, su descripción y cambiar su estado.
                   </p>
                 </div>
               </div>
 
-              <div className="dashboard-table-wrap">
-                <table className="table table-striped align-middle">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Título</th>
-                      <th>Zona</th>
-                      <th>Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td>Luz rota en garaje</td>
-                      <td>Garaje</td>
-                      <td><span className="badge bg-warning text-dark">Pendiente</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              {incidentsLoading && <p>Cargando incidencias...</p>}
+
+              {incidentsError && (
+                <div className="alert alert-danger">{incidentsError}</div>
+              )}
+
+              {!incidentsLoading && !incidentsError && (
+                <div className="dashboard-table-wrap">
+                  <table className="table table-striped align-middle">
+                    <thead>
+                      <tr>
+                        <th>ID</th>
+                        <th>Vecino</th>
+                        <th>DNI</th>
+                        <th>Zona</th>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {incidents.length === 0 ? (
+                        <tr>
+                          <td colSpan="8" className="text-center">
+                            No hay incidencias registradas.
+                          </td>
+                        </tr>
+                      ) : (
+                        incidents.map((incident) => (
+                          <tr key={incident.id}>
+                            <td>{incident.id}</td>
+                            <td>{incident.creator?.name || "—"}</td>
+                            <td>{incident.creator?.dni || "—"}</td>
+                            <td>{incident.zone?.name || "—"}</td>
+                            <td>{incident.title}</td>
+                            <td style={{ maxWidth: "280px" }}>
+                              {incident.description}
+                            </td>
+                            <td>
+                              <select
+                                className="form-select form-select-sm"
+                                value={incident.status}
+                                onChange={(e) =>
+                                  handleStatusChange(
+                                    incident.id,
+                                    e.target.value
+                                  )
+                                }
+                              >
+                                <option value="PENDIENTE">PENDIENTE</option>
+                                <option value="EN_PROCESO">EN PROCESO</option>
+                                <option value="RESUELTA">RESUELTA</option>
+                              </select>
+                            </td>
+                            <td>
+                              {incident.created_at
+                                ? new Date(
+                                    incident.created_at
+                                  ).toLocaleDateString()
+                                : "—"}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </section>
           )}
 
@@ -141,7 +238,9 @@ export default function AdminDashboard() {
 
               {usersLoading && <p>Cargando usuarios...</p>}
 
-              {usersError && <div className="alert alert-danger">{usersError}</div>}
+              {usersError && (
+                <div className="alert alert-danger">{usersError}</div>
+              )}
 
               {!usersLoading && !usersError && (
                 <div className="dashboard-table-wrap">

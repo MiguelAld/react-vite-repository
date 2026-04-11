@@ -4,6 +4,7 @@ import { sequelize } from "./config/sequelize.js";
 import authRoutes from "./routes/auth.js";
 import meetingsRoutes from "./routes/meetings.js";
 import usersRoutes from "./routes/users.js";
+import incidentsRoutes from "./routes/incidents.js";
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 app.use("/meetings", meetingsRoutes);
 app.use("/users", usersRoutes);
+app.use("/incidents", incidentsRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });
