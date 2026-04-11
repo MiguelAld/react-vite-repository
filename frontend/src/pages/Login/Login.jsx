@@ -1,4 +1,4 @@
-import Background from "../../components/Background/Bckground";
+import Background from "../../components/Background/Background";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import "./Login.css";
 
@@ -22,7 +22,7 @@ export default function Login() {
 
             <h2 className="h4 mb-1">Iniciar sesión</h2>
             <p className="text-secondary mb-3">
-              Accede con tu DNI (vecino) o credenciales de administración.
+              Accede con tu DNI para entrar o activar tu cuenta.
             </p>
 
             <LoginForm />

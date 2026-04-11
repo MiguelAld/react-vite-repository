@@ -3,13 +3,24 @@
   display: grid;
   place-items: center;
   padding: 24px;
+  position: relative;
 }
 
 .login-shell {
   max-width: 520px;
   width: 100%;
+  position: relative;
+  z-index: 2;
 }
 
 .login-card {
-  border-radius: 18px;
+  border-radius: 22px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08) !important;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(8px);
+}
+
+.login-card .card-body {
+  padding: 28px !important;
 }
