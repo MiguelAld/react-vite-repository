@@ -119,3 +119,46 @@ export async function updateIncidentStatus(id, status) {
 
   return data;
 }
+
+              // sección ZONES
+export async function getZones() {
+  const res = await fetch(`${API_URL}/zones`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando zonas");
+  }
+
+  return data;
+}
+
+              // sección INCIDENTS - USUARIOS
+export async function createIncident(incidentData) {
+  const res = await fetch(`${API_URL}/incidents`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(incidentData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando incidencia");
+  }
+
+  return data;
+}
+
+              // sección INCIDENTS - USUARIOS
+export async function getUserIncidents(userId) {
+  const res = await fetch(`${API_URL}/incidents/user/${userId}`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando incidencias del usuario");
+  }
+
+  return data;
+}

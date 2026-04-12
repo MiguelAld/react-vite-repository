@@ -1,28 +1,21 @@
-import { DataTypes } from "sequelize";
-import { sequelize } from "../config/sequelize.js";
+import express from "express";
+import { Zone } from "../models/Zone.js";
 
-export const Zone = sequelize.define(
-  "Zone",
-  {
-    name: {
-      type: DataTypes.STRING(100),
-      allowNull: false,
-      unique: true,
-    },
-    is_active: {
-      type: DataTypes.BOOLEAN,
-      allowNull: false,
-      defaultValue: true,
-    },
-    created_by: {
-      type: DataTypes.BIGINT,
-      allowNull: true,
-    },
-  },
-  {
-    tableName: "zones",
-    timestamps: true,
-    createdAt: "created_at",
-    updatedAt: false,
+const router = express.Router();
+
+router.get("/", async (req, res) => {
+  try {
+    const zones = await Zone.findAll({
+      where: { is_active: true },
+      attributes: ["id", "name"],
+      order: [["name", "ASC"]],
+    });
+
+    res.json(zones);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener zonas" });
   }
-);
+});
+
+export default router;

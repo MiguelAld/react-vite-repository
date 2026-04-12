@@ -5,6 +5,7 @@ import authRoutes from "./routes/auth.js";
 import meetingsRoutes from "./routes/meetings.js";
 import usersRoutes from "./routes/users.js";
 import incidentsRoutes from "./routes/incidents.js";
+import zonesRoutes from "./routes/zones.js";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use("/auth", authRoutes);
 app.use("/meetings", meetingsRoutes);
 app.use("/users", usersRoutes);
 app.use("/incidents", incidentsRoutes);
+app.use("/zones", zonesRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });

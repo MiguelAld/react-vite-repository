@@ -5,7 +5,7 @@ import { Zone } from "../models/Zone.js";
 
 const router = express.Router();
 
-/* listar incidencias para admin */
+/* admin: listar todas las incidencias */
 router.get("/", async (req, res) => {
   try {
     const incidents = await Incident.findAll({
@@ -31,7 +31,55 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* cambiar estado de incidencia */
+/* vecino: listar sus incidencias */
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const incidents = await Incident.findAll({
+      where: { created_by: userId },
+      include: [
+        {
+          model: Zone,
+          as: "zone",
+          attributes: ["id", "name"],
+        },
+      ],
+      order: [["created_at", "DESC"]],
+    });
+
+    res.json(incidents);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al obtener incidencias del usuario" });
+  }
+});
+
+/* vecino: crear incidencia */
+router.post("/", async (req, res) => {
+  try {
+    const { zone_id, created_by, title, description } = req.body;
+
+    if (!zone_id || !created_by || !title || !description) {
+      return res.status(400).json({ error: "Faltan datos" });
+    }
+
+    const incident = await Incident.create({
+      zone_id,
+      created_by,
+      title,
+      description,
+      status: "PENDIENTE",
+    });
+
+    res.status(201).json(incident);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al crear incidencia" });
+  }
+});
+
+/* admin: cambiar estado */
 router.patch("/:id/status", async (req, res) => {
   try {
     const { id } = req.params;
@@ -50,12 +98,7 @@ router.patch("/:id/status", async (req, res) => {
     }
 
     incident.status = status;
-
-    if (status === "RESUELTA") {
-      incident.closed_at = new Date();
-    } else {
-      incident.closed_at = null;
-    }
+    incident.closed_at = status === "RESUELTA" ? new Date() : null;
 
     await incident.save();
 
