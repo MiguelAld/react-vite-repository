@@ -1,23 +1,98 @@
 import { useEffect, useState } from "react";
 import SidebarUser from "../../components/layout/SidebarUser";
-import { getMeetings } from "../../services/api";
+import {
+  getMeetings,
+  getZones,
+  createIncident,
+  getUserIncidents,
+} from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
 
 export default function UserDashboard() {
   const [activeSection, setActiveSection] = useState("inicio");
   const [meetings, setMeetings] = useState([]);
+  const [zones, setZones] = useState([]);
+  const [incidents, setIncidents] = useState([]);
+  const [loadingIncidents, setLoadingIncidents] = useState(false);
+  const [incidentError, setIncidentError] = useState("");
+  const [showForm, setShowForm] = useState(false);
+
+  const [formData, setFormData] = useState({
+    zone_id: "",
+    title: "",
+    description: "",
+  });
+
   const { user } = useAuth();
 
   useEffect(() => {
-    getMeetings()
-      .then(setMeetings)
-      .catch(console.error);
+    getMeetings().then(setMeetings).catch(console.error);
+    getZones().then(setZones).catch(console.error);
   }, []);
+
+  useEffect(() => {
+    if (activeSection === "incidencias" && user?.id) {
+      setLoadingIncidents(true);
+      setIncidentError("");
+
+      getUserIncidents(user.id)
+        .then(setIncidents)
+        .catch((err) => {
+          console.error(err);
+          setIncidentError(err.message || "Error cargando incidencias");
+        })
+        .finally(() => {
+          setLoadingIncidents(false);
+        });
+    }
+  }, [activeSection, user]);
 
   const userName = user?.name || "Vecino";
   const userDni = user?.dni || "Sin DNI";
   const userHouse = user?.vivienda || "Sin vivienda";
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCreateIncident = async (e) => {
+    e.preventDefault();
+
+    try {
+      const newIncident = await createIncident({
+        zone_id: Number(formData.zone_id),
+        created_by: user.id,
+        title: formData.title,
+        description: formData.description,
+      });
+
+      const zoneObj = zones.find((z) => z.id === Number(formData.zone_id));
+
+      setIncidents((prev) => [
+        {
+          ...newIncident,
+          zone: zoneObj || null,
+        },
+        ...prev,
+      ]);
+
+      setFormData({
+        zone_id: "",
+        title: "",
+        description: "",
+      });
+
+      setShowForm(false);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error al crear incidencia");
+    }
+  };
 
   return (
     <div className="dashboard-shell">
@@ -30,7 +105,6 @@ export default function UserDashboard() {
       />
 
       <div className="dashboard-content">
-
         <main className="dashboard-main">
           {activeSection === "inicio" && (
             <section className="dashboard-panel">
@@ -51,7 +125,7 @@ export default function UserDashboard() {
 
                 <div className="dashboard-card summary-accent-yellow">
                   <h5>Incidencias abiertas</h5>
-                  <p>Pendiente de conectar con datos reales</p>
+                  <p>{incidents.length}</p>
                 </div>
 
                 <div className="dashboard-card summary-accent-blue">
@@ -72,35 +146,113 @@ export default function UserDashboard() {
                   </p>
                 </div>
 
-                <button className="btn btn-primary">Nueva incidencia</button>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setShowForm((prev) => !prev)}
+                >
+                  {showForm ? "Cerrar formulario" : "Nueva incidencia"}
+                </button>
               </div>
 
-              <div className="dashboard-table-wrap">
-                <table className="table align-middle">
-                  <thead>
-                    <tr>
-                      <th>Título</th>
-                      <th>Zona</th>
-                      <th>Estado</th>
-                      <th>Fecha</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Luz fundida</td>
-                      <td>Garaje</td>
-                      <td><span className="badge text-bg-warning">Pendiente</span></td>
-                      <td>04/03/2026</td>
-                    </tr>
-                    <tr>
-                      <td>Fuga de agua</td>
-                      <td>Baños públicos</td>
-                      <td><span className="badge text-bg-primary">En proceso</span></td>
-                      <td>02/03/2026</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              {showForm && (
+                <form onSubmit={handleCreateIncident} className="dashboard-block mb-4">
+                  <div className="mb-3">
+                    <label className="form-label">Zona</label>
+                    <select
+                      className="form-select"
+                      name="zone_id"
+                      value={formData.zone_id}
+                      onChange={handleChange}
+                      required
+                    >
+                      <option value="">Selecciona una zona</option>
+                      {zones.map((zone) => (
+                        <option key={zone.id} value={zone.id}>
+                          {zone.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Título</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="title"
+                      value={formData.title}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Descripción</label>
+                    <textarea
+                      className="form-control"
+                      name="description"
+                      rows="4"
+                      value={formData.description}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+
+                  <button type="submit" className="btn btn-success">
+                    Enviar incidencia
+                  </button>
+                </form>
+              )}
+
+              {loadingIncidents && <p>Cargando incidencias...</p>}
+              {incidentError && <div className="alert alert-danger">{incidentError}</div>}
+
+              {!loadingIncidents && !incidentError && (
+                <div className="dashboard-table-wrap">
+                  <table className="table align-middle">
+                    <thead>
+                      <tr>
+                        <th>Título</th>
+                        <th>Zona</th>
+                        <th>Estado</th>
+                        <th>Fecha</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {incidents.length === 0 ? (
+                        <tr>
+                          <td colSpan="4" className="text-center">
+                            No has creado incidencias todavía.
+                          </td>
+                        </tr>
+                      ) : (
+                        incidents.map((incident) => (
+                          <tr key={incident.id}>
+                            <td>{incident.title}</td>
+                            <td>{incident.zone?.name || "—"}</td>
+                            <td>
+                              {incident.status === "PENDIENTE" && (
+                                <span className="badge text-bg-warning">Pendiente</span>
+                              )}
+                              {incident.status === "EN_PROCESO" && (
+                                <span className="badge text-bg-primary">En proceso</span>
+                              )}
+                              {incident.status === "RESUELTA" && (
+                                <span className="badge text-bg-success">Resuelta</span>
+                              )}
+                            </td>
+                            <td>
+                              {incident.created_at
+                                ? new Date(incident.created_at).toLocaleDateString()
+                                : "—"}
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </section>
           )}
 
