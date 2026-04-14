@@ -194,3 +194,19 @@ export async function updateUserActive(id, is_active) {
 
   return data;
 }
+
+export async function updateUser(id, userData) {
+  const res = await fetch(`${API_URL}/users/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error editando usuario");
+  }
+
+  return data;
+}

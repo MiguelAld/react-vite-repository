@@ -4,6 +4,7 @@ import CreateMeeting from "./CreateMeeting";
 import {
   getUsers,
   createUser,
+  updateUser,
   updateUserActive,
   getIncidents,
   updateIncidentStatus,
@@ -21,14 +22,17 @@ export default function AdminDashboard() {
   const [incidentsLoading, setIncidentsLoading] = useState(false);
   const [incidentsError, setIncidentsError] = useState("");
 
-  const [showUserForm, setShowUserForm] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [openMenuId, setOpenMenuId] = useState(null);
+
   const [userForm, setUserForm] = useState({
     dni: "",
     name: "",
-    email: "",
     phone: "",
-    role: "VECINO",
+    email: "",
     vivienda: "",
+    role: "VECINO",
   });
 
   useEffect(() => {
@@ -95,27 +99,59 @@ export default function AdminDashboard() {
     }));
   };
 
-  const handleCreateUser = async (e) => {
+  const openCreateModal = () => {
+    setEditingUser(null);
+    setUserForm({
+      dni: "",
+      name: "",
+      phone: "",
+      email: "",
+      vivienda: "",
+      role: "VECINO",
+    });
+    setShowUserModal(true);
+    setOpenMenuId(null);
+  };
+
+  const openEditModal = (user) => {
+    setEditingUser(user);
+    setUserForm({
+      dni: user.dni || "",
+      name: user.name || "",
+      phone: user.phone || "",
+      email: user.email || "",
+      vivienda: user.vivienda || "",
+      role: user.role || "VECINO",
+    });
+    setShowUserModal(true);
+    setOpenMenuId(null);
+  };
+
+  const closeUserModal = () => {
+    setShowUserModal(false);
+    setEditingUser(null);
+    setOpenMenuId(null);
+  };
+
+  const handleSubmitUser = async (e) => {
     e.preventDefault();
 
     try {
-      const newUser = await createUser(userForm);
+      if (editingUser) {
+        const updated = await updateUser(editingUser.id, userForm);
 
-      setUsers((prev) => [...prev, newUser]);
+        setUsers((prev) =>
+          prev.map((u) => (u.id === editingUser.id ? updated : u))
+        );
+      } else {
+        const newUser = await createUser(userForm);
+        setUsers((prev) => [...prev, newUser]);
+      }
 
-      setUserForm({
-        dni: "",
-        name: "",
-        email: "",
-        phone: "",
-        role: "VECINO",
-        vivienda: "",
-      });
-
-      setShowUserForm(false);
+      closeUserModal();
     } catch (err) {
       console.error(err);
-      alert(err.message || "Error creando usuario");
+      alert(err.message || "Error guardando usuario");
     }
   };
 
@@ -128,6 +164,14 @@ export default function AdminDashboard() {
           u.id === userId ? { ...u, is_active: !currentState } : u
         )
       );
+
+      if (editingUser && editingUser.id === userId) {
+        setEditingUser((prev) =>
+          prev ? { ...prev, is_active: !currentState } : prev
+        );
+      }
+
+      setOpenMenuId(null);
     } catch (err) {
       console.error(err);
       alert(err.message || "Error actualizando usuario");
@@ -290,100 +334,14 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Usuarios</h1>
                   <p className="dashboard-subtitle">
-                    Aquí podrás ver, crear y activar o desactivar vecinos y administradores.
+                    Aquí podrás ver, crear, editar y activar o desactivar vecinos y administradores.
                   </p>
                 </div>
 
-                <button
-                  className="btn btn-primary"
-                  onClick={() => setShowUserForm((prev) => !prev)}
-                >
-                  {showUserForm ? "Cerrar formulario" : "Nuevo usuario"}
+                <button className="btn btn-primary" onClick={openCreateModal}>
+                  Nuevo usuario
                 </button>
               </div>
-
-              {showUserForm && (
-                <form onSubmit={handleCreateUser} className="dashboard-block mb-4">
-                  <div className="row g-3">
-                    <div className="col-md-4">
-                      <label className="form-label">DNI</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="dni"
-                        value={userForm.dni}
-                        onChange={handleUserFormChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">Nombre</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="name"
-                        value={userForm.name}
-                        onChange={handleUserFormChange}
-                        required
-                      />
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">Teléfono</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="phone"
-                        value={userForm.phone}
-                        onChange={handleUserFormChange}
-                      />
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">Email</label>
-                      <input
-                        type="email"
-                        className="form-control"
-                        name="email"
-                        value={userForm.email}
-                        onChange={handleUserFormChange}
-                      />
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">Rol</label>
-                      <select
-                        className="form-select"
-                        name="role"
-                        value={userForm.role}
-                        onChange={handleUserFormChange}
-                        required
-                      >
-                        <option value="VECINO">VECINO</option>
-                        <option value="ADMIN">ADMIN</option>
-                      </select>
-                    </div>
-
-                    <div className="col-md-4">
-                      <label className="form-label">Vivienda</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        name="vivienda"
-                        value={userForm.vivienda}
-                        onChange={handleUserFormChange}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="mt-3">
-                    <button type="submit" className="btn btn-success">
-                      Guardar usuario
-                    </button>
-                  </div>
-                </form>
-              )}
 
               {usersLoading && <p>Cargando usuarios...</p>}
 
@@ -401,8 +359,8 @@ export default function AdminDashboard() {
                         <th>DNI</th>
                         <th>Teléfono</th>
                         <th>Email</th>
-                        <th>Rol</th>
                         <th>Vivienda</th>
+                        <th>Rol</th>
                         <th>Estado</th>
                         <th>Alta</th>
                         <th>Acción</th>
@@ -423,6 +381,7 @@ export default function AdminDashboard() {
                             <td>{user.dni}</td>
                             <td>{user.phone || "—"}</td>
                             <td>{user.email || "—"}</td>
+                            <td>{user.vivienda || "—"}</td>
                             <td>
                               {user.role === "ADMIN" ? (
                                 <span className="badge bg-dark">ADMIN</span>
@@ -430,7 +389,6 @@ export default function AdminDashboard() {
                                 <span className="badge bg-primary">VECINO</span>
                               )}
                             </td>
-                            <td>{user.vivienda || "—"}</td>
                             <td>
                               {user.is_active ? (
                                 <span className="badge bg-success">ACTIVO</span>
@@ -443,25 +401,206 @@ export default function AdminDashboard() {
                                 ? new Date(user.created_at).toLocaleDateString()
                                 : "—"}
                             </td>
-                            <td>
+                            <td style={{ position: "relative" }}>
                               <button
-                                className={`btn btn-sm ${
-                                  user.is_active
-                                    ? "btn-outline-danger"
-                                    : "btn-outline-success"
-                                }`}
+                                className="btn btn-sm btn-outline-secondary"
                                 onClick={() =>
-                                  handleToggleUserActive(user.id, user.is_active)
+                                  setOpenMenuId(
+                                    openMenuId === user.id ? null : user.id
+                                  )
                                 }
                               >
-                                {user.is_active ? "Desactivar" : "Activar"}
+                                ⋮
                               </button>
+
+                              {openMenuId === user.id && (
+                                <div
+                                  className="card shadow-sm p-2"
+                                  style={{
+                                    position: "absolute",
+                                    right: 0,
+                                    top: "100%",
+                                    zIndex: 20,
+                                    minWidth: "170px",
+                                  }}
+                                >
+                                  <button
+                                    className="btn btn-sm btn-light text-start mb-2"
+                                    onClick={() => openEditModal(user)}
+                                  >
+                                    Editar
+                                  </button>
+
+                                  <button
+                                    className="btn btn-sm btn-light text-start"
+                                    onClick={() =>
+                                      handleToggleUserActive(
+                                        user.id,
+                                        user.is_active
+                                      )
+                                    }
+                                  >
+                                    {user.is_active
+                                      ? "Desactivar"
+                                      : "Activar"}
+                                  </button>
+                                </div>
+                              )}
                             </td>
                           </tr>
                         ))
                       )}
                     </tbody>
                   </table>
+                </div>
+              )}
+
+              {showUserModal && (
+                <div className="admin-modal-backdrop">
+                  <div className="admin-modal-card">
+                    <div className="dashboard-header-row">
+                      <div>
+                        <h2
+                          className="dashboard-title"
+                          style={{ fontSize: "1.5rem" }}
+                        >
+                          {editingUser ? "Editar usuario" : "Nuevo usuario"}
+                        </h2>
+                        <p className="dashboard-subtitle mb-0">
+                          {editingUser
+                            ? "Modifica los datos del usuario."
+                            : "Crea un nuevo vecino o administrador."}
+                        </p>
+                      </div>
+
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={closeUserModal}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+
+                    <form onSubmit={handleSubmitUser}>
+                      <div className="row g-3">
+                        <div className="col-md-6">
+                          <label className="form-label">DNI</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="dni"
+                            value={userForm.dni}
+                            onChange={handleUserFormChange}
+                            required
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <label className="form-label">Nombre</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="name"
+                            value={userForm.name}
+                            onChange={handleUserFormChange}
+                            required
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <label className="form-label">Teléfono</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="phone"
+                            value={userForm.phone}
+                            onChange={handleUserFormChange}
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <label className="form-label">Email</label>
+                          <input
+                            type="email"
+                            className="form-control"
+                            name="email"
+                            value={userForm.email}
+                            onChange={handleUserFormChange}
+                          />
+                        </div>
+
+                        <div className="col-md-12">
+                          <label className="form-label">Vivienda</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="vivienda"
+                            value={userForm.vivienda}
+                            onChange={handleUserFormChange}
+                          />
+                        </div>
+
+                        <div className="col-md-12">
+                          <label className="form-label">Rol</label>
+                          <select
+                            className="form-select"
+                            name="role"
+                            value={userForm.role}
+                            onChange={handleUserFormChange}
+                            required
+                          >
+                            <option value="VECINO">VECINO</option>
+                            <option value="ADMIN">ADMIN</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {editingUser && (
+                        <div className="mt-4 d-flex justify-content-between align-items-center">
+                          <div>
+                            <span className="me-2">Estado actual:</span>
+                            {editingUser.is_active ? (
+                              <span className="badge bg-success">ACTIVO</span>
+                            ) : (
+                              <span className="badge bg-secondary">INACTIVO</span>
+                            )}
+                          </div>
+
+                          <button
+                            type="button"
+                            className={`btn ${
+                              editingUser.is_active
+                                ? "btn-outline-danger"
+                                : "btn-outline-success"
+                            }`}
+                            onClick={() =>
+                              handleToggleUserActive(
+                                editingUser.id,
+                                editingUser.is_active
+                              )
+                            }
+                          >
+                            {editingUser.is_active
+                              ? "Desactivar usuario"
+                              : "Activar usuario"}
+                          </button>
+                        </div>
+                      )}
+
+                      <div className="mt-4 d-flex gap-2 justify-content-end">
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary"
+                          onClick={closeUserModal}
+                        >
+                          Cancelar
+                        </button>
+                        <button type="submit" className="btn btn-success">
+                          {editingUser ? "Guardar cambios" : "Crear usuario"}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
                 </div>
               )}
             </section>

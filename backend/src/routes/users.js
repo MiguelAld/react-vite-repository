@@ -61,6 +61,44 @@ router.post("/", async (req, res) => {
   }
 });
 
+/* editar usuario */
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { dni, name, email, phone, role, vivienda } = req.body;
+
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    if (!dni || !name || !role) {
+      return res.status(400).json({ error: "Faltan datos obligatorios" });
+    }
+
+    const existing = await User.findOne({ where: { dni } });
+
+    if (existing && existing.id !== user.id) {
+      return res.status(400).json({ error: "Ya existe otro usuario con ese DNI" });
+    }
+
+    user.dni = dni;
+    user.name = name;
+    user.email = email || null;
+    user.phone = phone || null;
+    user.role = role;
+    user.vivienda = vivienda || null;
+
+    await user.save();
+
+    res.json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al editar usuario" });
+  }
+});
+
 /* activar / desactivar usuario */
 router.patch("/:id/active", async (req, res) => {
   try {
