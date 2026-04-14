@@ -15,9 +15,13 @@ export const User = sequelize.define("User", {
     type: DataTypes.STRING(120),
     allowNull: true,
   },
+  phone: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+  },
   password_hash: {
     type: DataTypes.STRING(255),
-    allowNull: true, // <- ESTO ES LO IMPORTANTE
+    allowNull: true,
   },
   role: {
     type: DataTypes.ENUM("VECINO", "ADMIN"),
@@ -27,6 +31,11 @@ export const User = sequelize.define("User", {
   vivienda: {
     type: DataTypes.STRING(100),
     allowNull: true,
+  },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true,
   },
 }, {
   tableName: "users",

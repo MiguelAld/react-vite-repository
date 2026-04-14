@@ -3,6 +3,8 @@ import SidebarAdmin from "../../components/layout/SidebarAdmin";
 import CreateMeeting from "./CreateMeeting";
 import {
   getUsers,
+  createUser,
+  updateUserActive,
   getIncidents,
   updateIncidentStatus,
 } from "../../services/api";
@@ -18,6 +20,16 @@ export default function AdminDashboard() {
   const [incidents, setIncidents] = useState([]);
   const [incidentsLoading, setIncidentsLoading] = useState(false);
   const [incidentsError, setIncidentsError] = useState("");
+
+  const [showUserForm, setShowUserForm] = useState(false);
+  const [userForm, setUserForm] = useState({
+    dni: "",
+    name: "",
+    email: "",
+    phone: "",
+    role: "VECINO",
+    vivienda: "",
+  });
 
   useEffect(() => {
     if (section === "usuarios") {
@@ -72,6 +84,53 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error(err);
       alert(err.message || "Error actualizando estado");
+    }
+  };
+
+  const handleUserFormChange = (e) => {
+    const { name, value } = e.target;
+    setUserForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+
+    try {
+      const newUser = await createUser(userForm);
+
+      setUsers((prev) => [...prev, newUser]);
+
+      setUserForm({
+        dni: "",
+        name: "",
+        email: "",
+        phone: "",
+        role: "VECINO",
+        vivienda: "",
+      });
+
+      setShowUserForm(false);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error creando usuario");
+    }
+  };
+
+  const handleToggleUserActive = async (userId, currentState) => {
+    try {
+      await updateUserActive(userId, !currentState);
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === userId ? { ...u, is_active: !currentState } : u
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error actualizando usuario");
     }
   };
 
@@ -231,10 +290,100 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Usuarios</h1>
                   <p className="dashboard-subtitle">
-                    Aquí podrás ver los vecinos y administradores registrados.
+                    Aquí podrás ver, crear y activar o desactivar vecinos y administradores.
                   </p>
                 </div>
+
+                <button
+                  className="btn btn-primary"
+                  onClick={() => setShowUserForm((prev) => !prev)}
+                >
+                  {showUserForm ? "Cerrar formulario" : "Nuevo usuario"}
+                </button>
               </div>
+
+              {showUserForm && (
+                <form onSubmit={handleCreateUser} className="dashboard-block mb-4">
+                  <div className="row g-3">
+                    <div className="col-md-4">
+                      <label className="form-label">DNI</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="dni"
+                        value={userForm.dni}
+                        onChange={handleUserFormChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="col-md-4">
+                      <label className="form-label">Nombre</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="name"
+                        value={userForm.name}
+                        onChange={handleUserFormChange}
+                        required
+                      />
+                    </div>
+
+                    <div className="col-md-4">
+                      <label className="form-label">Teléfono</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="phone"
+                        value={userForm.phone}
+                        onChange={handleUserFormChange}
+                      />
+                    </div>
+
+                    <div className="col-md-4">
+                      <label className="form-label">Email</label>
+                      <input
+                        type="email"
+                        className="form-control"
+                        name="email"
+                        value={userForm.email}
+                        onChange={handleUserFormChange}
+                      />
+                    </div>
+
+                    <div className="col-md-4">
+                      <label className="form-label">Rol</label>
+                      <select
+                        className="form-select"
+                        name="role"
+                        value={userForm.role}
+                        onChange={handleUserFormChange}
+                        required
+                      >
+                        <option value="VECINO">VECINO</option>
+                        <option value="ADMIN">ADMIN</option>
+                      </select>
+                    </div>
+
+                    <div className="col-md-4">
+                      <label className="form-label">Vivienda</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        name="vivienda"
+                        value={userForm.vivienda}
+                        onChange={handleUserFormChange}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mt-3">
+                    <button type="submit" className="btn btn-success">
+                      Guardar usuario
+                    </button>
+                  </div>
+                </form>
+              )}
 
               {usersLoading && <p>Cargando usuarios...</p>}
 
@@ -250,16 +399,19 @@ export default function AdminDashboard() {
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>DNI</th>
+                        <th>Teléfono</th>
                         <th>Email</th>
                         <th>Rol</th>
                         <th>Vivienda</th>
+                        <th>Estado</th>
                         <th>Alta</th>
+                        <th>Acción</th>
                       </tr>
                     </thead>
                     <tbody>
                       {users.length === 0 ? (
                         <tr>
-                          <td colSpan="7" className="text-center">
+                          <td colSpan="10" className="text-center">
                             No hay usuarios registrados.
                           </td>
                         </tr>
@@ -269,6 +421,7 @@ export default function AdminDashboard() {
                             <td>{user.id}</td>
                             <td>{user.name}</td>
                             <td>{user.dni}</td>
+                            <td>{user.phone || "—"}</td>
                             <td>{user.email || "—"}</td>
                             <td>
                               {user.role === "ADMIN" ? (
@@ -279,9 +432,30 @@ export default function AdminDashboard() {
                             </td>
                             <td>{user.vivienda || "—"}</td>
                             <td>
+                              {user.is_active ? (
+                                <span className="badge bg-success">ACTIVO</span>
+                              ) : (
+                                <span className="badge bg-secondary">INACTIVO</span>
+                              )}
+                            </td>
+                            <td>
                               {user.created_at
                                 ? new Date(user.created_at).toLocaleDateString()
                                 : "—"}
+                            </td>
+                            <td>
+                              <button
+                                className={`btn btn-sm ${
+                                  user.is_active
+                                    ? "btn-outline-danger"
+                                    : "btn-outline-success"
+                                }`}
+                                onClick={() =>
+                                  handleToggleUserActive(user.id, user.is_active)
+                                }
+                              >
+                                {user.is_active ? "Desactivar" : "Activar"}
+                              </button>
                             </td>
                           </tr>
                         ))

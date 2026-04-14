@@ -162,3 +162,35 @@ export async function getUserIncidents(userId) {
 
   return data;
 }
+
+export async function createUser(userData) {
+  const res = await fetch(`${API_URL}/users`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando usuario");
+  }
+
+  return data;
+}
+
+export async function updateUserActive(id, is_active) {
+  const res = await fetch(`${API_URL}/users/${id}/active`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ is_active }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando usuario");
+  }
+
+  return data;
+}
