@@ -143,6 +143,8 @@ export default function AdminDashboard() {
         setUsers((prev) =>
           prev.map((u) => (u.id === editingUser.id ? updated : u))
         );
+
+        setEditingUser(updated);
       } else {
         const newUser = await createUser(userForm);
         setUsers((prev) => [...prev, newUser]);
@@ -157,17 +159,24 @@ export default function AdminDashboard() {
 
   const handleToggleUserActive = async (userId, currentState) => {
     try {
-      await updateUserActive(userId, !currentState);
+      const response = await updateUserActive(userId, !currentState);
 
       setUsers((prev) =>
         prev.map((u) =>
-          u.id === userId ? { ...u, is_active: !currentState } : u
+          u.id === userId
+            ? { ...u, is_active: response.user?.is_active ?? !currentState }
+            : u
         )
       );
 
       if (editingUser && editingUser.id === userId) {
         setEditingUser((prev) =>
-          prev ? { ...prev, is_active: !currentState } : prev
+          prev
+            ? {
+                ...prev,
+                is_active: response.user?.is_active ?? !currentState,
+              }
+            : prev
         );
       }
 
@@ -421,28 +430,14 @@ export default function AdminDashboard() {
                                     right: 0,
                                     top: "100%",
                                     zIndex: 20,
-                                    minWidth: "170px",
+                                    minWidth: "160px",
                                   }}
                                 >
                                   <button
-                                    className="btn btn-sm btn-light text-start mb-2"
+                                    className="btn btn-sm btn-light text-start"
                                     onClick={() => openEditModal(user)}
                                   >
                                     Editar
-                                  </button>
-
-                                  <button
-                                    className="btn btn-sm btn-light text-start"
-                                    onClick={() =>
-                                      handleToggleUserActive(
-                                        user.id,
-                                        user.is_active
-                                      )
-                                    }
-                                  >
-                                    {user.is_active
-                                      ? "Desactivar"
-                                      : "Activar"}
                                   </button>
                                 </div>
                               )}

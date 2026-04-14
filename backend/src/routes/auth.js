@@ -20,6 +20,12 @@ router.post("/check-dni", async (req, res) => {
       return res.status(404).json({ error: "DNI no encontrado" });
     }
 
+    if (!user.is_active) {
+      return res.status(403).json({
+        error: "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
+      });
+    }
+
     return res.json({
       exists: true,
       hasPassword: !!user.password_hash,
@@ -29,6 +35,7 @@ router.post("/check-dni", async (req, res) => {
         name: user.name,
         role: user.role,
         vivienda: user.vivienda,
+        is_active: user.is_active,
       },
     });
   } catch (error) {
@@ -50,6 +57,12 @@ router.post("/set-password", async (req, res) => {
 
     if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    if (!user.is_active) {
+      return res.status(403).json({
+        error: "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
+      });
     }
 
     if (user.password_hash) {
@@ -79,7 +92,17 @@ router.post("/login", async (req, res) => {
 
     const user = await User.findOne({ where: { dni } });
 
-    if (!user || !user.password_hash) {
+    if (!user) {
+      return res.status(401).json({ error: "Credenciales incorrectas" });
+    }
+
+    if (!user.is_active) {
+      return res.status(403).json({
+        error: "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
+      });
+    }
+
+    if (!user.password_hash) {
       return res.status(401).json({ error: "Credenciales incorrectas" });
     }
 
@@ -103,6 +126,7 @@ router.post("/login", async (req, res) => {
         name: user.name,
         role: user.role,
         vivienda: user.vivienda,
+        is_active: user.is_active,
       },
     });
   } catch (error) {
