@@ -21,6 +21,7 @@ export default function AdminDashboard() {
   const [incidents, setIncidents] = useState([]);
   const [incidentsLoading, setIncidentsLoading] = useState(false);
   const [incidentsError, setIncidentsError] = useState("");
+  const [expandedIncidentId, setExpandedIncidentId] = useState(null);
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -231,10 +232,35 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Gestión de incidencias</h1>
                   <p className="dashboard-subtitle">
-                    Aquí puedes revisar quién envió cada incidencia, su descripción y cambiar su estado.
+                    Aquí puedes revisar quién envió cada incidencia, consultar sus datos y cambiar su estado.
                   </p>
                 </div>
               </div>
+
+              {!incidentsLoading && !incidentsError && (
+                <div className="dashboard-cards incidents-summary-cards mb-4">
+                  <div className="dashboard-card summary-accent-yellow">
+                    <h5>Pendientes</h5>
+                    <p className="summary-number">
+                      {incidents.filter((i) => i.status === "PENDIENTE").length}
+                    </p>
+                  </div>
+
+                  <div className="dashboard-card summary-accent-blue">
+                    <h5>En proceso</h5>
+                    <p className="summary-number">
+                      {incidents.filter((i) => i.status === "EN_PROCESO").length}
+                    </p>
+                  </div>
+
+                  <div className="dashboard-card summary-accent-green">
+                    <h5>Resueltas</h5>
+                    <p className="summary-number">
+                      {incidents.filter((i) => i.status === "RESUELTA").length}
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {incidentsLoading && <p>Cargando incidencias...</p>}
 
@@ -243,67 +269,94 @@ export default function AdminDashboard() {
               )}
 
               {!incidentsLoading && !incidentsError && (
-                <div className="dashboard-table-wrap">
-                  <table className="table table-striped align-middle">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Vecino</th>
-                        <th>DNI</th>
-                        <th>Zona</th>
-                        <th>Título</th>
-                        <th>Descripción</th>
-                        <th>Estado</th>
-                        <th>Fecha</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {incidents.length === 0 ? (
-                        <tr>
-                          <td colSpan="8" className="text-center">
-                            No hay incidencias registradas.
-                          </td>
-                        </tr>
-                      ) : (
-                        incidents.map((incident) => (
-                          <tr key={incident.id}>
-                            <td>{incident.id}</td>
-                            <td>{incident.creator?.name || "—"}</td>
-                            <td>{incident.creator?.dni || "—"}</td>
-                            <td>{incident.zone?.name || "—"}</td>
-                            <td>{incident.title}</td>
-                            <td style={{ maxWidth: "280px" }}>
-                              {incident.description}
-                            </td>
-                            <td>
-                              <select
-                                className="form-select form-select-sm"
-                                value={incident.status}
-                                onChange={(e) =>
-                                  handleStatusChange(
-                                    incident.id,
-                                    e.target.value
-                                  )
-                                }
-                              >
-                                <option value="PENDIENTE">PENDIENTE</option>
-                                <option value="EN_PROCESO">EN PROCESO</option>
-                                <option value="RESUELTA">RESUELTA</option>
-                              </select>
-                            </td>
-                            <td>
-                              {incident.created_at
-                                ? new Date(
-                                    incident.created_at
-                                  ).toLocaleDateString()
-                                : "—"}
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                <>
+                  {incidents.length === 0 ? (
+                    <p className="dashboard-empty">No hay incidencias registradas.</p>
+                  ) : (
+                    <div className="incidents-grid">
+                      {incidents.map((incident) => (
+                        <article
+                          key={incident.id}
+                          className={`incident-card ${
+                            expandedIncidentId === incident.id ? "expanded" : ""
+                          }`}
+                        >
+                          <div className="incident-card__top">
+                            <h4>{incident.title}</h4>
+
+                            <span
+                              className={`badge ${
+                                incident.status === "PENDIENTE"
+                                  ? "text-bg-warning"
+                                  : incident.status === "EN_PROCESO"
+                                  ? "text-bg-primary"
+                                  : "text-bg-success"
+                              }`}
+                            >
+                              {incident.status === "EN_PROCESO"
+                                ? "EN PROCESO"
+                                : incident.status}
+                            </span>
+                          </div>
+
+                          <div className="incident-card__meta">
+                            <p>
+                              <strong>Vecino:</strong> {incident.creator?.name || "—"}
+                            </p>
+                            <p>
+                              <strong>DNI:</strong> {incident.creator?.dni || "—"}
+                            </p>
+                            <p>
+                              <strong>Zona:</strong> {incident.zone?.name || "—"}
+                            </p>
+                          </div>
+
+                          <button
+                            className="btn btn-sm btn-outline-primary incident-card__toggle"
+                            onClick={() =>
+                              setExpandedIncidentId(
+                                expandedIncidentId === incident.id ? null : incident.id
+                              )
+                            }
+                          >
+                            {expandedIncidentId === incident.id ? "Ver menos" : "Ver más"}
+                          </button>
+
+                          {expandedIncidentId === incident.id && (
+                            <>
+                              <div className="incident-card__description">
+                                <strong>Descripción:</strong>
+                                <p>{incident.description}</p>
+                              </div>
+
+                              <p className="incident-card__date">
+                                <strong>Fecha:</strong>{" "}
+                                {incident.created_at
+                                  ? new Date(incident.created_at).toLocaleDateString()
+                                  : "—"}
+                              </p>
+
+                              <div className="incident-card__footer">
+                                <label className="form-label mb-1">Cambiar estado</label>
+                                <select
+                                  className="form-select form-select-sm"
+                                  value={incident.status}
+                                  onChange={(e) =>
+                                    handleStatusChange(incident.id, e.target.value)
+                                  }
+                                >
+                                  <option value="PENDIENTE">PENDIENTE</option>
+                                  <option value="EN_PROCESO">EN PROCESO</option>
+                                  <option value="RESUELTA">RESUELTA</option>
+                                </select>
+                              </div>
+                            </>
+                          )}
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </section>
           )}
