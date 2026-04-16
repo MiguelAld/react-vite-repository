@@ -382,7 +382,7 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="incident-detail-block">
-                        <label>Estado</label>
+                        <label>Estado actual</label>
                         <p>
                           <span
                             className={`badge ${
@@ -430,18 +430,45 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="incident-detail-block incident-detail-block--full">
-                        <label>Cambiar estado</label>
-                        <select
-                          className="form-select"
-                          value={selectedIncident.status}
-                          onChange={(e) =>
-                            handleStatusChange(selectedIncident.id, e.target.value)
-                          }
-                        >
-                          <option value="PENDIENTE">PENDIENTE</option>
-                          <option value="EN_PROCESO">EN PROCESO</option>
-                          <option value="RESUELTA">RESUELTA</option>
-                        </select>
+                        <label>Estado</label>
+
+                        <div className="incident-status-actions">
+                          <button
+                            type="button"
+                            className={`incident-status-btn incident-status-btn--pending ${
+                              selectedIncident.status === "PENDIENTE" ? "active" : ""
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(selectedIncident.id, "PENDIENTE")
+                            }
+                          >
+                            Pendiente
+                          </button>
+
+                          <button
+                            type="button"
+                            className={`incident-status-btn incident-status-btn--progress ${
+                              selectedIncident.status === "EN_PROCESO" ? "active" : ""
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(selectedIncident.id, "EN_PROCESO")
+                            }
+                          >
+                            En proceso
+                          </button>
+
+                          <button
+                            type="button"
+                            className={`incident-status-btn incident-status-btn--resolved ${
+                              selectedIncident.status === "RESUELTA" ? "active" : ""
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(selectedIncident.id, "RESUELTA")
+                            }
+                          >
+                            Resuelta
+                          </button>
+                        </div>
                       </div>
                     </div>
 
