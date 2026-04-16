@@ -210,3 +210,17 @@ export async function updateUser(id, userData) {
 
   return data;
 }
+
+export async function deleteIncident(id) {
+  const res = await fetch(`${API_URL}/incidents/${id}`, {
+    method: "DELETE",
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando incidencia");
+  }
+
+  return data;
+}

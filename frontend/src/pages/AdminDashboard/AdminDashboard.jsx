@@ -8,6 +8,7 @@ import {
   updateUserActive,
   getIncidents,
   updateIncidentStatus,
+  deleteIncident,
 } from "../../services/api";
 import "../../assets/dashboard.css";
 
@@ -21,7 +22,7 @@ export default function AdminDashboard() {
   const [incidents, setIncidents] = useState([]);
   const [incidentsLoading, setIncidentsLoading] = useState(false);
   const [incidentsError, setIncidentsError] = useState("");
-  const [expandedIncidentId, setExpandedIncidentId] = useState(null);
+  const [selectedIncident, setSelectedIncident] = useState(null);
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -86,9 +87,40 @@ export default function AdminDashboard() {
             : incident
         )
       );
+
+      if (selectedIncident && selectedIncident.id === incidentId) {
+        setSelectedIncident((prev) =>
+          prev
+            ? {
+                ...prev,
+                status: newStatus,
+                closed_at:
+                  newStatus === "RESUELTA" ? new Date().toISOString() : null,
+              }
+            : prev
+        );
+      }
     } catch (err) {
       console.error(err);
       alert(err.message || "Error actualizando estado");
+    }
+  };
+
+  const handleDeleteIncident = async (incidentId) => {
+    const ok = window.confirm(
+      "¿Seguro que quieres eliminar esta incidencia? Esta acción no se puede deshacer."
+    );
+
+    if (!ok) return;
+
+    try {
+      await deleteIncident(incidentId);
+
+      setIncidents((prev) => prev.filter((incident) => incident.id !== incidentId));
+      setSelectedIncident(null);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error eliminando incidencia");
     }
   };
 
@@ -232,7 +264,7 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Gestión de incidencias</h1>
                   <p className="dashboard-subtitle">
-                    Aquí puedes revisar quién envió cada incidencia, consultar sus datos y cambiar su estado.
+                    Aquí puedes revisar quién envió cada incidencia y abrir su ficha completa.
                   </p>
                 </div>
               </div>
@@ -275,12 +307,7 @@ export default function AdminDashboard() {
                   ) : (
                     <div className="incidents-grid">
                       {incidents.map((incident) => (
-                        <article
-                          key={incident.id}
-                          className={`incident-card ${
-                            expandedIncidentId === incident.id ? "expanded" : ""
-                          }`}
-                        >
+                        <article key={incident.id} className="incident-card">
                           <div className="incident-card__top">
                             <h4>{incident.title}</h4>
 
@@ -313,50 +340,129 @@ export default function AdminDashboard() {
 
                           <button
                             className="btn btn-sm btn-outline-primary incident-card__toggle"
-                            onClick={() =>
-                              setExpandedIncidentId(
-                                expandedIncidentId === incident.id ? null : incident.id
-                              )
-                            }
+                            onClick={() => setSelectedIncident(incident)}
                           >
-                            {expandedIncidentId === incident.id ? "Ver menos" : "Ver más"}
+                            Ver detalle
                           </button>
-
-                          {expandedIncidentId === incident.id && (
-                            <>
-                              <div className="incident-card__description">
-                                <strong>Descripción:</strong>
-                                <p>{incident.description}</p>
-                              </div>
-
-                              <p className="incident-card__date">
-                                <strong>Fecha:</strong>{" "}
-                                {incident.created_at
-                                  ? new Date(incident.created_at).toLocaleDateString()
-                                  : "—"}
-                              </p>
-
-                              <div className="incident-card__footer">
-                                <label className="form-label mb-1">Cambiar estado</label>
-                                <select
-                                  className="form-select form-select-sm"
-                                  value={incident.status}
-                                  onChange={(e) =>
-                                    handleStatusChange(incident.id, e.target.value)
-                                  }
-                                >
-                                  <option value="PENDIENTE">PENDIENTE</option>
-                                  <option value="EN_PROCESO">EN PROCESO</option>
-                                  <option value="RESUELTA">RESUELTA</option>
-                                </select>
-                              </div>
-                            </>
-                          )}
                         </article>
                       ))}
                     </div>
                   )}
                 </>
+              )}
+
+              {selectedIncident && (
+                <div className="admin-modal-backdrop">
+                  <div className="admin-modal-card incident-detail-modal">
+                    <div className="dashboard-header-row">
+                      <div>
+                        <h2
+                          className="dashboard-title"
+                          style={{ fontSize: "1.5rem" }}
+                        >
+                          Detalle de incidencia
+                        </h2>
+                        <p className="dashboard-subtitle mb-0">
+                          Revisa toda la información y gestiona esta incidencia.
+                        </p>
+                      </div>
+
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={() => setSelectedIncident(null)}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+
+                    <div className="incident-detail-grid">
+                      <div className="incident-detail-block">
+                        <label>Título</label>
+                        <p>{selectedIncident.title}</p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>Estado</label>
+                        <p>
+                          <span
+                            className={`badge ${
+                              selectedIncident.status === "PENDIENTE"
+                                ? "text-bg-warning"
+                                : selectedIncident.status === "EN_PROCESO"
+                                ? "text-bg-primary"
+                                : "text-bg-success"
+                            }`}
+                          >
+                            {selectedIncident.status === "EN_PROCESO"
+                              ? "EN PROCESO"
+                              : selectedIncident.status}
+                          </span>
+                        </p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>Vecino</label>
+                        <p>{selectedIncident.creator?.name || "—"}</p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>DNI</label>
+                        <p>{selectedIncident.creator?.dni || "—"}</p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>Zona</label>
+                        <p>{selectedIncident.zone?.name || "—"}</p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>Fecha</label>
+                        <p>
+                          {selectedIncident.created_at
+                            ? new Date(selectedIncident.created_at).toLocaleDateString()
+                            : "—"}
+                        </p>
+                      </div>
+
+                      <div className="incident-detail-block incident-detail-block--full">
+                        <label>Descripción</label>
+                        <p>{selectedIncident.description}</p>
+                      </div>
+
+                      <div className="incident-detail-block incident-detail-block--full">
+                        <label>Cambiar estado</label>
+                        <select
+                          className="form-select"
+                          value={selectedIncident.status}
+                          onChange={(e) =>
+                            handleStatusChange(selectedIncident.id, e.target.value)
+                          }
+                        >
+                          <option value="PENDIENTE">PENDIENTE</option>
+                          <option value="EN_PROCESO">EN PROCESO</option>
+                          <option value="RESUELTA">RESUELTA</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 d-flex justify-content-end gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-outline-danger"
+                        onClick={() => handleDeleteIncident(selectedIncident.id)}
+                      >
+                        Eliminar incidencia
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() => setSelectedIncident(null)}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+                  </div>
+                </div>
               )}
             </section>
           )}

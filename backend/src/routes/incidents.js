@@ -109,4 +109,24 @@ router.patch("/:id/status", async (req, res) => {
   }
 });
 
+/* admin: borrar incidencia */
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const incident = await Incident.findByPk(id);
+
+    if (!incident) {
+      return res.status(404).json({ error: "Incidencia no encontrada" });
+    }
+
+    await incident.destroy();
+
+    res.json({ message: "Incidencia eliminada correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar incidencia" });
+  }
+});
+
 export default router;

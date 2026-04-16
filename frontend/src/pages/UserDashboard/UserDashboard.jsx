@@ -17,6 +17,7 @@ export default function UserDashboard() {
   const [loadingIncidents, setLoadingIncidents] = useState(false);
   const [incidentError, setIncidentError] = useState("");
   const [showForm, setShowForm] = useState(false);
+  const [expandedIncidentId, setExpandedIncidentId] = useState(null);
 
   const [formData, setFormData] = useState({
     zone_id: "",
@@ -124,7 +125,7 @@ export default function UserDashboard() {
                 </div>
 
                 <div className="dashboard-card summary-accent-yellow">
-                  <h5>Incidencias abiertas</h5>
+                  <h5>Mis incidencias</h5>
                   <p>{incidents.length}</p>
                 </div>
 
@@ -208,50 +209,73 @@ export default function UserDashboard() {
               {incidentError && <div className="alert alert-danger">{incidentError}</div>}
 
               {!loadingIncidents && !incidentError && (
-                <div className="dashboard-table-wrap">
-                  <table className="table align-middle">
-                    <thead>
-                      <tr>
-                        <th>Título</th>
-                        <th>Zona</th>
-                        <th>Estado</th>
-                        <th>Fecha</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {incidents.length === 0 ? (
-                        <tr>
-                          <td colSpan="4" className="text-center">
-                            No has creado incidencias todavía.
-                          </td>
-                        </tr>
-                      ) : (
-                        incidents.map((incident) => (
-                          <tr key={incident.id}>
-                            <td>{incident.title}</td>
-                            <td>{incident.zone?.name || "—"}</td>
-                            <td>
-                              {incident.status === "PENDIENTE" && (
-                                <span className="badge text-bg-warning">Pendiente</span>
-                              )}
-                              {incident.status === "EN_PROCESO" && (
-                                <span className="badge text-bg-primary">En proceso</span>
-                              )}
-                              {incident.status === "RESUELTA" && (
-                                <span className="badge text-bg-success">Resuelta</span>
-                              )}
-                            </td>
-                            <td>
-                              {incident.created_at
-                                ? new Date(incident.created_at).toLocaleDateString()
-                                : "—"}
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                <>
+                  {incidents.length === 0 ? (
+                    <p className="dashboard-empty">No has creado incidencias todavía.</p>
+                  ) : (
+                    <div className="incidents-grid user-incidents-grid">
+                      {incidents.map((incident) => (
+                        <article
+                          key={incident.id}
+                          className={`incident-card ${
+                            expandedIncidentId === incident.id ? "expanded" : ""
+                          }`}
+                        >
+                          <div className="incident-card__top">
+                            <h4>{incident.title}</h4>
+
+                            <span
+                              className={`badge ${
+                                incident.status === "PENDIENTE"
+                                  ? "text-bg-warning"
+                                  : incident.status === "EN_PROCESO"
+                                  ? "text-bg-primary"
+                                  : "text-bg-success"
+                              }`}
+                            >
+                              {incident.status === "EN_PROCESO"
+                                ? "EN PROCESO"
+                                : incident.status}
+                            </span>
+                          </div>
+
+                          <div className="incident-card__meta">
+                            <p>
+                              <strong>Zona:</strong> {incident.zone?.name || "—"}
+                            </p>
+                          </div>
+
+                          <button
+                            className="btn btn-sm btn-outline-primary incident-card__toggle"
+                            onClick={() =>
+                              setExpandedIncidentId(
+                                expandedIncidentId === incident.id ? null : incident.id
+                              )
+                            }
+                          >
+                            {expandedIncidentId === incident.id ? "Ver menos" : "Ver más"}
+                          </button>
+
+                          {expandedIncidentId === incident.id && (
+                            <>
+                              <div className="incident-card__description">
+                                <strong>Descripción:</strong>
+                                <p>{incident.description}</p>
+                              </div>
+
+                              <p className="incident-card__date">
+                                <strong>Fecha:</strong>{" "}
+                                {incident.created_at
+                                  ? new Date(incident.created_at).toLocaleDateString()
+                                  : "—"}
+                              </p>
+                            </>
+                          )}
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </>
               )}
             </section>
           )}
