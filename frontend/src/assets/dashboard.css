@@ -583,3 +583,175 @@
     grid-template-columns: 1fr;
   }
 }
+.user-sketch-shell {
+  min-height: 100vh;
+  background: #f4f7fb;
+  position: relative;
+  overflow: hidden;
+}
+
+.user-sketch-layout {
+  position: relative;
+  min-height: 100vh;
+  padding: 28px;
+}
+
+.user-sketch-top-icon {
+  position: absolute;
+  top: 24px;
+  right: 28px;
+}
+
+.user-sketch-home-btn {
+  width: 68px;
+  height: 68px;
+  border: 2px solid #d7e3f1;
+  border-radius: 18px;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.user-sketch-home-btn.active {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.user-sketch-profile-card {
+  position: absolute;
+  top: 120px;
+  right: 28px;
+  width: 260px;
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+}
+
+.user-sketch-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.user-sketch-profile-name {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.user-sketch-profile-card p {
+  margin: 0 0 8px;
+  color: #334155;
+}
+
+.user-sketch-nav {
+  position: absolute;
+  left: 28px;
+  bottom: 40px;
+  display: flex;
+  gap: 22px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  max-width: 720px;
+}
+
+.user-sketch-nav-item {
+  background: transparent;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+.user-sketch-nav-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  border: 3px solid #1e293b;
+  background: #ffffff;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+}
+
+.user-sketch-nav-item.active .user-sketch-nav-icon {
+  background: #eff6ff;
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.user-sketch-nav-item--logout .user-sketch-nav-icon {
+  border-color: #7f1d1d;
+  color: #7f1d1d;
+}
+
+.user-sketch-main {
+  position: relative;
+  min-height: 100vh;
+  padding: 28px;
+}
+
+.user-sketch-center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-sketch-welcome {
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  font-weight: 700;
+  color: #334155;
+  text-align: center;
+}
+
+.user-sketch-welcome span {
+  color: #0f172a;
+}
+
+@media (max-width: 1100px) {
+  .user-sketch-profile-card {
+    position: static;
+    margin-left: auto;
+    margin-bottom: 32px;
+  }
+
+  .user-sketch-top-icon {
+    position: static;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+  }
+
+  .user-sketch-nav {
+    position: static;
+    margin-top: 48px;
+    justify-content: center;
+  }
+
+  .user-sketch-center {
+    min-height: auto;
+    padding: 40px 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .user-sketch-nav {
+    gap: 16px;
+  }
+
+  .user-sketch-nav-icon {
+    width: 82px;
+    height: 82px;
+  }
+
+  .user-sketch-profile-card {
+    width: 100%;
+  }
+}
