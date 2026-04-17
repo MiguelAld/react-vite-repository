@@ -24,10 +24,19 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: #f4f7fb;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0 auto;
+  max-width: 70%;
+  background: #f4f7fb;
 }
 
 h1 {
@@ -64,5 +73,23 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 1400px) {
+  #root {
+    max-width: 75%;
+  }
+}
+
+@media (max-width: 1000px) {
+  #root {
+    max-width: 85%;
+  }
+}
+
+@media (max-width: 768px) {
+  #root {
+    max-width: 95%;
   }
 }
