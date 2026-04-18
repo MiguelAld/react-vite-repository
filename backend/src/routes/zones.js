@@ -1,6 +1,6 @@
 import express from "express";
 import { Zone } from "../models/Zone.js";
-import { sequelize } from "../config/sequelize.js";
+import { sequelize, Op } from "../config/sequelize.js";
 
 const router = express.Router();
 
@@ -109,7 +109,7 @@ router.patch("/:id/order", async (req, res) => {
     if (direction === "up") {
       // Buscar la zona anterior (order menor más cercano)
       const prevZone = await Zone.findOne({
-        where: { order: { [sequelize.Op.lt]: zone.order } },
+        where: { order: { [Op.lt]: zone.order } },
         order: [["order", "DESC"]],
       });
 
@@ -123,7 +123,7 @@ router.patch("/:id/order", async (req, res) => {
     } else {
       // Buscar la zona siguiente (order mayor más cercano)
       const nextZone = await Zone.findOne({
-        where: { order: { [sequelize.Op.gt]: zone.order } },
+        where: { order: { [Op.gt]: zone.order } },
         order: [["order", "ASC"]],
       });
 

@@ -8,7 +8,8 @@ export const Incident = sequelize.define(
   {
     zone_id: {
       type: DataTypes.BIGINT,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: 0,
     },
     custom_zone: {
       type: DataTypes.STRING(120),

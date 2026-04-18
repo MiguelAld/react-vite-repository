@@ -92,7 +92,7 @@ router.post("/", async (req, res) => {
     }
 
     const incident = await Incident.create({
-      zone_id: usingNormalZone ? zone_id : null,
+      zone_id: usingNormalZone ? zone_id : 0,
       custom_zone: usingCustomZone ? custom_zone.trim() : null,
       created_by,
       title: generatedTitle,

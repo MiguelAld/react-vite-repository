@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { Sequelize } from "sequelize";
+import { Sequelize, Op } from "sequelize";
 
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -11,3 +11,5 @@ export const sequelize = new Sequelize(
     logging: false,
   }
 );
+
+export { Op };
