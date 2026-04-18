@@ -390,6 +390,7 @@ export default function AdminDashboard() {
               )}
 
               {!incidentsLoading && !incidentsError && (
+                <div className="dashboard-cards incidents-summary-cards mb-4">
                   <div className="dashboard-card summary-accent-yellow">
                     <h5>Pendientes</h5>
                     <p className="summary-number">
