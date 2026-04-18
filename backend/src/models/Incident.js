@@ -52,4 +52,6 @@ Incident.belongsTo(User, {
 Incident.belongsTo(Zone, {
   foreignKey: "zone_id",
   as: "zone",
+  onDelete: "RESTRICT",
+  onUpdate: "CASCADE",
 });
