@@ -346,10 +346,7 @@ export default function AdminDashboard() {
                 <div className="mb-3">
                   <button
                     className="btn btn-outline-primary"
-                    onClick={() => {
-                      setShowZonesManager(!showZonesManager);
-                      setSelectedZoneId(null);
-                    }}
+                    onClick={() => setShowZonesManager(!showZonesManager)}
                   >
                     {showZonesManager ? "Cerrar" : "Gestionar zonas"}
                   </button>
@@ -357,45 +354,65 @@ export default function AdminDashboard() {
               )}
 
               {showZonesManager && (
-                <div className="dashboard-block mb-4">
-                  <h3 className="mb-3">Zonas disponibles</h3>
+                <div className="admin-modal-backdrop">
+                  <div className="admin-modal-card" style={{ width: "min(500px, 100%)" }}>
+                    <div className="dashboard-header-row">
+                      <div>
+                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
+                          Gestionar zonas
+                        </h2>
+                        <p className="dashboard-subtitle mb-0">
+                          Crea nuevas zonas y controla su estado.
+                        </p>
+                      </div>
 
-                  <div className="row g-3 mb-4 align-items-end">
-                    <div className="col-md-6">
-                      <label className="form-label">Nueva zona</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={zoneName}
-                        onChange={(e) => setZoneName(e.target.value)}
-                        placeholder="Ej: Gimnasio, Portal A..."
-                      />
-                    </div>
-
-                    <div className="col-md-3">
                       <button
-                        type="button"
-                        className="btn btn-success w-100"
-                        onClick={handleCreateZone}
-                        disabled={!zoneName.trim()}
+                        className="btn btn-outline-secondary"
+                        onClick={() => setShowZonesManager(false)}
                       >
-                        Agregar
+                        ✕
                       </button>
                     </div>
-                  </div>
 
-                  {zonesLoading && <p>Cargando zonas...</p>}
-                  {zonesError && <div className="alert alert-danger">{zonesError}</div>}
+                    <form onSubmit={handleCreateZone} className="mb-4">
+                      <div className="row g-2 align-items-end">
+                        <div className="col-md-8">
+                          <label className="form-label">Nueva zona</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            value={zoneName}
+                            onChange={(e) => setZoneName(e.target.value)}
+                            placeholder="Ej: Gimnasio, Portal..."
+                          />
+                        </div>
 
-                  {!zonesLoading && !zonesError && zones.length > 0 && (
-                    <div>
-                      <label className="form-label">Gestionar zonas</label>
-                      <div className="zone-list-admin">
+                        <div className="col-md-4">
+                          <button
+                            type="submit"
+                            className="btn btn-success w-100"
+                            disabled={!zoneName.trim()}
+                          >
+                            Crear
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+
+                    {zonesLoading && <p className="text-center">Cargando zonas...</p>}
+                    {zonesError && <div className="alert alert-danger">{zonesError}</div>}
+
+                    {!zonesLoading && !zonesError && zones.length > 0 && (
+                      <div className="zone-modal-list">
                         {zones.map((zone) => (
-                          <div key={zone.id} className="zone-item-admin">
-                            <div className="zone-item-admin__info">
+                          <div key={zone.id} className="zone-modal-item">
+                            <div>
                               <strong>{zone.name}</strong>
-                              <span className={`badge ${zone.is_active ? "bg-success" : "bg-secondary"}`}>
+                              <span
+                                className={`badge ms-2 ${
+                                  zone.is_active ? "bg-success" : "bg-secondary"
+                                }`}
+                              >
                                 {zone.is_active ? "ACTIVA" : "INACTIVA"}
                               </span>
                             </div>
@@ -403,7 +420,7 @@ export default function AdminDashboard() {
                             <button
                               type="button"
                               className={`btn btn-sm ${
-                                zone.is_active ? "btn-danger" : "btn-success"
+                                zone.is_active ? "btn-outline-danger" : "btn-outline-success"
                               }`}
                               onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
                             >
@@ -412,8 +429,22 @@ export default function AdminDashboard() {
                           </div>
                         ))}
                       </div>
+                    )}
+
+                    {!zonesLoading && !zonesError && zones.length === 0 && (
+                      <p className="text-center text-muted">No hay zonas creadas aún.</p>
+                    )}
+
+                    <div className="mt-4 d-flex justify-content-end">
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() => setShowZonesManager(false)}
+                      >
+                        Cerrar
+                      </button>
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
 
