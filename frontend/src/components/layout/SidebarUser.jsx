@@ -1,86 +1,82 @@
 import {
+  House,
   FileText,
   CalendarDays,
   Wrench,
+  Bell,
   LogOut,
-  House,
-  UserCircle2,
 } from "lucide-react";
 
 export default function SidebarUser({
   activeSection,
   setActiveSection,
-  userName,
-  userDni,
-  userHouse,
+  onLogout,
 }) {
   return (
-    <aside className="user-sketch-layout">
-      <div className="user-sketch-top-icon">
+    <aside className="user-app-sidebar">
+      <div className="user-app-sidebar__brand">
+        <div className="user-app-sidebar__logo">
+          <House size={22} />
+        </div>
+        <span>Comunidad</span>
+      </div>
+
+      <nav className="user-app-sidebar__nav">
         <button
-          className={`user-sketch-home-btn ${
+          className={`user-app-sidebar__link ${
             activeSection === "inicio" ? "active" : ""
           }`}
           onClick={() => setActiveSection("inicio")}
-          title="Inicio"
         >
-          <House size={28} />
+          <House size={18} />
+          <span>Inicio</span>
         </button>
-      </div>
 
-      <div className="user-sketch-profile-card">
-        <div className="user-sketch-profile-row">
-          <UserCircle2 size={22} />
-          <span className="user-sketch-profile-name">{userName}</span>
-        </div>
-        <p><strong>DNI:</strong> {userDni}</p>
-        <p><strong>Vivienda:</strong> {userHouse}</p>
-      </div>
-
-      <div className="user-sketch-nav">
         <button
-          className={`user-sketch-nav-item ${
+          className={`user-app-sidebar__link ${
             activeSection === "documentos" ? "active" : ""
           }`}
           onClick={() => setActiveSection("documentos")}
         >
-          <div className="user-sketch-nav-icon">
-            <FileText size={34} />
-          </div>
+          <FileText size={18} />
           <span>Documentos</span>
         </button>
 
         <button
-          className={`user-sketch-nav-item ${
+          className={`user-app-sidebar__link ${
             activeSection === "reuniones" ? "active" : ""
           }`}
           onClick={() => setActiveSection("reuniones")}
         >
-          <div className="user-sketch-nav-icon">
-            <CalendarDays size={34} />
-          </div>
+          <CalendarDays size={18} />
           <span>Reuniones</span>
         </button>
 
         <button
-          className={`user-sketch-nav-item ${
+          className={`user-app-sidebar__link ${
             activeSection === "incidencias" ? "active" : ""
           }`}
           onClick={() => setActiveSection("incidencias")}
         >
-          <div className="user-sketch-nav-icon">
-            <Wrench size={34} />
-          </div>
+          <Wrench size={18} />
           <span>Incidencias</span>
         </button>
 
-        <button className="user-sketch-nav-item user-sketch-nav-item--logout">
-          <div className="user-sketch-nav-icon">
-            <LogOut size={34} />
-          </div>
-          <span>Cerrar sesión</span>
+        <button
+          className={`user-app-sidebar__link ${
+            activeSection === "novedades" ? "active" : ""
+          }`}
+          onClick={() => setActiveSection("novedades")}
+        >
+          <Bell size={18} />
+          <span>Novedades</span>
         </button>
-      </div>
+      </nav>
+
+      <button className="user-app-sidebar__logout" onClick={onLogout}>
+        <LogOut size={18} />
+        <span>Cerrar sesión</span>
+      </button>
     </aside>
   );
 }
