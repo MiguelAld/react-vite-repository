@@ -16,7 +16,6 @@ app.use("/meetings", meetingsRoutes);
 app.use("/users", usersRoutes);
 app.use("/incidents", incidentsRoutes);
 app.use("/zones", zonesRoutes);
-app.use("/buildings", buildingsRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });
