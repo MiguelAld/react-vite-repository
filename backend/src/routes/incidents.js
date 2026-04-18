@@ -5,7 +5,7 @@ import { Zone } from "../models/Zone.js";
 
 const router = express.Router();
 
-/* admin y comunidad: listar todas las incidencias */
+/* comunidad/admin: listar todas las incidencias */
 router.get("/", async (req, res) => {
   try {
     const incidents = await Incident.findAll({
@@ -19,11 +19,10 @@ router.get("/", async (req, res) => {
           model: Zone,
           as: "zone",
           attributes: ["id", "name"],
+          required: false,
         },
       ],
-      order: [
-        ["created_at", "DESC"],
-      ],
+      order: [["created_at", "DESC"]],
     });
 
     res.json(incidents);
@@ -50,6 +49,7 @@ router.get("/user/:userId", async (req, res) => {
           model: Zone,
           as: "zone",
           attributes: ["id", "name"],
+          required: false,
         },
       ],
       order: [["created_at", "DESC"]],
@@ -65,14 +65,24 @@ router.get("/user/:userId", async (req, res) => {
 /* vecino: crear incidencia */
 router.post("/", async (req, res) => {
   try {
-    const { zone_id, created_by, title, description } = req.body;
+    const { zone_id, custom_zone, created_by, title, description } = req.body;
 
-    if (!zone_id || !created_by || !title || !description) {
-      return res.status(400).json({ error: "Faltan datos" });
+    if (!created_by || !title || !description) {
+      return res.status(400).json({ error: "Faltan datos obligatorios" });
+    }
+
+    const usingCustomZone = !zone_id && custom_zone;
+    const usingNormalZone = zone_id && !custom_zone;
+
+    if (!usingCustomZone && !usingNormalZone) {
+      return res.status(400).json({
+        error: "Debes seleccionar una zona o indicar una zona personalizada",
+      });
     }
 
     const incident = await Incident.create({
-      zone_id,
+      zone_id: usingNormalZone ? zone_id : null,
+      custom_zone: usingCustomZone ? custom_zone.trim() : null,
       created_by,
       title,
       description,
@@ -90,6 +100,7 @@ router.post("/", async (req, res) => {
           model: Zone,
           as: "zone",
           attributes: ["id", "name"],
+          required: false,
         },
       ],
     });

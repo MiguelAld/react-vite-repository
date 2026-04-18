@@ -236,3 +236,47 @@ export async function getCommunityIncidents() {
 
   return data;
 }
+
+export async function getAllZones() {
+  const res = await fetch(`${API_URL}/zones/all`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando todas las zonas");
+  }
+
+  return data;
+}
+
+export async function createZone(zoneData) {
+  const res = await fetch(`${API_URL}/zones`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(zoneData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando zona");
+  }
+
+  return data;
+}
+
+export async function updateZoneActive(id, is_active) {
+  const res = await fetch(`${API_URL}/zones/${id}/active`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ is_active }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando zona");
+  }
+
+  return data;
+}

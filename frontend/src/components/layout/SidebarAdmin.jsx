@@ -1,20 +1,19 @@
 import {
-  House,
+  LayoutDashboard,
   Wrench,
   BarChart3,
   FileText,
   CalendarDays,
   Users,
-  LogOut,
-  Bell
+  MapPinned,
 } from "lucide-react";
 
 export default function SidebarAdmin({
   activeSection,
   setActiveSection,
-  userName = "Santiago Aldama",
-  userDni = "12345678A",
-  userHouse = "Administración"
+  userName,
+  userDni,
+  userHouse,
 }) {
   return (
     <aside className="sidebar-user">
@@ -26,7 +25,7 @@ export default function SidebarAdmin({
             className={`sidebar-user__link ${activeSection === "inicio" ? "active" : ""}`}
             onClick={() => setActiveSection("inicio")}
           >
-            <House size={18} />
+            <LayoutDashboard size={18} />
             <span>Inicio</span>
           </button>
 
@@ -39,11 +38,11 @@ export default function SidebarAdmin({
           </button>
 
           <button
-            className={`sidebar-user__link ${activeSection === "reportes" ? "active" : ""}`}
-            onClick={() => setActiveSection("reportes")}
+            className={`sidebar-user__link ${activeSection === "zonas" ? "active" : ""}`}
+            onClick={() => setActiveSection("zonas")}
           >
-            <BarChart3 size={18} />
-            <span>Reportes</span>
+            <MapPinned size={18} />
+            <span>Zonas</span>
           </button>
 
           <button
@@ -60,9 +59,6 @@ export default function SidebarAdmin({
           >
             <CalendarDays size={18} />
             <span>Reuniones</span>
-            <span className="sidebar-user__dot">
-              <Bell size={14} />
-            </span>
           </button>
 
           <button
@@ -71,6 +67,14 @@ export default function SidebarAdmin({
           >
             <Users size={18} />
             <span>Usuarios</span>
+          </button>
+
+          <button
+            className={`sidebar-user__link ${activeSection === "reportes" ? "active" : ""}`}
+            onClick={() => setActiveSection("reportes")}
+          >
+            <BarChart3 size={18} />
+            <span>Reportes</span>
           </button>
         </nav>
       </div>
@@ -84,14 +88,9 @@ export default function SidebarAdmin({
           <div className="sidebar-user__info">
             <strong>{userName}</strong>
             <span>DNI: {userDni}</span>
-            <span>{userHouse}</span>
+            <span>Casa: {userHouse}</span>
           </div>
         </div>
-
-        <button className="sidebar-user__logout">
-          <LogOut size={16} />
-          <span>Cerrar sesión</span>
-        </button>
       </div>
     </aside>
   );

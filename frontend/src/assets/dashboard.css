@@ -1145,3 +1145,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
 .incident-create-modal {
   width: min(760px, 100%);
 }
+
+.dashboard-panel .incident-card .btn {
+  align-self: flex-start;
+}

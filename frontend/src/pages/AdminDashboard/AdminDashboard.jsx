@@ -9,6 +9,9 @@ import {
   getIncidents,
   updateIncidentStatus,
   deleteIncident,
+  getAllZones,
+  createZone,
+  updateZoneActive,
 } from "../../services/api";
 import "../../assets/dashboard.css";
 
@@ -23,6 +26,11 @@ export default function AdminDashboard() {
   const [incidentsLoading, setIncidentsLoading] = useState(false);
   const [incidentsError, setIncidentsError] = useState("");
   const [selectedIncident, setSelectedIncident] = useState(null);
+
+  const [zones, setZones] = useState([]);
+  const [zonesLoading, setZonesLoading] = useState(false);
+  const [zonesError, setZonesError] = useState("");
+  const [zoneName, setZoneName] = useState("");
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -71,6 +79,27 @@ export default function AdminDashboard() {
     }
   }, [section]);
 
+  useEffect(() => {
+    if (section === "zonas") {
+      setZonesLoading(true);
+      setZonesError("");
+
+      getAllZones()
+        .then(setZones)
+        .catch((err) => {
+          console.error(err);
+          setZonesError(err.message || "Error al cargar zonas");
+        })
+        .finally(() => {
+          setZonesLoading(false);
+        });
+    }
+  }, [section]);
+
+  const getIncidentZoneLabel = (incident) => {
+    return incident.zone?.name || incident.custom_zone || "—";
+  };
+
   const handleStatusChange = async (incidentId, newStatus) => {
     try {
       await updateIncidentStatus(incidentId, newStatus);
@@ -115,7 +144,6 @@ export default function AdminDashboard() {
 
     try {
       await deleteIncident(incidentId);
-
       setIncidents((prev) => prev.filter((incident) => incident.id !== incidentId));
       setSelectedIncident(null);
     } catch (err) {
@@ -172,11 +200,9 @@ export default function AdminDashboard() {
     try {
       if (editingUser) {
         const updated = await updateUser(editingUser.id, userForm);
-
         setUsers((prev) =>
           prev.map((u) => (u.id === editingUser.id ? updated : u))
         );
-
         setEditingUser(updated);
       } else {
         const newUser = await createUser(userForm);
@@ -217,6 +243,40 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error(err);
       alert(err.message || "Error actualizando usuario");
+    }
+  };
+
+  const handleCreateZone = async (e) => {
+    e.preventDefault();
+
+    try {
+      const newZone = await createZone({
+        name: zoneName,
+        created_by: 1,
+      });
+
+      setZones((prev) => [...prev, newZone].sort((a, b) => a.name.localeCompare(b.name)));
+      setZoneName("");
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error creando zona");
+    }
+  };
+
+  const handleToggleZoneActive = async (zoneId, currentState) => {
+    try {
+      const response = await updateZoneActive(zoneId, !currentState);
+
+      setZones((prev) =>
+        prev.map((z) =>
+          z.id === zoneId
+            ? { ...z, is_active: response.zone?.is_active ?? !currentState }
+            : z
+        )
+      );
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error actualizando zona");
     }
   };
 
@@ -295,10 +355,7 @@ export default function AdminDashboard() {
               )}
 
               {incidentsLoading && <p>Cargando incidencias...</p>}
-
-              {incidentsError && (
-                <div className="alert alert-danger">{incidentsError}</div>
-              )}
+              {incidentsError && <div className="alert alert-danger">{incidentsError}</div>}
 
               {!incidentsLoading && !incidentsError && (
                 <>
@@ -334,7 +391,7 @@ export default function AdminDashboard() {
                               <strong>DNI:</strong> {incident.creator?.dni || "—"}
                             </p>
                             <p>
-                              <strong>Zona:</strong> {incident.zone?.name || "—"}
+                              <strong>Zona:</strong> {getIncidentZoneLabel(incident)}
                             </p>
                           </div>
 
@@ -356,10 +413,7 @@ export default function AdminDashboard() {
                   <div className="admin-modal-card incident-detail-modal">
                     <div className="dashboard-header-row">
                       <div>
-                        <h2
-                          className="dashboard-title"
-                          style={{ fontSize: "1.5rem" }}
-                        >
+                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
                           Detalle de incidencia
                         </h2>
                         <p className="dashboard-subtitle mb-0">
@@ -412,7 +466,7 @@ export default function AdminDashboard() {
 
                       <div className="incident-detail-block">
                         <label>Zona</label>
-                        <p>{selectedIncident.zone?.name || "—"}</p>
+                        <p>{getIncidentZoneLabel(selectedIncident)}</p>
                       </div>
 
                       <div className="incident-detail-block">
@@ -494,6 +548,86 @@ export default function AdminDashboard() {
             </section>
           )}
 
+          {section === "zonas" && (
+            <section className="dashboard-panel">
+              <div className="dashboard-header-row">
+                <div>
+                  <h1 className="dashboard-title">Zonas comunes</h1>
+                  <p className="dashboard-subtitle">
+                    Aquí puedes crear, activar o desactivar las zonas que verán los usuarios al crear incidencias.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleCreateZone} className="dashboard-block mb-4">
+                <div className="row g-3 align-items-end">
+                  <div className="col-md-9">
+                    <label className="form-label">Nueva zona</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={zoneName}
+                      onChange={(e) => setZoneName(e.target.value)}
+                      placeholder="Ej: Trasteros"
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-3">
+                    <button type="submit" className="btn btn-success w-100">
+                      Añadir zona
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              {zonesLoading && <p>Cargando zonas...</p>}
+              {zonesError && <div className="alert alert-danger">{zonesError}</div>}
+
+              {!zonesLoading && !zonesError && (
+                <div className="incidents-grid">
+                  {zones.length === 0 ? (
+                    <p className="dashboard-empty">No hay zonas registradas.</p>
+                  ) : (
+                    zones.map((zone) => (
+                      <article key={zone.id} className="incident-card">
+                        <div className="incident-card__top">
+                          <h4>{zone.name}</h4>
+
+                          {zone.is_active ? (
+                            <span className="badge bg-success">ACTIVA</span>
+                          ) : (
+                            <span className="badge bg-secondary">INACTIVA</span>
+                          )}
+                        </div>
+
+                        <div className="incident-card__meta">
+                          <p>
+                            <strong>Alta:</strong>{" "}
+                            {zone.created_at
+                              ? new Date(zone.created_at).toLocaleDateString()
+                              : "—"}
+                          </p>
+                        </div>
+
+                        <button
+                          className={`btn btn-sm ${
+                            zone.is_active ? "btn-outline-danger" : "btn-outline-success"
+                          }`}
+                          onClick={() =>
+                            handleToggleZoneActive(zone.id, zone.is_active)
+                          }
+                        >
+                          {zone.is_active ? "Desactivar" : "Activar"}
+                        </button>
+                      </article>
+                    ))
+                  )}
+                </div>
+              )}
+            </section>
+          )}
+
           {section === "reportes" && (
             <section className="dashboard-panel">
               <h1 className="dashboard-title">Reportes</h1>
@@ -539,10 +673,7 @@ export default function AdminDashboard() {
               </div>
 
               {usersLoading && <p>Cargando usuarios...</p>}
-
-              {usersError && (
-                <div className="alert alert-danger">{usersError}</div>
-              )}
+              {usersError && <div className="alert alert-danger">{usersError}</div>}
 
               {!usersLoading && !usersError && (
                 <div className="dashboard-table-wrap">
@@ -641,10 +772,7 @@ export default function AdminDashboard() {
                   <div className="admin-modal-card">
                     <div className="dashboard-header-row">
                       <div>
-                        <h2
-                          className="dashboard-title"
-                          style={{ fontSize: "1.5rem" }}
-                        >
+                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
                           {editingUser ? "Editar usuario" : "Nuevo usuario"}
                         </h2>
                         <p className="dashboard-subtitle mb-0">
