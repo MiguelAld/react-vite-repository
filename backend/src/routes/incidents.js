@@ -5,7 +5,7 @@ import { Zone } from "../models/Zone.js";
 
 const router = express.Router();
 
-/* admin: listar todas las incidencias */
+/* admin y comunidad: listar todas las incidencias */
 router.get("/", async (req, res) => {
   try {
     const incidents = await Incident.findAll({
@@ -21,7 +21,9 @@ router.get("/", async (req, res) => {
           attributes: ["id", "name"],
         },
       ],
-      order: [["created_at", "DESC"]],
+      order: [
+        ["created_at", "DESC"],
+      ],
     });
 
     res.json(incidents);
@@ -31,7 +33,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* vecino: listar sus incidencias */
+/* vecino: listar solo sus incidencias */
 router.get("/user/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -39,6 +41,11 @@ router.get("/user/:userId", async (req, res) => {
     const incidents = await Incident.findAll({
       where: { created_by: userId },
       include: [
+        {
+          model: User,
+          as: "creator",
+          attributes: ["id", "name", "dni", "vivienda", "role"],
+        },
         {
           model: Zone,
           as: "zone",
@@ -72,7 +79,22 @@ router.post("/", async (req, res) => {
       status: "PENDIENTE",
     });
 
-    res.status(201).json(incident);
+    const fullIncident = await Incident.findByPk(incident.id, {
+      include: [
+        {
+          model: User,
+          as: "creator",
+          attributes: ["id", "name", "dni", "vivienda", "role"],
+        },
+        {
+          model: Zone,
+          as: "zone",
+          attributes: ["id", "name"],
+        },
+      ],
+    });
+
+    res.status(201).json(fullIncident);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al crear incidencia" });

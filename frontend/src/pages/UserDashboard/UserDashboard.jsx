@@ -13,7 +13,7 @@ import {
   getMeetings,
   getZones,
   createIncident,
-  getUserIncidents,
+  getCommunityIncidents,
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
@@ -44,11 +44,11 @@ export default function UserDashboard() {
   }, []);
 
   useEffect(() => {
-    if (activeSection === "incidencias" && user?.id) {
+    if (activeSection === "incidencias") {
       setLoadingIncidents(true);
       setIncidentError("");
 
-      getUserIncidents(user.id)
+      getCommunityIncidents()
         .then(setIncidents)
         .catch((err) => {
           console.error(err);
@@ -58,7 +58,7 @@ export default function UserDashboard() {
           setLoadingIncidents(false);
         });
     }
-  }, [activeSection, user]);
+  }, [activeSection]);
 
   const userName = user?.name || "USER";
   const userDni = user?.dni || "Sin DNI";
@@ -88,15 +88,7 @@ export default function UserDashboard() {
         description: formData.description,
       });
 
-      const zoneObj = zones.find((z) => z.id === Number(formData.zone_id));
-
-      setIncidents((prev) => [
-        {
-          ...newIncident,
-          zone: zoneObj || null,
-        },
-        ...prev,
-      ]);
+      setIncidents((prev) => [newIncident, ...prev]);
 
       setFormData({
         zone_id: "",
@@ -120,6 +112,13 @@ export default function UserDashboard() {
         <p className="user-home__subtitle">
           Accede rápidamente a las secciones principales de la comunidad.
         </p>
+      </div>
+
+      <div className="user-home__identity-card">
+        <h3>Mis datos</h3>
+        <p><strong>Nombre:</strong> {userName}</p>
+        <p><strong>DNI:</strong> {userDni}</p>
+        <p><strong>Vivienda:</strong> {userHouse}</p>
       </div>
 
       <div className="user-home__grid">
@@ -158,7 +157,7 @@ export default function UserDashboard() {
           </div>
           <div>
             <h3>Incidencias</h3>
-            <p>Crea avisos y consulta el estado de tus incidencias.</p>
+            <p>Crea avisos y consulta el estado de la comunidad.</p>
           </div>
         </button>
 
@@ -182,9 +181,9 @@ export default function UserDashboard() {
     <section className="dashboard-panel">
       <div className="dashboard-header-row">
         <div>
-          <h1 className="dashboard-title">Mis incidencias</h1>
+          <h1 className="dashboard-title">Incidencias de la comunidad</h1>
           <p className="dashboard-subtitle">
-            Aquí verás tus incidencias creadas y su estado.
+            Aquí puedes crear una incidencia y consultar las registradas por toda la comunidad.
           </p>
         </div>
 
@@ -252,68 +251,84 @@ export default function UserDashboard() {
       {!loadingIncidents && !incidentError && (
         <>
           {incidents.length === 0 ? (
-            <p className="dashboard-empty">No has creado incidencias todavía.</p>
+            <p className="dashboard-empty">No hay incidencias registradas todavía.</p>
           ) : (
             <div className="incidents-grid user-incidents-grid">
-              {incidents.map((incident) => (
-                <article
-                  key={incident.id}
-                  className={`incident-card ${
-                    expandedIncidentId === incident.id ? "expanded" : ""
-                  }`}
-                >
-                  <div className="incident-card__top">
-                    <h4>{incident.title}</h4>
+              {incidents.map((incident) => {
+                const isMine = user?.id && incident.creator?.id === user.id;
 
-                    <span
-                      className={`badge ${
-                        incident.status === "PENDIENTE"
-                          ? "text-bg-warning"
-                          : incident.status === "EN_PROCESO"
-                          ? "text-bg-primary"
-                          : "text-bg-success"
-                      }`}
-                    >
-                      {incident.status === "EN_PROCESO"
-                        ? "EN PROCESO"
-                        : incident.status}
-                    </span>
-                  </div>
-
-                  <div className="incident-card__meta">
-                    <p>
-                      <strong>Zona:</strong> {incident.zone?.name || "—"}
-                    </p>
-                  </div>
-
-                  <button
-                    className="btn btn-sm btn-outline-primary incident-card__toggle"
-                    onClick={() =>
-                      setExpandedIncidentId(
-                        expandedIncidentId === incident.id ? null : incident.id
-                      )
-                    }
+                return (
+                  <article
+                    key={incident.id}
+                    className={`incident-card ${
+                      expandedIncidentId === incident.id ? "expanded" : ""
+                    }`}
                   >
-                    {expandedIncidentId === incident.id ? "Ver menos" : "Ver más"}
-                  </button>
+                    <div className="incident-card__top">
+                      <h4>{incident.title}</h4>
 
-                  {expandedIncidentId === incident.id && (
-                    <>
-                      <div className="incident-card__description">
-                        <strong>Descripción:</strong>
-                        <p>{incident.description}</p>
-                      </div>
+                      <span
+                        className={`badge ${
+                          incident.status === "PENDIENTE"
+                            ? "text-bg-warning"
+                            : incident.status === "EN_PROCESO"
+                            ? "text-bg-primary"
+                            : "text-bg-success"
+                        }`}
+                      >
+                        {incident.status === "EN_PROCESO"
+                          ? "EN PROCESO"
+                          : incident.status}
+                      </span>
+                    </div>
 
-                      <p className="incident-card__date">
-                        <strong>Fecha:</strong>{" "}
-                        {incident.created_at
-                          ? new Date(incident.created_at).toLocaleDateString()
-                          : "—"}
+                    <div className="incident-card__meta">
+                      <p>
+                        <strong>Creada por:</strong> {incident.creator?.name || "—"}
                       </p>
-                    </>
-                  )}
-                </article>
-              ))}
+                      <p>
+                        <strong>DNI:</strong> {incident.creator?.dni || "—"}
+                      </p>
+                      <p>
+                        <strong>Zona:</strong> {incident.zone?.name || "—"}
+                      </p>
+                    </div>
+
+                    {isMine && (
+                      <div className="incident-card__mine-badge">
+                        <span className="badge bg-info text-dark">Tu incidencia</span>
+                      </div>
+                    )}
+
+                    <button
+                      className="btn btn-sm btn-outline-primary incident-card__toggle"
+                      onClick={() =>
+                        setExpandedIncidentId(
+                          expandedIncidentId === incident.id ? null : incident.id
+                        )
+                      }
+                    >
+                      {expandedIncidentId === incident.id ? "Ver menos" : "Ver detalle"}
+                    </button>
+
+                    {expandedIncidentId === incident.id && (
+                      <>
+                        <div className="incident-card__description">
+                          <strong>Descripción:</strong>
+                          <p>{incident.description}</p>
+                        </div>
+
+                        <p className="incident-card__date">
+                          <strong>Fecha:</strong>{" "}
+                          {incident.created_at
+                            ? new Date(incident.created_at).toLocaleDateString()
+                            : "—"}
+                        </p>
+                      </>
+                    )}
+                  </article>
+                );
+              })}
             </div>
           )}
         </>

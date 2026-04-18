@@ -224,3 +224,15 @@ export async function deleteIncident(id) {
 
   return data;
 }
+
+export async function getCommunityIncidents() {
+  const res = await fetch(`${API_URL}/incidents`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando incidencias de la comunidad");
+  }
+
+  return data;
+}
