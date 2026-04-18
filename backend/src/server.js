@@ -6,7 +6,6 @@ import meetingsRoutes from "./routes/meetings.js";
 import usersRoutes from "./routes/users.js";
 import incidentsRoutes from "./routes/incidents.js";
 import zonesRoutes from "./routes/zones.js";
-import buildingsRoutes from "./routes/buildings.js";
 
 const app = express();
 

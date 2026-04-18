@@ -1,6 +1,5 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/sequelize.js";
-import { Building } from "./Building.js";
 
 export const User = sequelize.define("User", {
   dni: {
@@ -47,9 +46,4 @@ export const User = sequelize.define("User", {
   timestamps: true,
   createdAt: "created_at",
   updatedAt: false,
-});
-
-User.belongsTo(Building, {
-  foreignKey: "building_id",
-  as: "building",
 });
