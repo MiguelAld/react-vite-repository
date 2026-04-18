@@ -1141,3 +1141,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
 .incident-card__mine-badge {
   margin-top: -4px;
 }
+
+.incident-create-modal {
+  width: min(760px, 100%);
+}

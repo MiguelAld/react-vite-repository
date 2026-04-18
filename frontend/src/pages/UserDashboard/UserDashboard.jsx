@@ -7,6 +7,7 @@ import {
   Bell,
   UserCircle2,
   ChevronDown,
+  X,
 } from "lucide-react";
 import SidebarUser from "../../components/layout/SidebarUser";
 import {
@@ -25,12 +26,13 @@ export default function UserDashboard() {
   const [incidents, setIncidents] = useState([]);
   const [loadingIncidents, setLoadingIncidents] = useState(false);
   const [incidentError, setIncidentError] = useState("");
-  const [showForm, setShowForm] = useState(false);
-  const [expandedIncidentId, setExpandedIncidentId] = useState(null);
+  const [showCreateIncidentModal, setShowCreateIncidentModal] = useState(false);
+  const [selectedIncident, setSelectedIncident] = useState(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const [formData, setFormData] = useState({
     zone_id: "",
+    custom_zone: "",
     title: "",
     description: "",
   });
@@ -71,9 +73,11 @@ export default function UserDashboard() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+      ...(name === "zone_id" && value !== "other" ? { custom_zone: "" } : {}),
     }));
   };
 
@@ -81,26 +85,34 @@ export default function UserDashboard() {
     e.preventDefault();
 
     try {
-      const newIncident = await createIncident({
-        zone_id: Number(formData.zone_id),
+      const incidentPayload = {
+        zone_id: formData.zone_id === "other" ? null : Number(formData.zone_id),
+        custom_zone: formData.zone_id === "other" ? formData.custom_zone.trim() : null,
         created_by: user.id,
         title: formData.title,
         description: formData.description,
-      });
+      };
+
+      const newIncident = await createIncident(incidentPayload);
 
       setIncidents((prev) => [newIncident, ...prev]);
 
       setFormData({
         zone_id: "",
+        custom_zone: "",
         title: "",
         description: "",
       });
 
-      setShowForm(false);
+      setShowCreateIncidentModal(false);
     } catch (err) {
       console.error(err);
       alert(err.message || "Error al crear incidencia");
     }
+  };
+
+  const getIncidentZoneLabel = (incident) => {
+    return incident.zone?.name || incident.custom_zone || "—";
   };
 
   const renderInicio = () => (
@@ -189,61 +201,11 @@ export default function UserDashboard() {
 
         <button
           className="btn btn-primary"
-          onClick={() => setShowForm((prev) => !prev)}
+          onClick={() => setShowCreateIncidentModal(true)}
         >
-          {showForm ? "Cerrar formulario" : "Nueva incidencia"}
+          Nueva incidencia
         </button>
       </div>
-
-      {showForm && (
-        <form onSubmit={handleCreateIncident} className="dashboard-block mb-4">
-          <div className="mb-3">
-            <label className="form-label">Zona</label>
-            <select
-              className="form-select"
-              name="zone_id"
-              value={formData.zone_id}
-              onChange={handleChange}
-              required
-            >
-              <option value="">Selecciona una zona</option>
-              {zones.map((zone) => (
-                <option key={zone.id} value={zone.id}>
-                  {zone.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label">Título</label>
-            <input
-              type="text"
-              className="form-control"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="mb-3">
-            <label className="form-label">Descripción</label>
-            <textarea
-              className="form-control"
-              name="description"
-              rows="4"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <button type="submit" className="btn btn-success">
-            Enviar incidencia
-          </button>
-        </form>
-      )}
 
       {loadingIncidents && <p>Cargando incidencias...</p>}
       {incidentError && <div className="alert alert-danger">{incidentError}</div>}
@@ -258,12 +220,7 @@ export default function UserDashboard() {
                 const isMine = user?.id && incident.creator?.id === user.id;
 
                 return (
-                  <article
-                    key={incident.id}
-                    className={`incident-card ${
-                      expandedIncidentId === incident.id ? "expanded" : ""
-                    }`}
-                  >
+                  <article key={incident.id} className="incident-card">
                     <div className="incident-card__top">
                       <h4>{incident.title}</h4>
 
@@ -287,10 +244,13 @@ export default function UserDashboard() {
                         <strong>Creada por:</strong> {incident.creator?.name || "—"}
                       </p>
                       <p>
-                        <strong>DNI:</strong> {incident.creator?.dni || "—"}
+                        <strong>Zona:</strong> {getIncidentZoneLabel(incident)}
                       </p>
                       <p>
-                        <strong>Zona:</strong> {incident.zone?.name || "—"}
+                        <strong>Fecha:</strong>{" "}
+                        {incident.created_at
+                          ? new Date(incident.created_at).toLocaleDateString()
+                          : "—"}
                       </p>
                     </div>
 
@@ -302,36 +262,199 @@ export default function UserDashboard() {
 
                     <button
                       className="btn btn-sm btn-outline-primary incident-card__toggle"
-                      onClick={() =>
-                        setExpandedIncidentId(
-                          expandedIncidentId === incident.id ? null : incident.id
-                        )
-                      }
+                      onClick={() => setSelectedIncident(incident)}
                     >
-                      {expandedIncidentId === incident.id ? "Ver menos" : "Ver detalle"}
+                      Ver detalle
                     </button>
-
-                    {expandedIncidentId === incident.id && (
-                      <>
-                        <div className="incident-card__description">
-                          <strong>Descripción:</strong>
-                          <p>{incident.description}</p>
-                        </div>
-
-                        <p className="incident-card__date">
-                          <strong>Fecha:</strong>{" "}
-                          {incident.created_at
-                            ? new Date(incident.created_at).toLocaleDateString()
-                            : "—"}
-                        </p>
-                      </>
-                    )}
                   </article>
                 );
               })}
             </div>
           )}
         </>
+      )}
+
+      {showCreateIncidentModal && (
+        <div className="admin-modal-backdrop">
+          <div className="admin-modal-card incident-create-modal">
+            <div className="dashboard-header-row">
+              <div>
+                <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
+                  Crear nueva incidencia
+                </h2>
+                <p className="dashboard-subtitle mb-0">
+                  Rellena los datos y envía la incidencia a la comunidad.
+                </p>
+              </div>
+
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() => setShowCreateIncidentModal(false)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateIncident}>
+              <div className="row g-3">
+                <div className="col-md-7">
+                  <label className="form-label">Título</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+
+                <div className="col-md-5">
+                  <label className="form-label">Zona</label>
+                  <select
+                    className="form-select"
+                    name="zone_id"
+                    value={formData.zone_id}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Selecciona una zona</option>
+                    {zones.map((zone) => (
+                      <option key={zone.id} value={zone.id}>
+                        {zone.name}
+                      </option>
+                    ))}
+                    <option value="other">Otro</option>
+                  </select>
+                </div>
+
+                {formData.zone_id === "other" && (
+                  <div className="col-md-12">
+                    <label className="form-label">Especifica la zona</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="custom_zone"
+                      value={formData.custom_zone}
+                      onChange={handleChange}
+                      placeholder="Ej: Pasillo bloque B"
+                      required
+                    />
+                  </div>
+                )}
+
+                <div className="col-md-12">
+                  <label className="form-label">Descripción</label>
+                  <textarea
+                    className="form-control"
+                    name="description"
+                    rows="6"
+                    value={formData.description}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4 d-flex gap-2 justify-content-end">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={() => setShowCreateIncidentModal(false)}
+                >
+                  Cerrar
+                </button>
+                <button type="submit" className="btn btn-success">
+                  Enviar incidencia
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {selectedIncident && (
+        <div className="admin-modal-backdrop">
+          <div className="admin-modal-card incident-detail-modal">
+            <div className="dashboard-header-row">
+              <div>
+                <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
+                  Detalle de incidencia
+                </h2>
+                <p className="dashboard-subtitle mb-0">
+                  Información completa de la incidencia seleccionada.
+                </p>
+              </div>
+
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() => setSelectedIncident(null)}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="incident-detail-grid">
+              <div className="incident-detail-block">
+                <label>Título</label>
+                <p>{selectedIncident.title}</p>
+              </div>
+
+              <div className="incident-detail-block">
+                <label>Estado</label>
+                <p>
+                  <span
+                    className={`badge ${
+                      selectedIncident.status === "PENDIENTE"
+                        ? "text-bg-warning"
+                        : selectedIncident.status === "EN_PROCESO"
+                        ? "text-bg-primary"
+                        : "text-bg-success"
+                    }`}
+                  >
+                    {selectedIncident.status === "EN_PROCESO"
+                      ? "EN PROCESO"
+                      : selectedIncident.status}
+                  </span>
+                </p>
+              </div>
+
+              <div className="incident-detail-block">
+                <label>Creado por</label>
+                <p>{selectedIncident.creator?.name || "—"}</p>
+              </div>
+
+              <div className="incident-detail-block">
+                <label>Zona</label>
+                <p>{getIncidentZoneLabel(selectedIncident)}</p>
+              </div>
+
+              <div className="incident-detail-block incident-detail-block--full">
+                <label>Descripción</label>
+                <p>{selectedIncident.description}</p>
+              </div>
+
+              <div className="incident-detail-block">
+                <label>Fecha</label>
+                <p>
+                  {selectedIncident.created_at
+                    ? new Date(selectedIncident.created_at).toLocaleDateString()
+                    : "—"}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-4 d-flex justify-content-end">
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => setSelectedIncident(null)}
+              >
+                Cerrar
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </section>
   );
