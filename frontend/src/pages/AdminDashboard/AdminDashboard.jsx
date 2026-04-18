@@ -66,6 +66,8 @@ export default function AdminDashboard() {
     if (section === "incidencias") {
       setIncidentsLoading(true);
       setIncidentsError("");
+      setZonesLoading(true);
+      setZonesError("");
 
       getIncidents()
         .then(setIncidents)
@@ -75,6 +77,16 @@ export default function AdminDashboard() {
         })
         .finally(() => {
           setIncidentsLoading(false);
+        });
+
+      getAllZones()
+        .then(setZones)
+        .catch((err) => {
+          console.error(err);
+          setZonesError(err.message || "Error al cargar zonas");
+        })
+        .finally(() => {
+          setZonesLoading(false);
         });
     }
   }, [section]);
@@ -330,7 +342,54 @@ export default function AdminDashboard() {
               </div>
 
               {!incidentsLoading && !incidentsError && (
-                <div className="dashboard-cards incidents-summary-cards mb-4">
+                <div className="dashboard-block mb-4">
+                  <h3 className="mb-3">Zonas disponibles para incidencias</h3>
+
+                  <form onSubmit={handleCreateZone} className="row g-3 align-items-end mb-3">
+                    <div className="col-md-8">
+                      <label className="form-label">Añadir nueva zona</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={zoneName}
+                        onChange={(e) => setZoneName(e.target.value)}
+                        placeholder="Ej: Gimnasio, Portal A, Portal B..."
+                        required
+                      />
+                    </div>
+
+                    <div className="col-md-4">
+                      <button type="submit" className="btn btn-success w-100">
+                        Añadir zona
+                      </button>
+                    </div>
+                  </form>
+
+                  {zonesLoading && <p>Cargando zonas...</p>}
+                  {zonesError && <div className="alert alert-danger">{zonesError}</div>}
+
+                  {!zonesLoading && !zonesError && (
+                    <div className="zone-inline-list">
+                      {zones.map((zone) => (
+                        <div key={zone.id} className="zone-inline-item">
+                          <span>{zone.name}</span>
+
+                          <button
+                            className={`btn btn-sm ${
+                              zone.is_active ? "btn-outline-danger" : "btn-outline-success"
+                            }`}
+                            onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
+                          >
+                            {zone.is_active ? "Desactivar" : "Activar"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {!incidentsLoading && !incidentsError && (
                   <div className="dashboard-card summary-accent-yellow">
                     <h5>Pendientes</h5>
                     <p className="summary-number">
@@ -366,7 +425,7 @@ export default function AdminDashboard() {
                       {incidents.map((incident) => (
                         <article key={incident.id} className="incident-card">
                           <div className="incident-card__top">
-                            <h4>{incident.title}</h4>
+                            <h4>{getIncidentZoneLabel(incident)}</h4>
 
                             <span
                               className={`badge ${
@@ -385,13 +444,22 @@ export default function AdminDashboard() {
 
                           <div className="incident-card__meta">
                             <p>
-                              <strong>Vecino:</strong> {incident.creator?.name || "—"}
+                              <strong>Enviada por:</strong> {incident.creator?.name || "—"}
                             </p>
                             <p>
-                              <strong>DNI:</strong> {incident.creator?.dni || "—"}
+                              <strong>Fecha:</strong>{" "}
+                              {incident.created_at
+                                ? new Date(incident.created_at).toLocaleDateString()
+                                : "—"}
                             </p>
                             <p>
-                              <strong>Zona:</strong> {getIncidentZoneLabel(incident)}
+                              <strong>Hora:</strong>{" "}
+                              {incident.created_at
+                                ? new Date(incident.created_at).toLocaleTimeString([], {
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                  })
+                                : "—"}
                             </p>
                           </div>
 
@@ -431,8 +499,8 @@ export default function AdminDashboard() {
 
                     <div className="incident-detail-grid">
                       <div className="incident-detail-block">
-                        <label>Título</label>
-                        <p>{selectedIncident.title}</p>
+                        <label>Zona</label>
+                        <p>{getIncidentZoneLabel(selectedIncident)}</p>
                       </div>
 
                       <div className="incident-detail-block">
@@ -465,15 +533,22 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="incident-detail-block">
-                        <label>Zona</label>
-                        <p>{getIncidentZoneLabel(selectedIncident)}</p>
-                      </div>
-
-                      <div className="incident-detail-block">
                         <label>Fecha</label>
                         <p>
                           {selectedIncident.created_at
                             ? new Date(selectedIncident.created_at).toLocaleDateString()
+                            : "—"}
+                        </p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>Hora</label>
+                        <p>
+                          {selectedIncident.created_at
+                            ? new Date(selectedIncident.created_at).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
                             : "—"}
                         </p>
                       </div>

@@ -65,9 +65,9 @@ router.get("/user/:userId", async (req, res) => {
 /* vecino: crear incidencia */
 router.post("/", async (req, res) => {
   try {
-    const { zone_id, custom_zone, created_by, title, description } = req.body;
+    const { zone_id, custom_zone, created_by, description } = req.body;
 
-    if (!created_by || !title || !description) {
+    if (!created_by || !description) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
@@ -80,11 +80,22 @@ router.post("/", async (req, res) => {
       });
     }
 
+    let generatedTitle = "Otra zona";
+
+    if (usingNormalZone) {
+      const zone = await Zone.findByPk(zone_id);
+      generatedTitle = zone?.name || "Zona";
+    }
+
+    if (usingCustomZone) {
+      generatedTitle = custom_zone.trim();
+    }
+
     const incident = await Incident.create({
       zone_id: usingNormalZone ? zone_id : null,
       custom_zone: usingCustomZone ? custom_zone.trim() : null,
       created_by,
-      title,
+      title: generatedTitle,
       description,
       status: "PENDIENTE",
     });

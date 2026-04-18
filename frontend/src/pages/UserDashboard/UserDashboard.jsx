@@ -33,7 +33,6 @@ export default function UserDashboard() {
   const [formData, setFormData] = useState({
     zone_id: "",
     custom_zone: "",
-    title: "",
     description: "",
   });
 
@@ -89,7 +88,6 @@ export default function UserDashboard() {
         zone_id: formData.zone_id === "other" ? null : Number(formData.zone_id),
         custom_zone: formData.zone_id === "other" ? formData.custom_zone.trim() : null,
         created_by: user.id,
-        title: formData.title,
         description: formData.description,
       };
 
@@ -100,7 +98,6 @@ export default function UserDashboard() {
       setFormData({
         zone_id: "",
         custom_zone: "",
-        title: "",
         description: "",
       });
 
@@ -222,7 +219,7 @@ export default function UserDashboard() {
                 return (
                   <article key={incident.id} className="incident-card">
                     <div className="incident-card__top">
-                      <h4>{incident.title}</h4>
+                      <h4>{getIncidentZoneLabel(incident)}</h4>
 
                       <span
                         className={`badge ${
@@ -244,12 +241,18 @@ export default function UserDashboard() {
                         <strong>Creada por:</strong> {incident.creator?.name || "—"}
                       </p>
                       <p>
-                        <strong>Zona:</strong> {getIncidentZoneLabel(incident)}
-                      </p>
-                      <p>
                         <strong>Fecha:</strong>{" "}
                         {incident.created_at
                           ? new Date(incident.created_at).toLocaleDateString()
+                          : "—"}
+                      </p>
+                      <p>
+                        <strong>Hora:</strong>{" "}
+                        {incident.created_at
+                          ? new Date(incident.created_at).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })
                           : "—"}
                       </p>
                     </div>
@@ -297,19 +300,7 @@ export default function UserDashboard() {
 
             <form onSubmit={handleCreateIncident}>
               <div className="row g-3">
-                <div className="col-md-7">
-                  <label className="form-label">Título</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="col-md-5">
+                <div className="col-md-12">
                   <label className="form-label">Zona</label>
                   <select
                     className="form-select"
@@ -396,8 +387,8 @@ export default function UserDashboard() {
 
             <div className="incident-detail-grid">
               <div className="incident-detail-block">
-                <label>Título</label>
-                <p>{selectedIncident.title}</p>
+                <label>Zona</label>
+                <p>{getIncidentZoneLabel(selectedIncident)}</p>
               </div>
 
               <div className="incident-detail-block">
@@ -425,22 +416,29 @@ export default function UserDashboard() {
               </div>
 
               <div className="incident-detail-block">
-                <label>Zona</label>
-                <p>{getIncidentZoneLabel(selectedIncident)}</p>
-              </div>
-
-              <div className="incident-detail-block incident-detail-block--full">
-                <label>Descripción</label>
-                <p>{selectedIncident.description}</p>
-              </div>
-
-              <div className="incident-detail-block">
                 <label>Fecha</label>
                 <p>
                   {selectedIncident.created_at
                     ? new Date(selectedIncident.created_at).toLocaleDateString()
                     : "—"}
                 </p>
+              </div>
+
+              <div className="incident-detail-block">
+                <label>Hora</label>
+                <p>
+                  {selectedIncident.created_at
+                    ? new Date(selectedIncident.created_at).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "—"}
+                </p>
+              </div>
+
+              <div className="incident-detail-block incident-detail-block--full">
+                <label>Descripción</label>
+                <p>{selectedIncident.description}</p>
               </div>
             </div>
 

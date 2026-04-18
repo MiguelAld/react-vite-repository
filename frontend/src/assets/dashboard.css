@@ -1146,6 +1146,22 @@ aside.user-sketch-layout .user-sketch-profile-card {
   width: min(760px, 100%);
 }
 
+.zone-inline-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.zone-inline-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f8fbff;
+  border: 1px solid #e8eef5;
+  border-radius: 14px;
+  padding: 10px 14px;
+}
+
 .dashboard-panel .incident-card .btn {
   align-self: flex-start;
 }
