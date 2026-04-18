@@ -1220,6 +1220,11 @@ aside.user-sketch-layout .user-sketch-profile-card {
   gap: 12px;
 }
 
+.zone-modal-item__actions {
+  display: flex;
+  gap: 6px;
+}
+
 .dashboard-panel .incident-card .btn {
   align-self: flex-start;
 }

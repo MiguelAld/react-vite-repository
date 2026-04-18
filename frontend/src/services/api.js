@@ -280,3 +280,19 @@ export async function updateZoneActive(id, is_active) {
 
   return data;
 }
+
+export async function updateZoneOrder(id, direction) {
+  const res = await fetch(`${API_URL}/zones/${id}/order`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ direction }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando orden");
+  }
+
+  return data;
+}

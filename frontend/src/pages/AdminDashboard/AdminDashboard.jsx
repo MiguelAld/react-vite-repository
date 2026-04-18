@@ -12,6 +12,7 @@ import {
   getAllZones,
   createZone,
   updateZoneActive,
+  updateZoneOrder,
 } from "../../services/api";
 import "../../assets/dashboard.css";
 
@@ -293,6 +294,20 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleMoveZone = async (zoneId, direction) => {
+    try {
+      await updateZoneOrder(zoneId, direction);
+
+      // Recargar zonas para reflejar el nuevo orden
+      getAllZones()
+        .then(setZones)
+        .catch(console.error);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error moviendo zona");
+    }
+  };
+
   return (
     <div className="dashboard-shell">
       <SidebarAdmin
@@ -404,9 +419,9 @@ export default function AdminDashboard() {
 
                     {!zonesLoading && !zonesError && zones.length > 0 && (
                       <div className="zone-modal-list">
-                        {zones.map((zone) => (
+                        {zones.map((zone, index) => (
                           <div key={zone.id} className="zone-modal-item">
-                            <div>
+                            <div style={{ flex: 1 }}>
                               <strong>{zone.name}</strong>
                               <span
                                 className={`badge ms-2 ${
@@ -417,15 +432,37 @@ export default function AdminDashboard() {
                               </span>
                             </div>
 
-                            <button
-                              type="button"
-                              className={`btn btn-sm ${
-                                zone.is_active ? "btn-outline-danger" : "btn-outline-success"
-                              }`}
-                              onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
-                            >
-                              {zone.is_active ? "Desactivar" : "Activar"}
-                            </button>
+                            <div className="zone-modal-item__actions">
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-secondary"
+                                onClick={() => handleMoveZone(zone.id, "up")}
+                                disabled={index === 0}
+                                title="Mover arriba"
+                              >
+                                ↑
+                              </button>
+
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-outline-secondary"
+                                onClick={() => handleMoveZone(zone.id, "down")}
+                                disabled={index === zones.length - 1}
+                                title="Mover abajo"
+                              >
+                                ↓
+                              </button>
+
+                              <button
+                                type="button"
+                                className={`btn btn-sm ${
+                                  zone.is_active ? "btn-outline-danger" : "btn-outline-success"
+                                }`}
+                                onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
+                              >
+                                {zone.is_active ? "Desactivar" : "Activar"}
+                              </button>
+                            </div>
                           </div>
                         ))}
                       </div>

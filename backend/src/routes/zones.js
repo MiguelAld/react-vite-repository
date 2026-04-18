@@ -1,5 +1,6 @@
 import express from "express";
 import { Zone } from "../models/Zone.js";
+import { sequelize } from "../config/sequelize.js";
 
 const router = express.Router();
 
@@ -9,7 +10,7 @@ router.get("/", async (req, res) => {
     const zones = await Zone.findAll({
       where: { is_active: true },
       attributes: ["id", "name"],
-      order: [["name", "ASC"]],
+      order: [["order", "ASC"]],
     });
 
     res.json(zones);
@@ -23,8 +24,8 @@ router.get("/", async (req, res) => {
 router.get("/all", async (req, res) => {
   try {
     const zones = await Zone.findAll({
-      attributes: ["id", "name", "is_active", "created_at"],
-      order: [["name", "ASC"]],
+      attributes: ["id", "name", "is_active", "order", "created_at"],
+      order: [["order", "ASC"]],
     });
 
     res.json(zones);
@@ -86,6 +87,64 @@ router.patch("/:id/active", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al actualizar la zona" });
+  }
+});
+
+/* admin: cambiar orden de zona */
+router.patch("/:id/order", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { direction } = req.body; // "up" o "down"
+
+    if (!["up", "down"].includes(direction)) {
+      return res.status(400).json({ error: "Dirección inválida" });
+    }
+
+    const zone = await Zone.findByPk(id);
+
+    if (!zone) {
+      return res.status(404).json({ error: "Zona no encontrada" });
+    }
+
+    if (direction === "up") {
+      // Buscar la zona anterior (order menor más cercano)
+      const prevZone = await Zone.findOne({
+        where: { order: { [sequelize.Op.lt]: zone.order } },
+        order: [["order", "DESC"]],
+      });
+
+      if (prevZone) {
+        const tempOrder = zone.order;
+        zone.order = prevZone.order;
+        prevZone.order = tempOrder;
+        await zone.save();
+        await prevZone.save();
+      }
+    } else {
+      // Buscar la zona siguiente (order mayor más cercano)
+      const nextZone = await Zone.findOne({
+        where: { order: { [sequelize.Op.gt]: zone.order } },
+        order: [["order", "ASC"]],
+      });
+
+      if (nextZone) {
+        const tempOrder = zone.order;
+        zone.order = nextZone.order;
+        nextZone.order = tempOrder;
+        await zone.save();
+        await nextZone.save();
+      }
+    }
+
+    const updatedZone = await Zone.findByPk(id);
+
+    res.json({
+      message: "Orden actualizado",
+      zone: updatedZone,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error actualizando orden" });
   }
 });
 

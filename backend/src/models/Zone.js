@@ -14,6 +14,11 @@ export const Zone = sequelize.define(
       allowNull: false,
       defaultValue: true,
     },
+    order: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
     created_by: {
       type: DataTypes.BIGINT,
       allowNull: true,
