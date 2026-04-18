@@ -32,10 +32,6 @@ export const User = sequelize.define("User", {
     type: DataTypes.STRING(100),
     allowNull: true,
   },
-  building_id: {
-    type: DataTypes.BIGINT,
-    allowNull: true,
-  },
   is_active: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
