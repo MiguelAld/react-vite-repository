@@ -1220,9 +1220,17 @@ aside.user-sketch-layout .user-sketch-profile-card {
   gap: 12px;
 }
 
-.zone-modal-item__actions {
-  display: flex;
-  gap: 6px;
+.incident-card__description {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e8eef5;
+}
+
+.incident-card__description p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+  font-size: 0.95rem;
 }
 
 .dashboard-panel .incident-card .btn {

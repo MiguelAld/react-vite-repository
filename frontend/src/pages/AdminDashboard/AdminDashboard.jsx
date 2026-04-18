@@ -38,6 +38,7 @@ export default function AdminDashboard() {
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [userSearchFilter, setUserSearchFilter] = useState("");
 
   const [userForm, setUserForm] = useState({
     dni: "",
@@ -113,6 +114,12 @@ export default function AdminDashboard() {
 
   const getIncidentZoneLabel = (incident) => {
     return incident.zone?.name || incident.custom_zone || "—";
+  };
+
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "—";
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   const handleStatusChange = async (incidentId, newStatus) => {
@@ -306,6 +313,21 @@ export default function AdminDashboard() {
       console.error(err);
       alert(err.message || "Error moviendo zona");
     }
+  };
+
+  const getFilteredUsers = () => {
+    if (!userSearchFilter.trim()) return users;
+
+    const filter = userSearchFilter.toLowerCase();
+
+    return users.filter(
+      (user) =>
+        user.name?.toLowerCase().includes(filter) ||
+        user.dni?.toLowerCase().includes(filter) ||
+        user.email?.toLowerCase().includes(filter) ||
+        user.phone?.toLowerCase().includes(filter) ||
+        user.vivienda?.toLowerCase().includes(filter)
+    );
   };
 
   return (
@@ -544,19 +566,7 @@ export default function AdminDashboard() {
                               <strong>Enviada por:</strong> {incident.creator?.name || "—"}
                             </p>
                             <p>
-                              <strong>Fecha:</strong>{" "}
-                              {incident.created_at
-                                ? new Date(incident.created_at).toLocaleDateString()
-                                : "—"}
-                            </p>
-                            <p>
-                              <strong>Hora:</strong>{" "}
-                              {incident.created_at
-                                ? new Date(incident.created_at).toLocaleTimeString([], {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                  })
-                                : "—"}
+                              <strong>Fecha y hora:</strong> {formatDateTime(incident.created_at)}
                             </p>
                           </div>
 
@@ -630,24 +640,13 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="incident-detail-block">
-                        <label>Fecha</label>
-                        <p>
-                          {selectedIncident.created_at
-                            ? new Date(selectedIncident.created_at).toLocaleDateString()
-                            : "—"}
-                        </p>
+                        <label>Vivienda</label>
+                        <p>{selectedIncident.creator?.vivienda || "—"}</p>
                       </div>
 
                       <div className="incident-detail-block">
-                        <label>Hora</label>
-                        <p>
-                          {selectedIncident.created_at
-                            ? new Date(selectedIncident.created_at).toLocaleTimeString([], {
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })
-                            : "—"}
-                        </p>
+                        <label>Fecha y hora</label>
+                        <p>{formatDateTime(selectedIncident.created_at)}</p>
                       </div>
 
                       <div className="incident-detail-block incident-detail-block--full">
@@ -848,95 +847,85 @@ export default function AdminDashboard() {
               {usersError && <div className="alert alert-danger">{usersError}</div>}
 
               {!usersLoading && !usersError && (
-                <div className="dashboard-table-wrap">
-                  <table className="table table-striped align-middle">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Nombre</th>
-                        <th>DNI</th>
-                        <th>Teléfono</th>
-                        <th>Email</th>
-                        <th>Vivienda</th>
-                        <th>Rol</th>
-                        <th>Estado</th>
-                        <th>Alta</th>
-                        <th>Acción</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.length === 0 ? (
-                        <tr>
-                          <td colSpan="10" className="text-center">
-                            No hay usuarios registrados.
-                          </td>
-                        </tr>
-                      ) : (
-                        users.map((user) => (
-                          <tr key={user.id}>
-                            <td>{user.id}</td>
-                            <td>{user.name}</td>
-                            <td>{user.dni}</td>
-                            <td>{user.phone || "—"}</td>
-                            <td>{user.email || "—"}</td>
-                            <td>{user.vivienda || "—"}</td>
-                            <td>
-                              {user.role === "ADMIN" ? (
-                                <span className="badge bg-dark">ADMIN</span>
-                              ) : (
-                                <span className="badge bg-primary">VECINO</span>
-                              )}
-                            </td>
-                            <td>
-                              {user.is_active ? (
-                                <span className="badge bg-success">ACTIVO</span>
-                              ) : (
-                                <span className="badge bg-secondary">INACTIVO</span>
-                              )}
-                            </td>
-                            <td>
-                              {user.created_at
-                                ? new Date(user.created_at).toLocaleDateString()
-                                : "—"}
-                            </td>
-                            <td style={{ position: "relative" }}>
-                              <button
-                                className="btn btn-sm btn-outline-secondary"
-                                onClick={() =>
-                                  setOpenMenuId(
-                                    openMenuId === user.id ? null : user.id
-                                  )
-                                }
-                              >
-                                ⋮
-                              </button>
+                <>
+                  <div className="mb-3">
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Buscar por nombre, DNI, email, teléfono o vivienda..."
+                      value={userSearchFilter}
+                      onChange={(e) => setUserSearchFilter(e.target.value)}
+                    />
+                  </div>
 
-                              {openMenuId === user.id && (
-                                <div
-                                  className="card shadow-sm p-2"
-                                  style={{
-                                    position: "absolute",
-                                    right: 0,
-                                    top: "100%",
-                                    zIndex: 20,
-                                    minWidth: "160px",
-                                  }}
-                                >
-                                  <button
-                                    className="btn btn-sm btn-light text-start"
-                                    onClick={() => openEditModal(user)}
-                                  >
-                                    Editar
-                                  </button>
-                                </div>
-                              )}
+                  <div className="dashboard-table-wrap">
+                    <table className="table table-striped align-middle">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          <th>Nombre</th>
+                          <th>DNI</th>
+                          <th>Teléfono</th>
+                          <th>Email</th>
+                          <th>Vivienda</th>
+                          <th>Rol</th>
+                          <th>Estado</th>
+                          <th>Alta</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {getFilteredUsers().length === 0 ? (
+                          <tr>
+                            <td colSpan="10" className="text-center">
+                              {userSearchFilter
+                                ? "No hay usuarios que coincidan con la búsqueda."
+                                : "No hay usuarios registrados."}
                             </td>
                           </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+                        ) : (
+                          getFilteredUsers().map((user) => (
+                            <tr key={user.id}>
+                              <td>{user.id}</td>
+                              <td>{user.name}</td>
+                              <td>{user.dni}</td>
+                              <td>{user.phone || "—"}</td>
+                              <td>{user.email || "—"}</td>
+                              <td>{user.vivienda || "—"}</td>
+                              <td>
+                                {user.role === "ADMIN" ? (
+                                  <span className="badge bg-dark">ADMIN</span>
+                                ) : (
+                                  <span className="badge bg-primary">VECINO</span>
+                                )}
+                              </td>
+                              <td>
+                                {user.is_active ? (
+                                  <span className="badge bg-success">ACTIVO</span>
+                                ) : (
+                                  <span className="badge bg-secondary">INACTIVO</span>
+                                )}
+                              </td>
+                              <td>
+                                {user.created_at
+                                  ? new Date(user.created_at).toLocaleDateString()
+                                  : "—"}
+                              </td>
+                              <td>
+                                <button
+                                  className="btn btn-sm btn-outline-primary"
+                                  onClick={() => openEditModal(user)}
+                                >
+                                  Editar
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </>
               )}
 
               {showUserModal && (

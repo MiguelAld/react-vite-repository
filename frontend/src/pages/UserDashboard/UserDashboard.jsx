@@ -108,8 +108,10 @@ export default function UserDashboard() {
     }
   };
 
-  const getIncidentZoneLabel = (incident) => {
-    return incident.zone?.name || incident.custom_zone || "—";
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "—";
+    const date = new Date(dateString);
+    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   const renderInicio = () => (
@@ -241,34 +243,13 @@ export default function UserDashboard() {
                         <strong>Creada por:</strong> {incident.creator?.name || "—"}
                       </p>
                       <p>
-                        <strong>Fecha:</strong>{" "}
-                        {incident.created_at
-                          ? new Date(incident.created_at).toLocaleDateString()
-                          : "—"}
-                      </p>
-                      <p>
-                        <strong>Hora:</strong>{" "}
-                        {incident.created_at
-                          ? new Date(incident.created_at).toLocaleTimeString([], {
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })
-                          : "—"}
+                        <strong>Fecha y hora:</strong> {formatDateTime(incident.created_at)}
                       </p>
                     </div>
 
-                    {isMine && (
-                      <div className="incident-card__mine-badge">
-                        <span className="badge bg-info text-dark">Tu incidencia</span>
-                      </div>
-                    )}
-
-                    <button
-                      className="btn btn-sm btn-outline-primary incident-card__toggle"
-                      onClick={() => setSelectedIncident(incident)}
-                    >
-                      Ver detalle
-                    </button>
+                    <div className="incident-card__description">
+                      <p>{incident.description}</p>
+                    </div>
                   </article>
                 );
               })}
