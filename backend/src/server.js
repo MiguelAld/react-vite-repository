@@ -28,7 +28,7 @@ const PORT = process.env.PORT || 4000;
     await sequelize.authenticate();
     console.log("✅ Conectado a MySQL");
 
-    await sequelize.sync({ alter: true });
+    await sequelize.sync({ alter: false });
     console.log("✅ Tablas sincronizadas");
 
     app.listen(PORT, () => {
