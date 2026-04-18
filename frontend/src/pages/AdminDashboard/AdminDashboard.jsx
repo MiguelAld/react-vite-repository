@@ -31,6 +31,8 @@ export default function AdminDashboard() {
   const [zonesLoading, setZonesLoading] = useState(false);
   const [zonesError, setZonesError] = useState("");
   const [zoneName, setZoneName] = useState("");
+  const [showZonesManager, setShowZonesManager] = useState(false);
+  const [selectedZoneId, setSelectedZoneId] = useState(null);
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -342,48 +344,75 @@ export default function AdminDashboard() {
               </div>
 
               {!incidentsLoading && !incidentsError && (
-                <div className="dashboard-block mb-4">
-                  <h3 className="mb-3">Zonas disponibles para incidencias</h3>
+                <div className="mb-3">
+                  <button
+                    className="btn btn-outline-primary"
+                    onClick={() => {
+                      setShowZonesManager(!showZonesManager);
+                      setSelectedZoneId(null);
+                    }}
+                  >
+                    {showZonesManager ? "Cerrar" : "Gestionar zonas"}
+                  </button>
+                </div>
+              )}
 
-                  <form onSubmit={handleCreateZone} className="row g-3 align-items-end mb-3">
-                    <div className="col-md-8">
-                      <label className="form-label">Añadir nueva zona</label>
+              {showZonesManager && (
+                <div className="dashboard-block mb-4">
+                  <h3 className="mb-3">Zonas disponibles</h3>
+
+                  <div className="row g-3 mb-4 align-items-end">
+                    <div className="col-md-6">
+                      <label className="form-label">Nueva zona</label>
                       <input
                         type="text"
                         className="form-control"
                         value={zoneName}
                         onChange={(e) => setZoneName(e.target.value)}
-                        placeholder="Ej: Gimnasio, Portal A, Portal B..."
-                        required
+                        placeholder="Ej: Gimnasio, Portal A..."
                       />
                     </div>
 
-                    <div className="col-md-4">
-                      <button type="submit" className="btn btn-success w-100">
-                        Añadir zona
+                    <div className="col-md-3">
+                      <button
+                        type="button"
+                        className="btn btn-success w-100"
+                        onClick={handleCreateZone}
+                        disabled={!zoneName.trim()}
+                      >
+                        Agregar
                       </button>
                     </div>
-                  </form>
+                  </div>
 
                   {zonesLoading && <p>Cargando zonas...</p>}
                   {zonesError && <div className="alert alert-danger">{zonesError}</div>}
 
-                  {!zonesLoading && !zonesError && (
-                    <div className="zone-inline-list">
-                      {zones.map((zone) => (
-                        <div key={zone.id} className="zone-inline-item">
-                          <span>{zone.name}</span>
+                  {!zonesLoading && !zonesError && zones.length > 0 && (
+                    <div>
+                      <label className="form-label">Gestionar zonas</label>
+                      <div className="zone-list-admin">
+                        {zones.map((zone) => (
+                          <div key={zone.id} className="zone-item-admin">
+                            <div className="zone-item-admin__info">
+                              <strong>{zone.name}</strong>
+                              <span className={`badge ${zone.is_active ? "bg-success" : "bg-secondary"}`}>
+                                {zone.is_active ? "ACTIVA" : "INACTIVA"}
+                              </span>
+                            </div>
 
-                          <button
-                            className={`btn btn-sm ${
-                              zone.is_active ? "btn-outline-danger" : "btn-outline-success"
-                            }`}
-                            onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
-                          >
-                            {zone.is_active ? "Desactivar" : "Activar"}
-                          </button>
-                        </div>
-                      ))}
+                            <button
+                              type="button"
+                              className={`btn btn-sm ${
+                                zone.is_active ? "btn-danger" : "btn-success"
+                              }`}
+                              onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
+                            >
+                              {zone.is_active ? "Desactivar" : "Activar"}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </div>

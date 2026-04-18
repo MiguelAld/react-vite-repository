@@ -1162,6 +1162,45 @@ aside.user-sketch-layout .user-sketch-profile-card {
   padding: 10px 14px;
 }
 
+.zone-list-admin {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #e8eef5;
+  border-radius: 14px;
+  padding: 12px;
+  background: #f8fbff;
+}
+
+.zone-item-admin {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 10px;
+  gap: 12px;
+}
+
+.zone-item-admin__info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.zone-item-admin__info strong {
+  color: #0f172a;
+  font-size: 0.95rem;
+}
+
+.zone-item-admin__info .badge {
+  font-size: 0.75rem;
+}
+
 .dashboard-panel .incident-card .btn {
   align-self: flex-start;
 }
