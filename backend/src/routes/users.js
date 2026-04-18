@@ -1,5 +1,6 @@
 import express from "express";
 import { User } from "../models/User.js";
+import { Building } from "../models/Building.js";
 
 const router = express.Router();
 
@@ -15,8 +16,17 @@ router.get("/", async (req, res) => {
         "phone",
         "role",
         "vivienda",
+        "building_id",
         "is_active",
         "created_at",
+      ],
+      include: [
+        {
+          model: Building,
+          as: "building",
+          attributes: ["id", "name"],
+          required: false,
+        },
       ],
       order: [["id", "ASC"]],
     });
@@ -31,7 +41,7 @@ router.get("/", async (req, res) => {
 /* crear usuario */
 router.post("/", async (req, res) => {
   try {
-    const { dni, name, email, phone, role, vivienda } = req.body;
+    const { dni, name, email, phone, role, vivienda, building_id } = req.body;
 
     if (!dni || !name || !role) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -50,6 +60,7 @@ router.post("/", async (req, res) => {
       phone: phone || null,
       role,
       vivienda: vivienda || null,
+      building_id: building_id || null,
       password_hash: null,
       is_active: true,
     });
@@ -65,7 +76,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { dni, name, email, phone, role, vivienda } = req.body;
+    const { dni, name, email, phone, role, vivienda, building_id } = req.body;
 
     const user = await User.findByPk(id);
 
@@ -89,6 +100,7 @@ router.put("/:id", async (req, res) => {
     user.phone = phone || null;
     user.role = role;
     user.vivienda = vivienda || null;
+    user.building_id = building_id || null;
 
     await user.save();
 

@@ -114,6 +114,10 @@ export default function UserDashboard() {
     return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
+  const getIncidentZoneLabel = (incident) => {
+    return incident.zone?.name || incident.custom_zone || "—";
+  };
+
   const renderInicio = () => (
     <section className="user-home">
       <div className="user-home__hero">

@@ -296,3 +296,59 @@ export async function updateZoneOrder(id, direction) {
 
   return data;
 }
+
+export async function getBuildings() {
+  const res = await fetch(`${API_URL}/buildings`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando bloques");
+  }
+
+  return data;
+}
+
+export async function getAllBuildings() {
+  const res = await fetch(`${API_URL}/buildings/all`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando bloques");
+  }
+
+  return data;
+}
+
+export async function createBuilding(buildingData) {
+  const res = await fetch(`${API_URL}/buildings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(buildingData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando bloque");
+  }
+
+  return data;
+}
+
+export async function updateBuildingActive(id, is_active) {
+  const res = await fetch(`${API_URL}/buildings/${id}/active`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ is_active }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando bloque");
+  }
+
+  return data;
+}

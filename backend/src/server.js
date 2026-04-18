@@ -6,6 +6,7 @@ import meetingsRoutes from "./routes/meetings.js";
 import usersRoutes from "./routes/users.js";
 import incidentsRoutes from "./routes/incidents.js";
 import zonesRoutes from "./routes/zones.js";
+import buildingsRoutes from "./routes/buildings.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use("/meetings", meetingsRoutes);
 app.use("/users", usersRoutes);
 app.use("/incidents", incidentsRoutes);
 app.use("/zones", zonesRoutes);
+app.use("/buildings", buildingsRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });

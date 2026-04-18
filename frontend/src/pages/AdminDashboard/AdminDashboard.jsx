@@ -13,6 +13,10 @@ import {
   createZone,
   updateZoneActive,
   updateZoneOrder,
+  getBuildings,
+  getAllBuildings,
+  createBuilding,
+  updateBuildingActive,
 } from "../../services/api";
 import "../../assets/dashboard.css";
 
@@ -22,6 +26,9 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersError, setUsersError] = useState("");
+
+  const [buildings, setBuildings] = useState([]);
+  const [buildingsLoading, setBuildingsLoading] = useState(false);
 
   const [incidents, setIncidents] = useState([]);
   const [incidentsLoading, setIncidentsLoading] = useState(false);
@@ -189,9 +196,14 @@ export default function AdminDashboard() {
       name: "",
       phone: "",
       email: "",
-      vivienda: "",
+      building_id: "",
       role: "VECINO",
     });
+    setBuildingsLoading(true);
+    getAllBuildings()
+      .then(setBuildings)
+      .catch(console.error)
+      .finally(() => setBuildingsLoading(false));
     setShowUserModal(true);
     setOpenMenuId(null);
   };
@@ -203,9 +215,14 @@ export default function AdminDashboard() {
       name: user.name || "",
       phone: user.phone || "",
       email: user.email || "",
-      vivienda: user.vivienda || "",
+      building_id: user.building_id || "",
       role: user.role || "VECINO",
     });
+    setBuildingsLoading(true);
+    getAllBuildings()
+      .then(setBuildings)
+      .catch(console.error)
+      .finally(() => setBuildingsLoading(false));
     setShowUserModal(true);
     setOpenMenuId(null);
   };
@@ -891,7 +908,7 @@ export default function AdminDashboard() {
                               <td>{user.dni}</td>
                               <td>{user.phone || "—"}</td>
                               <td>{user.email || "—"}</td>
-                              <td>{user.vivienda || "—"}</td>
+                              <td>{user.building?.name || user.vivienda || "—"}</td>
                               <td>
                                 {user.role === "ADMIN" ? (
                                   <span className="badge bg-dark">ADMIN</span>
@@ -1000,14 +1017,24 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="col-md-12">
-                          <label className="form-label">Vivienda</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="vivienda"
-                            value={userForm.vivienda}
-                            onChange={handleUserFormChange}
-                          />
+                          <label className="form-label">Bloque</label>
+                          {buildingsLoading ? (
+                            <p className="text-muted">Cargando bloques...</p>
+                          ) : (
+                            <select
+                              className="form-select"
+                              name="building_id"
+                              value={userForm.building_id}
+                              onChange={handleUserFormChange}
+                            >
+                              <option value="">Selecciona un bloque</option>
+                              {buildings.map((building) => (
+                                <option key={building.id} value={building.id}>
+                                  {building.name}
+                                </option>
+                              ))}
+                            </select>
+                          )}
                         </div>
 
                         <div className="col-md-12">
