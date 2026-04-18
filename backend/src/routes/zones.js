@@ -53,7 +53,7 @@ router.post("/", async (req, res) => {
 
     const zone = await Zone.create({
       name: name.trim(),
-      created_by: created_by || null,
+      created_by: null,
       is_active: true,
     });
 

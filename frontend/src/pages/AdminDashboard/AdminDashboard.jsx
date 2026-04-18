@@ -266,7 +266,6 @@ export default function AdminDashboard() {
     try {
       const newZone = await createZone({
         name: zoneName,
-        created_by: 1,
       });
 
       setZones((prev) => [...prev, newZone].sort((a, b) => a.name.localeCompare(b.name)));
