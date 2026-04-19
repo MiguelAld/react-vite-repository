@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import SidebarAdmin from "../../components/layout/SidebarAdmin";
 import CreateMeeting from "./CreateMeeting";
+import { useAuth } from "../../context/AuthContext";
 import {
   getUsers,
   createUser,
@@ -17,10 +18,12 @@ import {
   getAllBuildings,
   createBuilding,
   updateBuildingActive,
+  getMeetings,
 } from "../../services/api";
 import "../../assets/dashboard.css";
 
 export default function AdminDashboard() {
+  const { user } = useAuth();
   const [section, setSection] = useState("inicio");
 
   const [users, setUsers] = useState([]);
@@ -34,6 +37,9 @@ export default function AdminDashboard() {
   const [incidentsLoading, setIncidentsLoading] = useState(false);
   const [incidentsError, setIncidentsError] = useState("");
   const [selectedIncident, setSelectedIncident] = useState(null);
+
+  const [meetings, setMeetings] = useState([]);
+  const [meetingsLoading, setMeetingsLoading] = useState(false);
 
   const [zones, setZones] = useState([]);
   const [zonesLoading, setZonesLoading] = useState(false);
@@ -69,6 +75,31 @@ export default function AdminDashboard() {
         })
         .finally(() => {
           setUsersLoading(false);
+        });
+    }
+  }, [section]);
+
+  useEffect(() => {
+    if (section === "inicio") {
+      setIncidentsLoading(true);
+      setMeetingsLoading(true);
+
+      getIncidents()
+        .then(setIncidents)
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setIncidentsLoading(false);
+        });
+
+      getMeetings()
+        .then(setMeetings)
+        .catch((err) => {
+          console.error(err);
+        })
+        .finally(() => {
+          setMeetingsLoading(false);
         });
     }
   }, [section]);
@@ -352,9 +383,9 @@ export default function AdminDashboard() {
       <SidebarAdmin
         activeSection={section}
         setActiveSection={setSection}
-        userName="Admin Comunidad"
-        userDni="12345678A"
-        userHouse="Administración"
+        userName={user?.name || "Admin"}
+        userDni={user?.dni || "—"}
+        userHouse={user?.vivienda || "—"}
       />
 
       <div className="dashboard-content">
@@ -369,7 +400,9 @@ export default function AdminDashboard() {
               <div className="dashboard-cards">
                 <div className="dashboard-card summary-accent-yellow">
                   <h5>Incidencias pendientes</h5>
-                  <p className="summary-number">4</p>
+                  <p className="summary-number">
+                    {incidentsLoading ? "..." : incidents.filter((i) => i.status === "PENDIENTE").length}
+                  </p>
                 </div>
 
                 <div className="dashboard-card summary-accent-blue">
@@ -379,7 +412,9 @@ export default function AdminDashboard() {
 
                 <div className="dashboard-card summary-accent-green">
                   <h5>Próximas reuniones</h5>
-                  <p className="summary-number">2</p>
+                  <p className="summary-number">
+                    {meetingsLoading ? "..." : meetings.filter((m) => new Date(m.meeting_date) > new Date()).length}
+                  </p>
                 </div>
               </div>
             </section>
