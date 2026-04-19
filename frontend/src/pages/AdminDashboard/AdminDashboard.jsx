@@ -14,10 +14,6 @@ import {
   createZone,
   updateZoneActive,
   updateZoneOrder,
-  getBuildings,
-  getAllBuildings,
-  createBuilding,
-  updateBuildingActive,
   getMeetings,
 } from "../../services/api";
 import "../../assets/dashboard.css";
@@ -29,9 +25,6 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersError, setUsersError] = useState("");
-
-  const [buildings, setBuildings] = useState([]);
-  const [buildingsLoading, setBuildingsLoading] = useState(false);
 
   const [incidents, setIncidents] = useState([]);
   const [incidentsLoading, setIncidentsLoading] = useState(false);
@@ -58,6 +51,7 @@ export default function AdminDashboard() {
     name: "",
     phone: "",
     email: "",
+    portal: "",
     vivienda: "",
     role: "VECINO",
   });
@@ -227,14 +221,10 @@ export default function AdminDashboard() {
       name: "",
       phone: "",
       email: "",
-      building_id: "",
+      portal: "",
+      vivienda: "",
       role: "VECINO",
     });
-    setBuildingsLoading(true);
-    getAllBuildings()
-      .then(setBuildings)
-      .catch(console.error)
-      .finally(() => setBuildingsLoading(false));
     setShowUserModal(true);
     setOpenMenuId(null);
   };
@@ -246,14 +236,10 @@ export default function AdminDashboard() {
       name: user.name || "",
       phone: user.phone || "",
       email: user.email || "",
-      building_id: user.building_id || "",
+      portal: user.portal || "",
+      vivienda: user.vivienda || "",
       role: user.role || "VECINO",
     });
-    setBuildingsLoading(true);
-    getAllBuildings()
-      .then(setBuildings)
-      .catch(console.error)
-      .finally(() => setBuildingsLoading(false));
     setShowUserModal(true);
     setOpenMenuId(null);
   };
@@ -692,11 +678,6 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="incident-detail-block">
-                        <label>Vivienda</label>
-                        <p>{selectedIncident.creator?.vivienda || "—"}</p>
-                      </div>
-
-                      <div className="incident-detail-block">
                         <label>Fecha y hora</label>
                         <p>{formatDateTime(selectedIncident.created_at)}</p>
                       </div>
@@ -943,7 +924,7 @@ export default function AdminDashboard() {
                               <td>{user.dni}</td>
                               <td>{user.phone || "—"}</td>
                               <td>{user.email || "—"}</td>
-                              <td>{user.building?.name || user.vivienda || "—"}</td>
+                              <td>{user.vivienda || "—"}</td>
                               <td>
                                 {user.role === "ADMIN" ? (
                                   <span className="badge bg-dark">ADMIN</span>
@@ -1051,25 +1032,30 @@ export default function AdminDashboard() {
                           />
                         </div>
 
-                        <div className="col-md-12">
-                          <label className="form-label">Bloque</label>
-                          {buildingsLoading ? (
-                            <p className="text-muted">Cargando bloques...</p>
-                          ) : (
-                            <select
-                              className="form-select"
-                              name="building_id"
-                              value={userForm.building_id}
-                              onChange={handleUserFormChange}
-                            >
-                              <option value="">Selecciona un bloque</option>
-                              {buildings.map((building) => (
-                                <option key={building.id} value={building.id}>
-                                  {building.name}
-                                </option>
-                              ))}
-                            </select>
-                          )}
+                        <div className="col-md-6">
+                          <label className="form-label">Portal</label>
+                          <select
+                            className="form-select"
+                            name="portal"
+                            value={userForm.portal}
+                            onChange={handleUserFormChange}
+                          >
+                            <option value="">Selecciona un portal</option>
+                            <option value="PORTAL 1">PORTAL 1</option>
+                            <option value="PORTAL 2">PORTAL 2</option>
+                          </select>
+                        </div>
+
+                        <div className="col-md-6">
+                          <label className="form-label">Vivienda</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="vivienda"
+                            value={userForm.vivienda}
+                            onChange={handleUserFormChange}
+                            placeholder="Ej: 2B, 1C, etc."
+                          />
                         </div>
 
                         <div className="col-md-12">
