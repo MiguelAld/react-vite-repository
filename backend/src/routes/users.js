@@ -14,11 +14,16 @@ router.get("/", async (req, res) => {
         "email",
         "phone",
         "role",
+        "portal",
         "vivienda",
         "is_active",
         "created_at",
       ],
-      order: [["id", "ASC"]],
+      order: [
+        ["portal", "ASC"],
+        ["vivienda", "ASC"],
+        ["name", "ASC"],
+      ],
     });
 
     res.json(users);
@@ -31,7 +36,7 @@ router.get("/", async (req, res) => {
 /* crear usuario */
 router.post("/", async (req, res) => {
   try {
-    const { dni, name, email, phone, role, vivienda } = req.body;
+    const { dni, name, email, phone, role, portal, vivienda } = req.body;
 
     if (!dni || !name || !role) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -49,6 +54,7 @@ router.post("/", async (req, res) => {
       email: email || null,
       phone: phone || null,
       role,
+      portal: portal || null,
       vivienda: vivienda || null,
       password_hash: null,
       is_active: true,
@@ -65,7 +71,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { dni, name, email, phone, role, vivienda } = req.body;
+    const { dni, name, email, phone, role, portal, vivienda } = req.body;
 
     const user = await User.findByPk(id);
 
@@ -88,6 +94,7 @@ router.put("/:id", async (req, res) => {
     user.email = email || null;
     user.phone = phone || null;
     user.role = role;
+    user.portal = portal || null;
     user.vivienda = vivienda || null;
 
     await user.save();

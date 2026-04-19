@@ -1,5 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
+/* AUTH */
 export async function checkDni(dni) {
   const res = await fetch(`${API_URL}/auth/check-dni`, {
     method: "POST",
@@ -48,7 +49,7 @@ export async function apiLogin(dni, password) {
   return data;
 }
 
-              //sección MEETINGS
+/* MEETINGS */
 export async function getMeetings() {
   const res = await fetch(`${API_URL}/meetings`);
 
@@ -77,7 +78,7 @@ export async function createMeeting(meetingData) {
   return data;
 }
 
-              //sección USERS
+/* USERS */
 export async function getUsers() {
   const res = await fetch(`${API_URL}/users`);
 
@@ -85,79 +86,6 @@ export async function getUsers() {
 
   if (!res.ok) {
     throw new Error(data?.error || "Error cargando usuarios");
-  }
-
-  return data;
-}
-
-              //sección INCIDENTS
-export async function getIncidents() {
-  const res = await fetch(`${API_URL}/incidents`);
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error cargando incidencias");
-  }
-
-  return data;
-}
-
-
-export async function updateIncidentStatus(id, status) {
-  const res = await fetch(`${API_URL}/incidents/${id}/status`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ status }),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error actualizando incidencia");
-  }
-
-  return data;
-}
-
-              // sección ZONES
-export async function getZones() {
-  const res = await fetch(`${API_URL}/zones`);
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error cargando zonas");
-  }
-
-  return data;
-}
-
-              // sección INCIDENTS - USUARIOS
-export async function createIncident(incidentData) {
-  const res = await fetch(`${API_URL}/incidents`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(incidentData),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error creando incidencia");
-  }
-
-  return data;
-}
-
-              // sección INCIDENTS - USUARIOS
-export async function getUserIncidents(userId) {
-  const res = await fetch(`${API_URL}/incidents/user/${userId}`);
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error cargando incidencias del usuario");
   }
 
   return data;
@@ -179,6 +107,22 @@ export async function createUser(userData) {
   return data;
 }
 
+export async function updateUser(id, userData) {
+  const res = await fetch(`${API_URL}/users/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(userData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error editando usuario");
+  }
+
+  return data;
+}
+
 export async function updateUserActive(id, is_active) {
   const res = await fetch(`${API_URL}/users/${id}/active`, {
     method: "PATCH",
@@ -195,17 +139,70 @@ export async function updateUserActive(id, is_active) {
   return data;
 }
 
-export async function updateUser(id, userData) {
-  const res = await fetch(`${API_URL}/users/${id}`, {
-    method: "PUT",
+/* INCIDENTS */
+export async function getIncidents() {
+  const res = await fetch(`${API_URL}/incidents`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando incidencias");
+  }
+
+  return data;
+}
+
+export async function getCommunityIncidents() {
+  const res = await fetch(`${API_URL}/incidents`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando incidencias de la comunidad");
+  }
+
+  return data;
+}
+
+export async function getUserIncidents(userId) {
+  const res = await fetch(`${API_URL}/incidents/user/${userId}`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando incidencias del usuario");
+  }
+
+  return data;
+}
+
+export async function createIncident(incidentData) {
+  const res = await fetch(`${API_URL}/incidents`, {
+    method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(userData),
+    body: JSON.stringify(incidentData),
   });
 
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    throw new Error(data?.error || "Error editando usuario");
+    throw new Error(data?.error || "Error creando incidencia");
+  }
+
+  return data;
+}
+
+export async function updateIncidentStatus(id, status) {
+  const res = await fetch(`${API_URL}/incidents/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando incidencia");
   }
 
   return data;
@@ -225,13 +222,14 @@ export async function deleteIncident(id) {
   return data;
 }
 
-export async function getCommunityIncidents() {
-  const res = await fetch(`${API_URL}/incidents`);
+/* ZONES */
+export async function getZones() {
+  const res = await fetch(`${API_URL}/zones`);
 
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    throw new Error(data?.error || "Error cargando incidencias de la comunidad");
+    throw new Error(data?.error || "Error cargando zonas");
   }
 
   return data;
@@ -292,62 +290,6 @@ export async function updateZoneOrder(id, direction) {
 
   if (!res.ok) {
     throw new Error(data?.error || "Error actualizando orden");
-  }
-
-  return data;
-}
-
-export async function getBuildings() {
-  const res = await fetch(`${API_URL}/buildings`);
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error cargando bloques");
-  }
-
-  return data;
-}
-
-export async function getAllBuildings() {
-  const res = await fetch(`${API_URL}/buildings/all`);
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error cargando bloques");
-  }
-
-  return data;
-}
-
-export async function createBuilding(buildingData) {
-  const res = await fetch(`${API_URL}/buildings`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(buildingData),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error creando bloque");
-  }
-
-  return data;
-}
-
-export async function updateBuildingActive(id, is_active) {
-  const res = await fetch(`${API_URL}/buildings/${id}/active`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ is_active }),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error actualizando bloque");
   }
 
   return data;

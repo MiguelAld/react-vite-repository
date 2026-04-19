@@ -13,10 +13,6 @@ import {
   createZone,
   updateZoneActive,
   updateZoneOrder,
-  getBuildings,
-  getAllBuildings,
-  createBuilding,
-  updateBuildingActive,
 } from "../../services/api";
 import "../../assets/dashboard.css";
 
@@ -26,9 +22,6 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersError, setUsersError] = useState("");
-
-  const [buildings, setBuildings] = useState([]);
-  const [buildingsLoading, setBuildingsLoading] = useState(false);
 
   const [incidents, setIncidents] = useState([]);
   const [incidentsLoading, setIncidentsLoading] = useState(false);
@@ -40,11 +33,9 @@ export default function AdminDashboard() {
   const [zonesError, setZonesError] = useState("");
   const [zoneName, setZoneName] = useState("");
   const [showZonesManager, setShowZonesManager] = useState(false);
-  const [selectedZoneId, setSelectedZoneId] = useState(null);
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
-  const [openMenuId, setOpenMenuId] = useState(null);
   const [userSearchFilter, setUserSearchFilter] = useState("");
 
   const [userForm, setUserForm] = useState({
@@ -52,6 +43,7 @@ export default function AdminDashboard() {
     name: "",
     phone: "",
     email: "",
+    portal: "",
     vivienda: "",
     role: "VECINO",
   });
@@ -102,23 +94,6 @@ export default function AdminDashboard() {
     }
   }, [section]);
 
-  useEffect(() => {
-    if (section === "zonas") {
-      setZonesLoading(true);
-      setZonesError("");
-
-      getAllZones()
-        .then(setZones)
-        .catch((err) => {
-          console.error(err);
-          setZonesError(err.message || "Error al cargar zonas");
-        })
-        .finally(() => {
-          setZonesLoading(false);
-        });
-    }
-  }, [section]);
-
   const getIncidentZoneLabel = (incident) => {
     return incident.zone?.name || incident.custom_zone || "—";
   };
@@ -126,7 +101,11 @@ export default function AdminDashboard() {
   const formatDateTime = (dateString) => {
     if (!dateString) return "—";
     const date = new Date(dateString);
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return (
+      date.toLocaleDateString() +
+      " " +
+      date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    );
   };
 
   const handleStatusChange = async (incidentId, newStatus) => {
@@ -173,7 +152,9 @@ export default function AdminDashboard() {
 
     try {
       await deleteIncident(incidentId);
-      setIncidents((prev) => prev.filter((incident) => incident.id !== incidentId));
+      setIncidents((prev) =>
+        prev.filter((incident) => incident.id !== incidentId)
+      );
       setSelectedIncident(null);
     } catch (err) {
       console.error(err);
@@ -196,16 +177,11 @@ export default function AdminDashboard() {
       name: "",
       phone: "",
       email: "",
-      building_id: "",
+      portal: "",
+      vivienda: "",
       role: "VECINO",
     });
-    setBuildingsLoading(true);
-    getAllBuildings()
-      .then(setBuildings)
-      .catch(console.error)
-      .finally(() => setBuildingsLoading(false));
     setShowUserModal(true);
-    setOpenMenuId(null);
   };
 
   const openEditModal = (user) => {
@@ -215,22 +191,16 @@ export default function AdminDashboard() {
       name: user.name || "",
       phone: user.phone || "",
       email: user.email || "",
-      building_id: user.building_id || "",
+      portal: user.portal || "",
+      vivienda: user.vivienda || "",
       role: user.role || "VECINO",
     });
-    setBuildingsLoading(true);
-    getAllBuildings()
-      .then(setBuildings)
-      .catch(console.error)
-      .finally(() => setBuildingsLoading(false));
     setShowUserModal(true);
-    setOpenMenuId(null);
   };
 
   const closeUserModal = () => {
     setShowUserModal(false);
     setEditingUser(null);
-    setOpenMenuId(null);
   };
 
   const handleSubmitUser = async (e) => {
@@ -242,7 +212,6 @@ export default function AdminDashboard() {
         setUsers((prev) =>
           prev.map((u) => (u.id === editingUser.id ? updated : u))
         );
-        setEditingUser(updated);
       } else {
         const newUser = await createUser(userForm);
         setUsers((prev) => [...prev, newUser]);
@@ -277,8 +246,6 @@ export default function AdminDashboard() {
             : prev
         );
       }
-
-      setOpenMenuId(null);
     } catch (err) {
       console.error(err);
       alert(err.message || "Error actualizando usuario");
@@ -293,7 +260,9 @@ export default function AdminDashboard() {
         name: zoneName,
       });
 
-      setZones((prev) => [...prev, newZone].sort((a, b) => a.name.localeCompare(b.name)));
+      setZones((prev) =>
+        [...prev, newZone].sort((a, b) => a.name.localeCompare(b.name))
+      );
       setZoneName("");
     } catch (err) {
       console.error(err);
@@ -321,11 +290,7 @@ export default function AdminDashboard() {
   const handleMoveZone = async (zoneId, direction) => {
     try {
       await updateZoneOrder(zoneId, direction);
-
-      // Recargar zonas para reflejar el nuevo orden
-      getAllZones()
-        .then(setZones)
-        .catch(console.error);
+      getAllZones().then(setZones).catch(console.error);
     } catch (err) {
       console.error(err);
       alert(err.message || "Error moviendo zona");
@@ -343,9 +308,89 @@ export default function AdminDashboard() {
         user.dni?.toLowerCase().includes(filter) ||
         user.email?.toLowerCase().includes(filter) ||
         user.phone?.toLowerCase().includes(filter) ||
-        user.vivienda?.toLowerCase().includes(filter)
+        user.vivienda?.toLowerCase().includes(filter) ||
+        user.portal?.toLowerCase().includes(filter)
     );
   };
+
+  const filteredUsers = getFilteredUsers();
+  const portal1Users = filteredUsers.filter((u) => u.portal === "PORTAL 1");
+  const portal2Users = filteredUsers.filter((u) => u.portal === "PORTAL 2");
+  const noPortalUsers = filteredUsers.filter((u) => !u.portal);
+
+  const renderUsersTable = (title, portalUsers) => (
+    <div className="dashboard-block mb-4">
+      <h3 className="mb-3">{title}</h3>
+
+      <div className="dashboard-table-wrap">
+        <table className="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>DNI</th>
+              <th>Teléfono</th>
+              <th>Email</th>
+              <th>Portal</th>
+              <th>Vivienda</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Alta</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+            {portalUsers.length === 0 ? (
+              <tr>
+                <td colSpan="11" className="text-center">
+                  No hay usuarios en este grupo.
+                </td>
+              </tr>
+            ) : (
+              portalUsers.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.id}</td>
+                  <td>{user.name}</td>
+                  <td>{user.dni}</td>
+                  <td>{user.phone || "—"}</td>
+                  <td>{user.email || "—"}</td>
+                  <td>{user.portal || "—"}</td>
+                  <td>{user.vivienda || "—"}</td>
+                  <td>
+                    {user.role === "ADMIN" ? (
+                      <span className="badge bg-dark">ADMIN</span>
+                    ) : (
+                      <span className="badge bg-primary">VECINO</span>
+                    )}
+                  </td>
+                  <td>
+                    {user.is_active ? (
+                      <span className="badge bg-success">ACTIVO</span>
+                    ) : (
+                      <span className="badge bg-secondary">INACTIVO</span>
+                    )}
+                  </td>
+                  <td>
+                    {user.created_at
+                      ? new Date(user.created_at).toLocaleDateString()
+                      : "—"}
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => openEditModal(user)}
+                    >
+                      Editar
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
 
   return (
     <div className="dashboard-shell">
@@ -869,79 +914,17 @@ export default function AdminDashboard() {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Buscar por nombre, DNI, email, teléfono o vivienda..."
+                      placeholder="Buscar por nombre, DNI, email, teléfono, portal o vivienda..."
                       value={userSearchFilter}
                       onChange={(e) => setUserSearchFilter(e.target.value)}
                     />
                   </div>
 
-                  <div className="dashboard-table-wrap">
-                    <table className="table table-striped align-middle">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          <th>Nombre</th>
-                          <th>DNI</th>
-                          <th>Teléfono</th>
-                          <th>Email</th>
-                          <th>Vivienda</th>
-                          <th>Rol</th>
-                          <th>Estado</th>
-                          <th>Alta</th>
-                          <th>Acción</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {getFilteredUsers().length === 0 ? (
-                          <tr>
-                            <td colSpan="10" className="text-center">
-                              {userSearchFilter
-                                ? "No hay usuarios que coincidan con la búsqueda."
-                                : "No hay usuarios registrados."}
-                            </td>
-                          </tr>
-                        ) : (
-                          getFilteredUsers().map((user) => (
-                            <tr key={user.id}>
-                              <td>{user.id}</td>
-                              <td>{user.name}</td>
-                              <td>{user.dni}</td>
-                              <td>{user.phone || "—"}</td>
-                              <td>{user.email || "—"}</td>
-                              <td>{user.building?.name || user.vivienda || "—"}</td>
-                              <td>
-                                {user.role === "ADMIN" ? (
-                                  <span className="badge bg-dark">ADMIN</span>
-                                ) : (
-                                  <span className="badge bg-primary">VECINO</span>
-                                )}
-                              </td>
-                              <td>
-                                {user.is_active ? (
-                                  <span className="badge bg-success">ACTIVO</span>
-                                ) : (
-                                  <span className="badge bg-secondary">INACTIVO</span>
-                                )}
-                              </td>
-                              <td>
-                                {user.created_at
-                                  ? new Date(user.created_at).toLocaleDateString()
-                                  : "—"}
-                              </td>
-                              <td>
-                                <button
-                                  className="btn btn-sm btn-outline-primary"
-                                  onClick={() => openEditModal(user)}
-                                >
-                                  Editar
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                  {renderUsersTable("Portal 1", portal1Users)}
+                  {renderUsersTable("Portal 2", portal2Users)}
+
+                  {noPortalUsers.length > 0 &&
+                    renderUsersTable("Sin portal asignado", noPortalUsers)}
                 </>
               )}
 
@@ -1016,25 +999,30 @@ export default function AdminDashboard() {
                           />
                         </div>
 
-                        <div className="col-md-12">
-                          <label className="form-label">Bloque</label>
-                          {buildingsLoading ? (
-                            <p className="text-muted">Cargando bloques...</p>
-                          ) : (
-                            <select
-                              className="form-select"
-                              name="building_id"
-                              value={userForm.building_id}
-                              onChange={handleUserFormChange}
-                            >
-                              <option value="">Selecciona un bloque</option>
-                              {buildings.map((building) => (
-                                <option key={building.id} value={building.id}>
-                                  {building.name}
-                                </option>
-                              ))}
-                            </select>
-                          )}
+                        <div className="col-md-6">
+                          <label className="form-label">Portal</label>
+                          <select
+                            className="form-select"
+                            name="portal"
+                            value={userForm.portal}
+                            onChange={handleUserFormChange}
+                          >
+                            <option value="">Selecciona portal</option>
+                            <option value="PORTAL 1">PORTAL 1</option>
+                            <option value="PORTAL 2">PORTAL 2</option>
+                          </select>
+                        </div>
+
+                        <div className="col-md-6">
+                          <label className="form-label">Vivienda</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="vivienda"
+                            value={userForm.vivienda}
+                            onChange={handleUserFormChange}
+                            placeholder="Ej: 2B"
+                          />
                         </div>
 
                         <div className="col-md-12">
