@@ -384,13 +384,15 @@ export default function AdminDashboard() {
 
     const filter = userSearchFilter.toLowerCase();
 
-    return users.filter(
-      (user) =>
-        user.name?.toLowerCase().includes(filter) ||
-        user.dni?.toLowerCase().includes(filter) ||
-        user.email?.toLowerCase().includes(filter) ||
-        user.phone?.toLowerCase().includes(filter) ||
-        user.vivienda?.toLowerCase().includes(filter)
+    return users.filter((user) =>
+      user.name?.toLowerCase().includes(filter) ||
+      user.apellidos?.toLowerCase().includes(filter) ||
+      user.dni?.toLowerCase().includes(filter) ||
+      user.email?.toLowerCase().includes(filter) ||
+      user.phone?.toLowerCase().includes(filter) ||
+      user.portal?.toLowerCase().includes(filter) ||
+      user.vivienda?.toLowerCase().includes(filter) ||
+      user.role?.toLowerCase().includes(filter)
     );
   };
 
