@@ -6,6 +6,8 @@ import meetingsRoutes from "./routes/meetings.js";
 import usersRoutes from "./routes/users.js";
 import incidentsRoutes from "./routes/incidents.js";
 import zonesRoutes from "./routes/zones.js";
+import announcementsRoutes from "./routes/announcements.js";
+import novededReadsRoutes from "./routes/novedad-reads.js";
 
 const app = express();
 
@@ -16,6 +18,8 @@ app.use("/meetings", meetingsRoutes);
 app.use("/users", usersRoutes);
 app.use("/incidents", incidentsRoutes);
 app.use("/zones", zonesRoutes);
+app.use("/announcements", announcementsRoutes);
+app.use("/novedad-reads", novededReadsRoutes);
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });

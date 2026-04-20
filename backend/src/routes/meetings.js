@@ -66,4 +66,75 @@ router.post("/", async (req, res) => {
   }
 });
 
+/* PUT editar reunión */
+router.put("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { title, description, meeting_date, created_by } = req.body;
+
+    const meeting = await Meeting.findByPk(id);
+    if (!meeting) {
+      return res.status(404).json({ error: "Reunión no encontrada" });
+    }
+
+    // Solo el creador puede editar
+    if (meeting.created_by !== created_by) {
+      return res
+        .status(403)
+        .json({ error: "No tienes permiso para editar esta reunión" });
+    }
+
+    if (!title || !meeting_date) {
+      return res.status(400).json({ error: "Faltan datos obligatorios" });
+    }
+
+    meeting.title = title;
+    meeting.description = description || null;
+    meeting.meeting_date = meeting_date;
+    await meeting.save();
+
+    const fullMeeting = await Meeting.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: "creator",
+          attributes: ["id", "name", "apellidos", "dni", "role"],
+          required: false,
+        },
+      ],
+    });
+
+    res.json(fullMeeting);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al editar reunión" });
+  }
+});
+
+/* DELETE eliminar reunión */
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { created_by } = req.body;
+
+    const meeting = await Meeting.findByPk(id);
+    if (!meeting) {
+      return res.status(404).json({ error: "Reunión no encontrada" });
+    }
+
+    // Solo el creador puede eliminar
+    if (meeting.created_by !== created_by) {
+      return res
+        .status(403)
+        .json({ error: "No tienes permiso para eliminar esta reunión" });
+    }
+
+    await meeting.destroy();
+    res.json({ message: "Reunión eliminada correctamente" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error al eliminar reunión" });
+  }
+});
+
 export default router;

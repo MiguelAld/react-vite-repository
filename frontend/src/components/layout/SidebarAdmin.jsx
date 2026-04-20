@@ -6,7 +6,10 @@ import {
   CalendarDays,
   Users,
   MapPinned,
+  LogOut,
 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function SidebarAdmin({
   activeSection,
@@ -15,6 +18,13 @@ export default function SidebarAdmin({
   userDni,
   userHouse,
 }) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
   return (
     <aside className="sidebar-user">
       <div className="sidebar-user__top">
@@ -91,6 +101,15 @@ export default function SidebarAdmin({
             <span>Casa: {userHouse}</span>
           </div>
         </div>
+
+        <button
+          onClick={handleLogout}
+          className="btn btn-sm btn-outline-danger w-100 mt-3"
+          title="Cerrar sesión"
+        >
+          <LogOut size={16} />
+          <span>Cerrar sesión</span>
+        </button>
       </div>
     </aside>
   );

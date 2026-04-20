@@ -6,12 +6,32 @@ import {
   Bell,
   LogOut,
 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { getNovededCount } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 
 export default function SidebarUser({
   activeSection,
   setActiveSection,
   onLogout,
 }) {
+  const { user } = useAuth();
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (user?.id) {
+      loadUnreadCount();
+    }
+  }, [user?.id]);
+
+  const loadUnreadCount = async () => {
+    try {
+      const data = await getNovededCount(user.id);
+      setUnreadCount(data.total || 0);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <aside className="user-app-sidebar">
       <div className="user-app-sidebar__brand">
@@ -70,6 +90,11 @@ export default function SidebarUser({
         >
           <Bell size={18} />
           <span>Novedades</span>
+          {unreadCount > 0 && (
+            <span className="badge bg-danger ms-auto" title={`${unreadCount} novedades sin leer`}>
+              {unreadCount}
+            </span>
+          )}
         </button>
       </nav>
 

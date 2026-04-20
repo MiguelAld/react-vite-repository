@@ -294,3 +294,141 @@ export async function updateZoneOrder(id, direction) {
 
   return data;
 }
+
+/* ANNOUNCEMENTS */
+export async function getAnnouncements() {
+  const res = await fetch(`${API_URL}/announcements`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando anuncios");
+  }
+
+  return data;
+}
+
+export async function createAnnouncement(announcementData) {
+  const res = await fetch(`${API_URL}/announcements`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(announcementData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando anuncio");
+  }
+
+  return data;
+}
+
+export async function updateAnnouncement(id, announcementData) {
+  const res = await fetch(`${API_URL}/announcements/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(announcementData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error editando anuncio");
+  }
+
+  return data;
+}
+
+export async function deleteAnnouncement(id, created_by) {
+  const res = await fetch(`${API_URL}/announcements/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ created_by }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando anuncio");
+  }
+
+  return data;
+}
+
+/* MEETINGS - MEJORADO */
+export async function updateMeeting(id, meetingData) {
+  const res = await fetch(`${API_URL}/meetings/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(meetingData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error editando reunión");
+  }
+
+  return data;
+}
+
+export async function deleteMeeting(id, created_by) {
+  const res = await fetch(`${API_URL}/meetings/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ created_by }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando reunión");
+  }
+
+  return data;
+}
+
+/* NOVEDAD READS */
+export async function getNovededCount(userId) {
+  const res = await fetch(`${API_URL}/novedad-reads/count/${userId}`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando conteo de novedades");
+  }
+
+  return data;
+}
+
+export async function markNovededAsRead(userId, novedad_type, novedad_id) {
+  const res = await fetch(`${API_URL}/novedad-reads/mark-read`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id: userId, novedad_type, novedad_id }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error marcando como leído");
+  }
+
+  return data;
+}
+
+export async function markAllNovededAsRead(userId) {
+  const res = await fetch(`${API_URL}/novedad-reads/mark-all-read/${userId}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error marcando como leído");
+  }
+
+  return data;
+}

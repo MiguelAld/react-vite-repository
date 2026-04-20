@@ -8,6 +8,7 @@ import {
   UserCircle2,
   ChevronDown,
   X,
+  CheckCircle2,
 } from "lucide-react";
 import SidebarUser from "../../components/layout/SidebarUser";
 import {
@@ -15,6 +16,10 @@ import {
   getZones,
   createIncident,
   getCommunityIncidents,
+  getAnnouncements,
+  markNovededAsRead,
+  markAllNovededAsRead,
+  getNovededCount,
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
@@ -24,8 +29,12 @@ export default function UserDashboard() {
   const [meetings, setMeetings] = useState([]);
   const [zones, setZones] = useState([]);
   const [incidents, setIncidents] = useState([]);
+  const [announcements, setAnnouncements] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const [loadingIncidents, setLoadingIncidents] = useState(false);
+  const [loadingAnnouncements, setLoadingAnnouncements] = useState(false);
   const [incidentError, setIncidentError] = useState("");
+  const [announcementError, setAnnouncementError] = useState("");
   const [showCreateIncidentModal, setShowCreateIncidentModal] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -42,7 +51,12 @@ export default function UserDashboard() {
   useEffect(() => {
     getMeetings().then(setMeetings).catch(console.error);
     getZones().then(setZones).catch(console.error);
-  }, []);
+    if (user?.id) {
+      getNovededCount(user.id)
+        .then((data) => setUnreadCount(data.total || 0))
+        .catch(console.error);
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     if (activeSection === "incidencias") {
@@ -57,6 +71,23 @@ export default function UserDashboard() {
         })
         .finally(() => {
           setLoadingIncidents(false);
+        });
+    }
+  }, [activeSection]);
+
+  useEffect(() => {
+    if (activeSection === "novedades") {
+      setLoadingAnnouncements(true);
+      setAnnouncementError("");
+
+      getAnnouncements()
+        .then(setAnnouncements)
+        .catch((err) => {
+          console.error(err);
+          setAnnouncementError(err.message || "Error cargando anuncios");
+        })
+        .finally(() => {
+          setLoadingAnnouncements(false);
         });
     }
   }, [activeSection]);
@@ -490,21 +521,82 @@ export default function UserDashboard() {
 
   const renderNovedades = () => (
     <section className="dashboard-panel">
-      <h1 className="dashboard-title">Novedades</h1>
-      <p className="dashboard-subtitle">
-        Aquí aparecerán avisos, noticias y comunicaciones importantes.
-      </p>
+      <div className="dashboard-header-row">
+        <div>
+          <h1 className="dashboard-title">Novedades</h1>
+          <p className="dashboard-subtitle">
+            Aquí aparecerán avisos, noticias y comunicaciones importantes de la comunidad.
+          </p>
+        </div>
 
-      <div className="dashboard-list">
-        <div className="dashboard-list-item">
-          <h5>Aviso de mantenimiento</h5>
-          <p>Se informará próximamente sobre actuaciones en zonas comunes.</p>
-        </div>
-        <div className="dashboard-list-item">
-          <h5>Comunicado general</h5>
-          <p>La administración publicará aquí los avisos recientes.</p>
-        </div>
+        {unreadCount > 0 && (
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => markAllNovededAsRead(user.id).then(() => {
+              setUnreadCount(0);
+              getAnnouncements()
+                .then(setAnnouncements)
+                .catch(console.error);
+            })}
+          >
+            Marcar todos como leído
+          </button>
+        )}
       </div>
+
+      {loadingAnnouncements && <p>Cargando anuncios...</p>}
+      {announcementError && <div className="alert alert-danger">{announcementError}</div>}
+
+      {!loadingAnnouncements && !announcementError && (
+        <>
+          {announcements.length === 0 ? (
+            <p className="dashboard-empty">No hay novedades disponibles.</p>
+          ) : (
+            <div className="dashboard-list">
+              {announcements.map((announcement) => (
+                <div key={announcement.id} className="dashboard-list-item announcement-item">
+                  <div className="announcement-header">
+                    <h5>{announcement.title}</h5>
+                    {announcement.is_read ? (
+                      <span className="badge bg-success">Leído</span>
+                    ) : (
+                      <span className="badge bg-info">Nuevo</span>
+                    )}
+                  </div>
+                  <p className="text-muted mb-2">
+                    <strong>Publicado por:</strong> {announcement.creator?.name || "Administración"}
+                  </p>
+                  <p className="text-muted mb-2">
+                    <strong>Fecha:</strong> {new Date(announcement.created_at).toLocaleDateString()}
+                  </p>
+                  <p className="announcement-content">{announcement.content}</p>
+
+                  {!announcement.is_read && (
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => {
+                        markNovededAsRead(user.id, "announcement", announcement.id)
+                          .then(() => {
+                            setAnnouncements((prev) =>
+                              prev.map((a) =>
+                                a.id === announcement.id ? { ...a, is_read: true } : a
+                              )
+                            );
+                            setUnreadCount((prev) => Math.max(0, prev - 1));
+                          })
+                          .catch(console.error);
+                      }}
+                    >
+                      <CheckCircle2 size={14} />
+                      Marcar como leído
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
+      )}
     </section>
   );
 

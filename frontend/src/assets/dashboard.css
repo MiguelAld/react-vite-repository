@@ -1236,3 +1236,194 @@ aside.user-sketch-layout .user-sketch-profile-card {
 .dashboard-panel .incident-card .btn {
   align-self: flex-start;
 }
+
+/* ============================================
+   CALENDAR MEETINGS STYLES
+   ============================================ */
+
+.calendar-meetings {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 28px;
+  padding: 24px 0;
+}
+
+.calendar-meetings__calendar {
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  height: fit-content;
+  position: sticky;
+  top: 100px;
+}
+
+.calendar-meetings__calendar :global(.react-calendar) {
+  width: 100%;
+  border: none;
+  font-family: inherit;
+}
+
+.calendar-meetings__calendar :global(.react-calendar__month-view__weekdays) {
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.calendar-meetings__calendar :global(.react-calendar__tile) {
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-meetings__calendar :global(.react-calendar__tile:hover) {
+  background: #f1f5fb;
+}
+
+.calendar-meetings__calendar :global(.react-calendar__tile--active) {
+  background: #0284c7;
+  color: white;
+}
+
+.calendar-meetings__calendar :global(.react-calendar__navigation button) {
+  color: #334155;
+  font-weight: 600;
+}
+
+.calendar-badge {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 5px;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.calendar-meetings__content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.calendar-meetings__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #e8eef5;
+}
+
+.calendar-meetings__header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #0f172a;
+  text-transform: capitalize;
+}
+
+.calendar-meetings__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.calendar-meetings__item {
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.calendar-meetings__item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 8px;
+}
+
+.calendar-meetings__item-header h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.calendar-meetings__item-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.calendar-meetings__item-actions .btn {
+  padding: 4px 8px;
+}
+
+.calendar-meetings__form-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.calendar-meetings__form {
+  background: white;
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
+}
+
+/* ============================================
+   ANNOUNCEMENTS / NOVEDADES STYLES
+   ============================================ */
+
+.announcement-item {
+  border-left: 4px solid #0284c7;
+  padding-left: 16px;
+}
+
+.announcement-item.unread {
+  background: #f0f9ff;
+}
+
+.announcement-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.announcement-header h5 {
+  margin: 0;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.announcement-content {
+  color: #475569;
+  line-height: 1.6;
+  margin: 12px 0;
+}
+
+@media (max-width: 1100px) {
+  .calendar-meetings {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-meetings__calendar {
+    position: relative;
+    top: 0;
+  }
+}
