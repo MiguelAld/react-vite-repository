@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
         "id",
         "dni",
         "name",
-        "last_name",
+        "apellidos",
         "email",
         "phone",
         "role",
@@ -37,7 +37,7 @@ router.get("/", async (req, res) => {
 /* crear usuario */
 router.post("/", async (req, res) => {
   try {
-    const { dni, name, last_name, email, phone, role, portal, vivienda } = req.body;
+    const { dni, name, apellidos, email, phone, role, portal, vivienda } = req.body;
 
     if (!dni || !name || !role) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -52,7 +52,7 @@ router.post("/", async (req, res) => {
     const newUser = await User.create({
       dni,
       name,
-      last_name: last_name || null,
+      apellidos: apellidos || null,
       email: email || null,
       phone: phone || null,
       role,
@@ -73,7 +73,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { dni, name, last_name, email, phone, role, portal, vivienda } = req.body;
+    const { dni, name, apellidos, email, phone, role, portal, vivienda } = req.body;
 
     const user = await User.findByPk(id);
 
