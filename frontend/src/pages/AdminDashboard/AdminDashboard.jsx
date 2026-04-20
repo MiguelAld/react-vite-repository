@@ -936,14 +936,14 @@ export default function AdminDashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {portalUsers.length === 0 ? (
+                        {getFilteredUsers().length === 0 ? (
                           <tr>
                             <td colSpan="8" className="text-center">
                               No hay usuarios en este grupo.
                             </td>
                           </tr>
                         ) : (
-                          portalUsers.map((user) => (
+                          getFilteredUsers().map((user) => (
                             <tr key={user.id}>
                               <td>{user.dni}</td>
                               <td>{user.name}</td>
