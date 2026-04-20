@@ -1,6 +1,6 @@
 import express from "express";
 import { NovededRead } from "../models/NovededRead.js";
-import { Meeting } from "../models/Meeting.js";
+import Meeting from "../models/Meeting.js";
 import { Announcement } from "../models/Announcement.js";
 import { sequelize } from "../config/sequelize.js";
 
