@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
           required: false,
         },
       ],
-      order: [["scheduled_date", "ASC"]],
+      order: [["meeting_date", "ASC"]],
     });
 
     res.json(meetings);
@@ -29,9 +29,9 @@ router.get("/", async (req, res) => {
 /* POST crear reunión */
 router.post("/", async (req, res) => {
   try {
-    const { title, description, scheduled_date, location, start_time, end_time, created_by } = req.body;
+    const { title, description, meeting_date, created_by } = req.body;
 
-    if (!title || !scheduled_date || !created_by) {
+    if (!title || !meeting_date || !created_by) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
@@ -44,10 +44,7 @@ router.post("/", async (req, res) => {
     const meeting = await Meeting.create({
       title,
       description: description || null,
-      scheduled_date,
-      location: location || null,
-      start_time: start_time || "10:00",
-      end_time: end_time || "11:00",
+      meeting_date,
       created_by,
     });
 
@@ -73,33 +70,29 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, scheduled_date, location, start_time, end_time, created_by } = req.body;
+    const { title, description, meeting_date, created_by } = req.body;
 
     const meeting = await Meeting.findByPk(id);
+
     if (!meeting) {
       return res.status(404).json({ error: "Reunión no encontrada" });
     }
 
-    // Solo el creador puede editar
-    if (meeting.created_by !== created_by) {
-      return res
-        .status(403)
-        .json({ error: "No tienes permiso para editar esta reunión" });
+    if (!title || !meeting_date || !created_by) {
+      return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
-    if (!title || !scheduled_date) {
-      return res.status(400).json({ error: "Faltan datos obligatorios" });
+    if (Number(meeting.created_by) !== Number(created_by)) {
+      return res.status(403).json({ error: "No tienes permiso para editar esta reunión" });
     }
 
     meeting.title = title;
     meeting.description = description || null;
-    meeting.scheduled_date = scheduled_date;
-    meeting.location = location || null;
-    meeting.start_time = start_time || "10:00";
-    meeting.end_time = end_time || "11:00";
+    meeting.meeting_date = meeting_date;
+
     await meeting.save();
 
-    const fullMeeting = await Meeting.findByPk(id, {
+    const updatedMeeting = await Meeting.findByPk(meeting.id, {
       include: [
         {
           model: User,
@@ -110,7 +103,7 @@ router.put("/:id", async (req, res) => {
       ],
     });
 
-    res.json(fullMeeting);
+    res.json(updatedMeeting);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error al editar reunión" });
@@ -124,18 +117,17 @@ router.delete("/:id", async (req, res) => {
     const { created_by } = req.body;
 
     const meeting = await Meeting.findByPk(id);
+
     if (!meeting) {
       return res.status(404).json({ error: "Reunión no encontrada" });
     }
 
-    // Solo el creador puede eliminar
-    if (meeting.created_by !== created_by) {
-      return res
-        .status(403)
-        .json({ error: "No tienes permiso para eliminar esta reunión" });
+    if (Number(meeting.created_by) !== Number(created_by)) {
+      return res.status(403).json({ error: "No tienes permiso para eliminar esta reunión" });
     }
 
     await meeting.destroy();
+
     res.json({ message: "Reunión eliminada correctamente" });
   } catch (error) {
     console.error(error);

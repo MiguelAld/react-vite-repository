@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import { getMeetings, createMeeting, updateMeeting, deleteMeeting } from "../services/api";
+import {
+  getMeetings,
+  createMeeting,
+  updateMeeting,
+  deleteMeeting,
+} from "../services/api";
 import { useAuth } from "../context/AuthContext";
 import { Plus, Edit2, Trash2, X } from "lucide-react";
 
@@ -13,12 +18,11 @@ export default function CalendarMeetings() {
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    location: "",
-    start_time: "10:00",
-    end_time: "11:00",
+    time: "10:00",
   });
 
   useEffect(() => {
@@ -31,7 +35,7 @@ export default function CalendarMeetings() {
       const data = await getMeetings();
       setMeetings(data);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Error cargando reuniones");
     } finally {
       setLoading(false);
     }
@@ -39,8 +43,8 @@ export default function CalendarMeetings() {
 
   const getMeetingsForDate = (date) => {
     return meetings.filter((m) => {
-      const meetingDate = new Date(m.scheduled_date).toDateString();
-      return meetingDate === date.toDateString();
+      const meetingDate = new Date(m.meeting_date);
+      return meetingDate.toDateString() === date.toDateString();
     });
   };
 
@@ -51,20 +55,23 @@ export default function CalendarMeetings() {
     setFormData({
       title: "",
       description: "",
-      location: "",
-      start_time: "10:00",
-      end_time: "11:00",
+      time: "10:00",
     });
   };
 
   const handleEdit = (meeting) => {
+    const meetingDate = new Date(meeting.meeting_date);
+
+    setSelectedDate(meetingDate);
     setEditingId(meeting.id);
     setFormData({
-      title: meeting.title,
-      description: meeting.description,
-      location: meeting.location,
-      start_time: meeting.start_time,
-      end_time: meeting.end_time,
+      title: meeting.title || "",
+      description: meeting.description || "",
+      time: meetingDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      }),
     });
     setShowForm(true);
   };
@@ -74,9 +81,20 @@ export default function CalendarMeetings() {
 
     try {
       setLoading(true);
+      setError("");
+
+      if (!user?.id) {
+        throw new Error("No se ha detectado el usuario administrador");
+      }
+
+      const [hours, minutes] = formData.time.split(":");
+      const meetingDate = new Date(selectedDate);
+      meetingDate.setHours(Number(hours), Number(minutes), 0, 0);
+
       const meetingData = {
-        ...formData,
-        scheduled_date: selectedDate.toISOString().split("T")[0],
+        title: formData.title,
+        description: formData.description,
+        meeting_date: meetingDate.toISOString().slice(0, 19).replace("T", " "),
         created_by: user.id,
       };
 
@@ -92,12 +110,11 @@ export default function CalendarMeetings() {
       setFormData({
         title: "",
         description: "",
-        location: "",
-        start_time: "10:00",
-        end_time: "11:00",
+        time: "10:00",
       });
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      setError(err.message || "Error guardando reunión");
     } finally {
       setLoading(false);
     }
@@ -108,10 +125,13 @@ export default function CalendarMeetings() {
 
     try {
       setLoading(true);
+      setError("");
+
       await deleteMeeting(id, user.id);
       await loadMeetings();
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      setError(err.message || "Error eliminando reunión");
     } finally {
       setLoading(false);
     }
@@ -128,9 +148,7 @@ export default function CalendarMeetings() {
           onClickDay={handleDateClick}
           tileContent={({ date }) => {
             const count = getMeetingsForDate(date).length;
-            return count > 0 ? (
-              <div className="calendar-badge">{count}</div>
-            ) : null;
+            return count > 0 ? <div className="calendar-badge">{count}</div> : null;
           }}
         />
       </div>
@@ -145,6 +163,7 @@ export default function CalendarMeetings() {
               day: "numeric",
             })}
           </h3>
+
           <button
             className="btn btn-sm btn-primary"
             onClick={() => handleDateClick(selectedDate)}
@@ -162,6 +181,7 @@ export default function CalendarMeetings() {
               <div key={meeting.id} className="calendar-meetings__item">
                 <div className="calendar-meetings__item-header">
                   <h4>{meeting.title}</h4>
+
                   <div className="calendar-meetings__item-actions">
                     <button
                       className="btn btn-sm btn-outline-secondary"
@@ -169,6 +189,7 @@ export default function CalendarMeetings() {
                     >
                       <Edit2 size={14} />
                     </button>
+
                     <button
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleDelete(meeting.id)}
@@ -177,10 +198,14 @@ export default function CalendarMeetings() {
                     </button>
                   </div>
                 </div>
+
                 <p className="text-muted">
-                  {meeting.start_time} - {meeting.end_time}
+                  {new Date(meeting.meeting_date).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </p>
-                {meeting.location && <p className="text-muted">{meeting.location}</p>}
+
                 {meeting.description && <p>{meeting.description}</p>}
               </div>
             ))}
@@ -194,6 +219,7 @@ export default function CalendarMeetings() {
             <div className="calendar-meetings__form">
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4>{editingId ? "Editar reunión" : "Nueva reunión"}</h4>
+
                 <button
                   className="btn btn-close"
                   onClick={() => {
@@ -232,48 +258,23 @@ export default function CalendarMeetings() {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label">Ubicación</label>
+                  <label className="form-label">Hora</label>
                   <input
-                    type="text"
+                    type="time"
                     className="form-control"
-                    value={formData.location}
+                    value={formData.time}
                     onChange={(e) =>
-                      setFormData({ ...formData, location: e.target.value })
+                      setFormData({ ...formData, time: e.target.value })
                     }
+                    required
                   />
-                </div>
-
-                <div className="row">
-                  <div className="col-6">
-                    <label className="form-label">Hora inicio</label>
-                    <input
-                      type="time"
-                      className="form-control"
-                      value={formData.start_time}
-                      onChange={(e) =>
-                        setFormData({ ...formData, start_time: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
-                  <div className="col-6">
-                    <label className="form-label">Hora fin</label>
-                    <input
-                      type="time"
-                      className="form-control"
-                      value={formData.end_time}
-                      onChange={(e) =>
-                        setFormData({ ...formData, end_time: e.target.value })
-                      }
-                      required
-                    />
-                  </div>
                 </div>
 
                 <div className="d-flex gap-2 mt-4">
                   <button type="submit" className="btn btn-primary" disabled={loading}>
                     {loading ? "Guardando..." : "Guardar"}
                   </button>
+
                   <button
                     type="button"
                     className="btn btn-secondary"

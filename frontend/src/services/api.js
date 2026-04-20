@@ -78,6 +78,38 @@ export async function createMeeting(meetingData) {
   return data;
 }
 
+  export async function updateMeeting(id, meetingData) {
+    const res = await fetch(`${API_URL}/meetings/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(meetingData),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(data?.error || "Error actualizando reunión");
+    }
+
+    return data;
+  }
+
+  export async function deleteMeeting(id, created_by) {
+    const res = await fetch(`${API_URL}/meetings/${id}`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ created_by }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(data?.error || "Error eliminando reunión");
+    }
+
+    return data;
+  }
+
 /* USERS */
 export async function getUsers() {
   const res = await fetch(`${API_URL}/users`);
@@ -367,39 +399,6 @@ export async function deleteAnnouncement(id, created_by) {
 
   if (!res.ok) {
     throw new Error(data?.error || "Error eliminando anuncio");
-  }
-
-  return data;
-}
-
-/* MEETINGS - MEJORADO */
-export async function updateMeeting(id, meetingData) {
-  const res = await fetch(`${API_URL}/meetings/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(meetingData),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error editando reunión");
-  }
-
-  return data;
-}
-
-export async function deleteMeeting(id, created_by) {
-  const res = await fetch(`${API_URL}/meetings/${id}`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ created_by }),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error eliminando reunión");
   }
 
   return data;
