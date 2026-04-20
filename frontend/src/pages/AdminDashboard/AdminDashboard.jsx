@@ -249,7 +249,7 @@ export default function AdminDashboard() {
       setUserForm({
         dni: "",
         name: "",
-        last_name: "",
+        apellidos: "",
         phone: "",
         email: "",
         portal: "",
@@ -264,7 +264,7 @@ export default function AdminDashboard() {
       setUserForm({
         dni: user.dni || "",
         name: user.name || "",
-        last_name: user.last_name || "",
+        apellidos: user.apellidos || "",
         phone: user.phone || "",
         email: user.email || "",
         portal: user.portal || "",
@@ -947,7 +947,7 @@ export default function AdminDashboard() {
                             <tr key={user.id}>
                               <td>{user.dni}</td>
                               <td>{user.name}</td>
-                              <td>{user.last_name || "—"}</td>
+                              <td>{user.apellidos || "—"}</td>
                               <td>{user.phone || "—"}</td>
                               <td>{user.portal || "—"}</td>
                               <td>{user.vivienda || "—"}</td>
@@ -1030,8 +1030,8 @@ export default function AdminDashboard() {
                           <input
                             type="text"
                             className="form-control"
-                            name="last_name"
-                            value={userForm.last_name}
+                            name="apellidos"
+                            value={userForm.apellidos}
                             onChange={handleUserFormChange}
                           />
                         </div>
