@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { createMeeting } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import { createMeeting } from "../../services/api.js";
+import { useAuth } from "../../context/AuthContext.jsx";
 
 export default function CreateMeeting() {
   const { user } = useAuth();
@@ -30,11 +30,15 @@ export default function CreateMeeting() {
     setError("");
 
     try {
+      if (!user || !user.id) {
+        throw new Error("No se ha detectado el usuario administrador. Vuelve a iniciar sesión.");
+      }
+
       await createMeeting({
         title: formData.title,
         description: formData.description,
         meeting_date: formData.meeting_date,
-        created_by: user?.id,
+        created_by: user.id,
       });
 
       setMessage("Reunión creada correctamente");
