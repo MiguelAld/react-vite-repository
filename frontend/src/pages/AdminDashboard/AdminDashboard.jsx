@@ -154,6 +154,23 @@ export default function AdminDashboard() {
     return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
+  const viviendasPorPortal = {
+  "PORTAL 1": [
+    "1A", "1B",
+    "2A", "2B",
+    "3A", "3B",
+    "4A", "4B",
+    "5A", "5B",
+  ],
+  "PORTAL 2": [
+    "1C", "1D",
+    "2C", "2D",
+    "3C", "3D",
+    "4C", "4D",
+    "5C", "5D",
+  ],
+};
+
   const handleStatusChange = async (incidentId, newStatus) => {
     try {
       await updateIncidentStatus(incidentId, newStatus);
@@ -208,10 +225,21 @@ export default function AdminDashboard() {
 
   const handleUserFormChange = (e) => {
     const { name, value } = e.target;
-    setUserForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    setUserForm((prev) => {
+      if (name === "portal") {
+        return {
+          ...prev,
+          portal: value,
+          vivienda: "",
+        };
+      }
+
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   const openCreateModal = () => {
@@ -1046,17 +1074,26 @@ export default function AdminDashboard() {
                           </select>
                         </div>
 
-                        <div className="col-md-6">
-                          <label className="form-label">Vivienda</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="vivienda"
-                            value={userForm.vivienda}
-                            onChange={handleUserFormChange}
-                            placeholder="Ej: 2B, 1C, etc."
-                          />
-                        </div>
+                      <div className="col-md-6">
+                        <label className="form-label">Vivienda</label>
+                        <select
+                          className="form-select"
+                          name="vivienda"
+                          value={userForm.vivienda}
+                          onChange={handleUserFormChange}
+                          disabled={!userForm.portal}
+                        >
+                          <option value="">
+                            {userForm.portal ? "Selecciona vivienda" : "Primero selecciona portal"}
+                          </option>
+
+                          {(viviendasPorPortal[userForm.portal] || []).map((vivienda) => (
+                            <option key={vivienda} value={vivienda}>
+                              {vivienda}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
                         <div className="col-md-12">
                           <label className="form-label">Rol</label>
