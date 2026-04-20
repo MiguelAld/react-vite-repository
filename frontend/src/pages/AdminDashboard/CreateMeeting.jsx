@@ -1,82 +1,103 @@
 import { useState } from "react";
 import { createMeeting } from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 
 export default function CreateMeeting() {
+  const { user } = useAuth();
 
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [meetingDate, setMeetingDate] = useState("");
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    meeting_date: "",
+  });
 
-  const submit = async (e) => {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage("");
+    setError("");
 
     try {
-
       await createMeeting({
-        title,
-        description,
-        meeting_date: meetingDate,
-        created_by: 1
+        title: formData.title,
+        description: formData.description,
+        meeting_date: formData.meeting_date,
+        created_by: user?.id,
       });
 
-      alert("Reunión creada");
-
-      setTitle("");
-      setDescription("");
-      setMeetingDate("");
-
-    } catch (error) {
-      console.error(error);
-      alert("Error creando reunión");
+      setMessage("Reunión creada correctamente");
+      setFormData({
+        title: "",
+        description: "",
+        meeting_date: "",
+      });
+    } catch (err) {
+      console.error(err);
+      setError(err.message || "Error al crear reunión");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="card p-4">
+    <div className="dashboard-block">
+      <h3>Crear reunión</h3>
 
-      <h2>Crear reunión</h2>
+      {message && <div className="alert alert-success">{message}</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
-      <form onSubmit={submit}>
-
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label className="form-label">Título</label>
-
           <input
+            type="text"
             className="form-control"
-            value={title}
-            onChange={(e)=>setTitle(e.target.value)}
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
             required
           />
         </div>
 
         <div className="mb-3">
           <label className="form-label">Descripción</label>
-
           <textarea
             className="form-control"
-            value={description}
-            onChange={(e)=>setDescription(e.target.value)}
+            name="description"
+            rows="4"
+            value={formData.description}
+            onChange={handleChange}
           />
         </div>
 
         <div className="mb-3">
-          <label className="form-label">Fecha</label>
-
+          <label className="form-label">Fecha y hora</label>
           <input
             type="datetime-local"
             className="form-control"
-            value={meetingDate}
-            onChange={(e)=>setMeetingDate(e.target.value)}
+            name="meeting_date"
+            value={formData.meeting_date}
+            onChange={handleChange}
             required
           />
         </div>
 
-        <button className="btn btn-primary">
-          Crear reunión
+        <button className="btn btn-primary" type="submit" disabled={loading}>
+          {loading ? "Creando..." : "Crear reunión"}
         </button>
-
       </form>
-
     </div>
   );
 }
