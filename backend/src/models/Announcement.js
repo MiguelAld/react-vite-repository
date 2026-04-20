@@ -9,7 +9,7 @@ export const Announcement = sequelize.define(
       type: DataTypes.STRING(150),
       allowNull: false,
     },
-    description: {
+    content: {
       type: DataTypes.TEXT,
       allowNull: false,
     },

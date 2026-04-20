@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   FileText,
-  CalendarDays,
   Wrench,
   Bell,
   UserCircle2,
@@ -80,8 +79,18 @@ export default function UserDashboard() {
       setLoadingAnnouncements(true);
       setAnnouncementError("");
 
-      getAnnouncements()
-        .then(setAnnouncements)
+      getAnnouncements(user?.id)
+        .then((data) => {
+          setAnnouncements(data);
+          // Marcar automáticamente todos como leídos
+          if (user?.id) {
+            markAllNovededAsRead(user.id)
+              .then(() => {
+                setUnreadCount(0);
+              })
+              .catch(console.error);
+          }
+        })
         .catch((err) => {
           console.error(err);
           setAnnouncementError(err.message || "Error cargando anuncios");
@@ -90,7 +99,7 @@ export default function UserDashboard() {
           setLoadingAnnouncements(false);
         });
     }
-  }, [activeSection]);
+  }, [activeSection, user?.id]);
 
   const userName = user?.name || "USER";
   const userDni = user?.dni || "Sin DNI";
@@ -178,19 +187,6 @@ export default function UserDashboard() {
           <div>
             <h3>Documentos</h3>
             <p>Consulta normativa, actas y archivos importantes.</p>
-          </div>
-        </button>
-
-        <button
-          className="user-home-card"
-          onClick={() => setActiveSection("reuniones")}
-        >
-          <div className="user-home-card__icon">
-            <CalendarDays size={28} />
-          </div>
-          <div>
-            <h3>Reuniones</h3>
-            <p>Revisa convocatorias, fechas y detalles publicados.</p>
           </div>
         </button>
 
@@ -525,23 +521,9 @@ export default function UserDashboard() {
         <div>
           <h1 className="dashboard-title">Novedades</h1>
           <p className="dashboard-subtitle">
-            Aquí aparecerán avisos, noticias y comunicaciones importantes de la comunidad.
+            Avisos y comunicaciones importantes de la comunidad
           </p>
         </div>
-
-        {unreadCount > 0 && (
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => markAllNovededAsRead(user.id).then(() => {
-              setUnreadCount(0);
-              getAnnouncements()
-                .then(setAnnouncements)
-                .catch(console.error);
-            })}
-          >
-            Marcar todos como leído
-          </button>
-        )}
       </div>
 
       {loadingAnnouncements && <p>Cargando anuncios...</p>}
@@ -552,45 +534,29 @@ export default function UserDashboard() {
           {announcements.length === 0 ? (
             <p className="dashboard-empty">No hay novedades disponibles.</p>
           ) : (
-            <div className="dashboard-list">
+            <div className="announcements-grid">
               {announcements.map((announcement) => (
-                <div key={announcement.id} className="dashboard-list-item announcement-item">
-                  <div className="announcement-header">
-                    <h5>{announcement.title}</h5>
-                    {announcement.is_read ? (
-                      <span className="badge bg-success">Leído</span>
-                    ) : (
-                      <span className="badge bg-info">Nuevo</span>
-                    )}
+                <div key={announcement.id} className="announcement-card">
+                  <div className="announcement-card__header">
+                    <h3>{announcement.title}</h3>
                   </div>
-                  <p className="text-muted mb-2">
+
+                  <p className="announcement-card__meta">
                     <strong>Publicado por:</strong> {announcement.creator?.name || "Administración"}
                   </p>
-                  <p className="text-muted mb-2">
-                    <strong>Fecha:</strong> {new Date(announcement.created_at).toLocaleDateString()}
+                  <p className="announcement-card__date">
+                    {new Date(announcement.created_at).toLocaleDateString("es-ES", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
-                  <p className="announcement-content">{announcement.content}</p>
 
-                  {!announcement.is_read && (
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => {
-                        markNovededAsRead(user.id, "announcement", announcement.id)
-                          .then(() => {
-                            setAnnouncements((prev) =>
-                              prev.map((a) =>
-                                a.id === announcement.id ? { ...a, is_read: true } : a
-                              )
-                            );
-                            setUnreadCount((prev) => Math.max(0, prev - 1));
-                          })
-                          .catch(console.error);
-                      }}
-                    >
-                      <CheckCircle2 size={14} />
-                      Marcar como leído
-                    </button>
-                  )}
+                  <div className="announcement-card__content">
+                    {announcement.content}
+                  </div>
                 </div>
               ))}
             </div>
@@ -661,7 +627,6 @@ export default function UserDashboard() {
         <main className="user-layout-main">
           {activeSection === "inicio" && renderInicio()}
           {activeSection === "documentos" && renderDocumentos()}
-          {activeSection === "reuniones" && renderReuniones()}
           {activeSection === "incidencias" && renderIncidencias()}
           {activeSection === "novedades" && renderNovedades()}
         </main>

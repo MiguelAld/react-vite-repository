@@ -1,12 +1,16 @@
 import express from "express";
 import { Announcement } from "../models/Announcement.js";
 import { User } from "../models/User.js";
+import { NovededRead } from "../models/NovededRead.js";
+import { sequelize } from "../config/sequelize.js";
 
 const router = express.Router();
 
 /* Listar anuncios */
 router.get("/", async (req, res) => {
   try {
+    const { userId } = req.query;
+
     const announcements = await Announcement.findAll({
       include: [
         {
@@ -17,6 +21,28 @@ router.get("/", async (req, res) => {
       ],
       order: [["created_at", "DESC"]],
     });
+
+    // Si tenemos userId, incluir estado de lectura
+    if (userId) {
+      const announcementsWithReadStatus = await Promise.all(
+        announcements.map(async (ann) => {
+          const read = await NovededRead.findOne({
+            where: {
+              user_id: userId,
+              novedad_type: "announcement",
+              novedad_id: ann.id,
+            },
+          });
+
+          return {
+            ...ann.toJSON(),
+            is_read: !!read,
+          };
+        })
+      );
+
+      return res.json(announcementsWithReadStatus);
+    }
 
     res.json(announcements);
   } catch (error) {

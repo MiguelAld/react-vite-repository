@@ -296,8 +296,13 @@ export async function updateZoneOrder(id, direction) {
 }
 
 /* ANNOUNCEMENTS */
-export async function getAnnouncements() {
-  const res = await fetch(`${API_URL}/announcements`);
+export async function getAnnouncements(userId = null) {
+  const url = new URL(`${API_URL}/announcements`);
+  if (userId) {
+    url.searchParams.append("userId", userId);
+  }
+
+  const res = await fetch(url);
 
   const data = await res.json().catch(() => ({}));
 
