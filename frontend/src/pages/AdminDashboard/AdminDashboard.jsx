@@ -17,6 +17,7 @@ import {
   getMeetings,
 } from "../../services/api";
 import "../../assets/dashboard.css";
+import { Pencil } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
   const [userForm, setUserForm] = useState({
     dni: "",
     name: "",
+    apellidos: "",
     phone: "",
     email: "",
     portal: "",
@@ -242,35 +244,35 @@ export default function AdminDashboard() {
     });
   };
 
-  const openCreateModal = () => {
-    setEditingUser(null);
-    setUserForm({
-      dni: "",
-      name: "",
-      phone: "",
-      email: "",
-      portal: "",
-      vivienda: "",
-      role: "VECINO",
-    });
-    setShowUserModal(true);
-    setOpenMenuId(null);
-  };
+    const openCreateModal = () => {
+      setEditingUser(null);
+      setUserForm({
+        dni: "",
+        name: "",
+        last_name: "",
+        phone: "",
+        email: "",
+        portal: "",
+        vivienda: "",
+        role: "VECINO",
+      });
+      setShowUserModal(true);
+    };
 
-  const openEditModal = (user) => {
-    setEditingUser(user);
-    setUserForm({
-      dni: user.dni || "",
-      name: user.name || "",
-      phone: user.phone || "",
-      email: user.email || "",
-      portal: user.portal || "",
-      vivienda: user.vivienda || "",
-      role: user.role || "VECINO",
-    });
-    setShowUserModal(true);
-    setOpenMenuId(null);
-  };
+    const openEditModal = (user) => {
+      setEditingUser(user);
+      setUserForm({
+        dni: user.dni || "",
+        name: user.name || "",
+        last_name: user.last_name || "",
+        phone: user.phone || "",
+        email: user.email || "",
+        portal: user.portal || "",
+        vivienda: user.vivienda || "",
+        role: user.role || "VECINO",
+      });
+      setShowUserModal(true);
+    };
 
   const closeUserModal = () => {
     setShowUserModal(false);
@@ -923,35 +925,31 @@ export default function AdminDashboard() {
                     <table className="table table-striped align-middle">
                       <thead>
                         <tr>
-                          <th>ID</th>
-                          <th>Nombre</th>
                           <th>DNI</th>
+                          <th>Nombre</th>
+                          <th>Apellidos</th>
                           <th>Teléfono</th>
-                          <th>Email</th>
+                          <th>Portal</th>
                           <th>Vivienda</th>
                           <th>Rol</th>
-                          <th>Estado</th>
-                          <th>Alta</th>
                           <th>Acción</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {getFilteredUsers().length === 0 ? (
+                        {portalUsers.length === 0 ? (
                           <tr>
-                            <td colSpan="10" className="text-center">
-                              {userSearchFilter
-                                ? "No hay usuarios que coincidan con la búsqueda."
-                                : "No hay usuarios registrados."}
+                            <td colSpan="8" className="text-center">
+                              No hay usuarios en este grupo.
                             </td>
                           </tr>
                         ) : (
-                          getFilteredUsers().map((user) => (
+                          portalUsers.map((user) => (
                             <tr key={user.id}>
-                              <td>{user.id}</td>
-                              <td>{user.name}</td>
                               <td>{user.dni}</td>
+                              <td>{user.name}</td>
+                              <td>{user.last_name || "—"}</td>
                               <td>{user.phone || "—"}</td>
-                              <td>{user.email || "—"}</td>
+                              <td>{user.portal || "—"}</td>
                               <td>{user.vivienda || "—"}</td>
                               <td>
                                 {user.role === "ADMIN" ? (
@@ -961,23 +959,12 @@ export default function AdminDashboard() {
                                 )}
                               </td>
                               <td>
-                                {user.is_active ? (
-                                  <span className="badge bg-success">ACTIVO</span>
-                                ) : (
-                                  <span className="badge bg-secondary">INACTIVO</span>
-                                )}
-                              </td>
-                              <td>
-                                {user.created_at
-                                  ? new Date(user.created_at).toLocaleDateString()
-                                  : "—"}
-                              </td>
-                              <td>
                                 <button
                                   className="btn btn-sm btn-outline-primary"
                                   onClick={() => openEditModal(user)}
+                                  title="Editar usuario"
                                 >
-                                  Editar
+                                  <Pencil size={16} />
                                 </button>
                               </td>
                             </tr>
@@ -1035,6 +1022,17 @@ export default function AdminDashboard() {
                             value={userForm.name}
                             onChange={handleUserFormChange}
                             required
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <label className="form-label">Apellidos</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="last_name"
+                            value={userForm.last_name}
+                            onChange={handleUserFormChange}
                           />
                         </div>
 
