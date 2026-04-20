@@ -555,7 +555,7 @@ export default function UserDashboard() {
                   </p>
 
                   <div className="announcement-card__content">
-                    {announcement.content}
+                    {announcement.description}
                   </div>
                 </div>
               ))}

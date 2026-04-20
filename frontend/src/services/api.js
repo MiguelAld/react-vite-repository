@@ -314,10 +314,16 @@ export async function getAnnouncements(userId = null) {
 }
 
 export async function createAnnouncement(announcementData) {
+  const payload = {
+    title: announcementData.title,
+    description: announcementData.description || announcementData.content,
+    created_by: announcementData.created_by,
+  };
+
   const res = await fetch(`${API_URL}/announcements`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(announcementData),
+    body: JSON.stringify(payload),
   });
 
   const data = await res.json().catch(() => ({}));
@@ -330,10 +336,15 @@ export async function createAnnouncement(announcementData) {
 }
 
 export async function updateAnnouncement(id, announcementData) {
+  const payload = {
+    title: announcementData.title,
+    description: announcementData.description || announcementData.content,
+  };
+
   const res = await fetch(`${API_URL}/announcements/${id}`, {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(announcementData),
+    body: JSON.stringify(payload),
   });
 
   const data = await res.json().catch(() => ({}));

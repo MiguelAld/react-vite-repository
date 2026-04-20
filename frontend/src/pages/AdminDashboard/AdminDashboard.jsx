@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import SidebarAdmin from "../../components/layout/SidebarAdmin";
-import CreateMeeting from "./CreateMeeting";
+import CalendarMeetings from "../../components/CalendarMeetings";
 import { useAuth } from "../../context/AuthContext";
 import {
   getUsers,
@@ -886,10 +886,10 @@ export default function AdminDashboard() {
             <section className="dashboard-panel">
               <h1 className="dashboard-title">Reuniones</h1>
               <p className="dashboard-subtitle">
-                Crea y organiza reuniones para la comunidad.
+                Crea y organiza reuniones para la comunidad con el calendario interactivo.
               </p>
 
-              <CreateMeeting />
+              <CalendarMeetings />
             </section>
           )}
 

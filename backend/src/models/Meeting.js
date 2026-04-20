@@ -13,9 +13,23 @@ const Meeting = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: true,
     },
-    meeting_date: {
+    scheduled_date: {
       type: DataTypes.DATE,
       allowNull: false,
+    },
+    location: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    start_time: {
+      type: DataTypes.STRING(5),
+      allowNull: false,
+      defaultValue: "10:00",
+    },
+    end_time: {
+      type: DataTypes.STRING(5),
+      allowNull: false,
+      defaultValue: "11:00",
     },
     created_by: {
       type: DataTypes.BIGINT,

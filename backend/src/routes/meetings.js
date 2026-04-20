@@ -16,7 +16,7 @@ router.get("/", async (req, res) => {
           required: false,
         },
       ],
-      order: [["meeting_date", "ASC"]],
+      order: [["scheduled_date", "ASC"]],
     });
 
     res.json(meetings);
@@ -29,9 +29,9 @@ router.get("/", async (req, res) => {
 /* POST crear reunión */
 router.post("/", async (req, res) => {
   try {
-    const { title, description, meeting_date, created_by } = req.body;
+    const { title, description, scheduled_date, location, start_time, end_time, created_by } = req.body;
 
-    if (!title || !meeting_date || !created_by) {
+    if (!title || !scheduled_date || !created_by) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
@@ -44,7 +44,10 @@ router.post("/", async (req, res) => {
     const meeting = await Meeting.create({
       title,
       description: description || null,
-      meeting_date,
+      scheduled_date,
+      location: location || null,
+      start_time: start_time || "10:00",
+      end_time: end_time || "11:00",
       created_by,
     });
 
@@ -70,7 +73,7 @@ router.post("/", async (req, res) => {
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, meeting_date, created_by } = req.body;
+    const { title, description, scheduled_date, location, start_time, end_time, created_by } = req.body;
 
     const meeting = await Meeting.findByPk(id);
     if (!meeting) {
@@ -84,13 +87,16 @@ router.put("/:id", async (req, res) => {
         .json({ error: "No tienes permiso para editar esta reunión" });
     }
 
-    if (!title || !meeting_date) {
+    if (!title || !scheduled_date) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
     meeting.title = title;
     meeting.description = description || null;
-    meeting.meeting_date = meeting_date;
+    meeting.scheduled_date = scheduled_date;
+    meeting.location = location || null;
+    meeting.start_time = start_time || "10:00";
+    meeting.end_time = end_time || "11:00";
     await meeting.save();
 
     const fullMeeting = await Meeting.findByPk(id, {
