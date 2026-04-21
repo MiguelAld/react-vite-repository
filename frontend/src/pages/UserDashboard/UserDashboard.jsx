@@ -7,16 +7,14 @@ import {
   UserCircle2,
   ChevronDown,
   X,
-  CheckCircle2,
+  House,
 } from "lucide-react";
-import SidebarUser from "../../components/layout/SidebarUser";
 import {
   getMeetings,
   getZones,
   createIncident,
   getCommunityIncidents,
   getAnnouncements,
-  markNovededAsRead,
   markAllNovededAsRead,
   getNovededCount,
 } from "../../services/api";
@@ -50,6 +48,7 @@ export default function UserDashboard() {
   useEffect(() => {
     getMeetings().then(setMeetings).catch(console.error);
     getZones().then(setZones).catch(console.error);
+
     if (user?.id) {
       getNovededCount(user.id)
         .then((data) => setUnreadCount(data.total || 0))
@@ -82,12 +81,10 @@ export default function UserDashboard() {
       getAnnouncements(user?.id)
         .then((data) => {
           setAnnouncements(data);
-          // Marcar automáticamente todos como leídos
+
           if (user?.id) {
             markAllNovededAsRead(user.id)
-              .then(() => {
-                setUnreadCount(0);
-              })
+              .then(() => setUnreadCount(0))
               .catch(console.error);
           }
         })
@@ -126,7 +123,8 @@ export default function UserDashboard() {
     try {
       const incidentPayload = {
         zone_id: formData.zone_id === "other" ? null : Number(formData.zone_id),
-        custom_zone: formData.zone_id === "other" ? formData.custom_zone.trim() : null,
+        custom_zone:
+          formData.zone_id === "other" ? formData.custom_zone.trim() : null,
         created_by: user.id,
         description: formData.description,
       };
@@ -151,81 +149,146 @@ export default function UserDashboard() {
   const formatDateTime = (dateString) => {
     if (!dateString) return "—";
     const date = new Date(dateString);
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    return (
+      date.toLocaleDateString() +
+      " " +
+      date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    );
   };
 
   const getIncidentZoneLabel = (incident) => {
     return incident.zone?.name || incident.custom_zone || "—";
   };
 
+  const renderTopHeader = () => (
+    <header className="user-app-header">
+      <div className="user-app-header__left">
+        {activeSection !== "inicio" && (
+          <button
+            className="user-app-home-btn"
+            onClick={() => setActiveSection("inicio")}
+            title="Volver a inicio"
+          >
+            <House size={20} />
+          </button>
+        )}
+
+        <div className="user-app-brand">
+          <div className="user-app-brand__logo">
+            <House size={20} />
+          </div>
+          <span>Mi Comunidad</span>
+        </div>
+      </div>
+
+      <div className="user-profile-menu">
+        <button
+          className="user-profile-menu__trigger"
+          onClick={() => setProfileMenuOpen((prev) => !prev)}
+        >
+          <div className="user-profile-menu__avatar">
+            <UserCircle2 size={24} />
+          </div>
+
+          <div className="user-profile-menu__text">
+            <strong>{userName}</strong>
+            <span>{userHouse}</span>
+          </div>
+
+          <ChevronDown size={18} />
+        </button>
+
+        {profileMenuOpen && (
+          <div className="user-profile-menu__dropdown">
+            <div className="user-profile-menu__info">
+              <p>
+                <strong>Nombre:</strong> {userName}
+              </p>
+              <p>
+                <strong>DNI:</strong> {userDni}
+              </p>
+              <p>
+                <strong>Vivienda:</strong> {userHouse}
+              </p>
+            </div>
+
+            {activeSection !== "inicio" && (
+              <button
+                className="user-profile-menu__item"
+                onClick={() => {
+                  setActiveSection("inicio");
+                  setProfileMenuOpen(false);
+                }}
+              >
+                Ver inicio
+              </button>
+            )}
+
+            <button
+              className="user-profile-menu__item user-profile-menu__item--danger"
+              onClick={handleLogout}
+            >
+              Cerrar sesión
+            </button>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+
   const renderInicio = () => (
-    <section className="user-home">
-      <div className="user-home__hero">
-        <h1 className="user-home__title">
-          Bienvenido, <span>{userName}</span>
-        </h1>
-        <p className="user-home__subtitle">
-          Accede rápidamente a las secciones principales de la comunidad.
-        </p>
+    <section className="user-home-v2">
+      {renderTopHeader()}
+
+      <div className="user-home-v2__center">
+        <div className="user-home-v2__buttons">
+          <button
+            className="user-circle-access user-circle-access--large"
+            onClick={() => setActiveSection("incidencias")}
+          >
+            <div className="user-circle-access__icon">
+              <Wrench size={34} />
+            </div>
+            <span>Incidencias</span>
+          </button>
+
+          <button
+            className="user-circle-access user-circle-access--small"
+            onClick={() => setActiveSection("novedades")}
+          >
+            <div className="user-circle-access__icon user-circle-access__icon--bell">
+              <Bell size={30} />
+              {unreadCount > 0 && (
+                <span className="user-circle-access__badge">{unreadCount}</span>
+              )}
+            </div>
+            <span>Novedades</span>
+          </button>
+
+          <button
+            className="user-circle-access user-circle-access--large"
+            onClick={() => setActiveSection("documentos")}
+          >
+            <div className="user-circle-access__icon">
+              <FileText size={34} />
+            </div>
+            <span>Documentos</span>
+          </button>
+        </div>
       </div>
 
-      <div className="user-home__identity-card">
-        <h3>Mis datos</h3>
-        <p><strong>Nombre:</strong> {userName}</p>
-        <p><strong>DNI:</strong> {userDni}</p>
-        <p><strong>Vivienda:</strong> {userHouse}</p>
-      </div>
-
-      <div className="user-home__grid">
-        <button
-          className="user-home-card"
-          onClick={() => setActiveSection("documentos")}
-        >
-          <div className="user-home-card__icon">
-            <FileText size={28} />
-          </div>
-          <div>
-            <h3>Documentos</h3>
-            <p>Consulta normativa, actas y archivos importantes.</p>
-          </div>
-        </button>
-
-        <button
-          className="user-home-card"
-          onClick={() => setActiveSection("incidencias")}
-        >
-          <div className="user-home-card__icon">
-            <Wrench size={28} />
-          </div>
-          <div>
-            <h3>Incidencias</h3>
-            <p>Crea avisos y consulta el estado de la comunidad.</p>
-          </div>
-        </button>
-
-        <button
-          className="user-home-card"
-          onClick={() => setActiveSection("novedades")}
-        >
-          <div className="user-home-card__icon">
-            <Bell size={28} />
-          </div>
-          <div>
-            <h3>Novedades</h3>
-            <p>Mantente al día con avisos y noticias de la comunidad.</p>
-          </div>
-        </button>
-      </div>
+      <div className="user-home-v2__bottom" />
     </section>
   );
 
   const renderIncidencias = () => (
-    <section className="dashboard-panel">
+    <section className="dashboard-panel user-section-panel">
       <div className="dashboard-header-row">
         <div>
-          <h1 className="dashboard-title">Incidencias de la comunidad</h1>
+          <h1 className="dashboard-title">Incidencias</h1>
           <p className="dashboard-subtitle">
-            Aquí puedes crear una incidencia y consultar las registradas por toda la comunidad.
+            Aquí puedes crear una incidencia y consultar las registradas por toda
+            la comunidad.
           </p>
         </div>
 
@@ -243,47 +306,47 @@ export default function UserDashboard() {
       {!loadingIncidents && !incidentError && (
         <>
           {incidents.length === 0 ? (
-            <p className="dashboard-empty">No hay incidencias registradas todavía.</p>
+            <p className="dashboard-empty">
+              No hay incidencias registradas todavía.
+            </p>
           ) : (
             <div className="incidents-grid user-incidents-grid">
-              {incidents.map((incident) => {
-                const isMine = user?.id && incident.creator?.id === user.id;
+              {incidents.map((incident) => (
+                <article key={incident.id} className="incident-card">
+                  <div className="incident-card__top">
+                    <h4>{getIncidentZoneLabel(incident)}</h4>
 
-                return (
-                  <article key={incident.id} className="incident-card">
-                    <div className="incident-card__top">
-                      <h4>{getIncidentZoneLabel(incident)}</h4>
+                    <span
+                      className={`badge ${
+                        incident.status === "PENDIENTE"
+                          ? "text-bg-warning"
+                          : incident.status === "EN_PROCESO"
+                          ? "text-bg-primary"
+                          : "text-bg-success"
+                      }`}
+                    >
+                      {incident.status === "EN_PROCESO"
+                        ? "EN PROCESO"
+                        : incident.status}
+                    </span>
+                  </div>
 
-                      <span
-                        className={`badge ${
-                          incident.status === "PENDIENTE"
-                            ? "text-bg-warning"
-                            : incident.status === "EN_PROCESO"
-                            ? "text-bg-primary"
-                            : "text-bg-success"
-                        }`}
-                      >
-                        {incident.status === "EN_PROCESO"
-                          ? "EN PROCESO"
-                          : incident.status}
-                      </span>
-                    </div>
+                  <div className="incident-card__meta">
+                    <p>
+                      <strong>Creada por:</strong>{" "}
+                      {incident.creator?.name || "—"}
+                    </p>
+                    <p>
+                      <strong>Fecha y hora:</strong>{" "}
+                      {formatDateTime(incident.created_at)}
+                    </p>
+                  </div>
 
-                    <div className="incident-card__meta">
-                      <p>
-                        <strong>Creada por:</strong> {incident.creator?.name || "—"}
-                      </p>
-                      <p>
-                        <strong>Fecha y hora:</strong> {formatDateTime(incident.created_at)}
-                      </p>
-                    </div>
-
-                    <div className="incident-card__description">
-                      <p>{incident.description}</p>
-                    </div>
-                  </article>
-                );
-              })}
+                  <div className="incident-card__description">
+                    <p>{incident.description}</p>
+                  </div>
+                </article>
+              ))}
             </div>
           )}
         </>
@@ -415,7 +478,7 @@ export default function UserDashboard() {
                         : "text-bg-success"
                     }`}
                   >
-                    {selectedIncident.status === "EN_PROCESO"
+                    {selectedIncident.status === "EN PROCESO"
                       ? "EN PROCESO"
                       : selectedIncident.status}
                   </span>
@@ -431,7 +494,9 @@ export default function UserDashboard() {
                 <label>Fecha</label>
                 <p>
                   {selectedIncident.created_at
-                    ? new Date(selectedIncident.created_at).toLocaleDateString()
+                    ? new Date(
+                        selectedIncident.created_at
+                      ).toLocaleDateString()
                     : "—"}
                 </p>
               </div>
@@ -440,7 +505,9 @@ export default function UserDashboard() {
                 <label>Hora</label>
                 <p>
                   {selectedIncident.created_at
-                    ? new Date(selectedIncident.created_at).toLocaleTimeString([], {
+                    ? new Date(
+                        selectedIncident.created_at
+                      ).toLocaleTimeString([], {
                         hour: "2-digit",
                         minute: "2-digit",
                       })
@@ -469,34 +536,8 @@ export default function UserDashboard() {
     </section>
   );
 
-  const renderReuniones = () => (
-    <section className="dashboard-panel">
-      <h1 className="dashboard-title">Reuniones</h1>
-      <p className="dashboard-subtitle">
-        Aquí verás las reuniones creadas por el administrador.
-      </p>
-
-      {meetings.length === 0 ? (
-        <p className="dashboard-empty">No hay reuniones programadas.</p>
-      ) : (
-        <div className="dashboard-list">
-          {meetings.map((meeting) => (
-            <div key={meeting.id} className="dashboard-list-item">
-              <h5>{meeting.title}</h5>
-              <p>
-                <strong>Fecha:</strong>{" "}
-                {new Date(meeting.meeting_date).toLocaleString()}
-              </p>
-              <p>{meeting.description || "Sin descripción"}</p>
-            </div>
-          ))}
-        </div>
-      )}
-    </section>
-  );
-
   const renderDocumentos = () => (
-    <section className="dashboard-panel">
+    <section className="dashboard-panel user-section-panel">
       <h1 className="dashboard-title">Documentos</h1>
       <p className="dashboard-subtitle">
         Aquí verás los documentos subidos por la administración.
@@ -516,7 +557,7 @@ export default function UserDashboard() {
   );
 
   const renderNovedades = () => (
-    <section className="dashboard-panel">
+    <section className="dashboard-panel user-section-panel">
       <div className="dashboard-header-row">
         <div>
           <h1 className="dashboard-title">Novedades</h1>
@@ -527,7 +568,9 @@ export default function UserDashboard() {
       </div>
 
       {loadingAnnouncements && <p>Cargando anuncios...</p>}
-      {announcementError && <div className="alert alert-danger">{announcementError}</div>}
+      {announcementError && (
+        <div className="alert alert-danger">{announcementError}</div>
+      )}
 
       {!loadingAnnouncements && !announcementError && (
         <>
@@ -542,16 +585,20 @@ export default function UserDashboard() {
                   </div>
 
                   <p className="announcement-card__meta">
-                    <strong>Publicado por:</strong> {announcement.creator?.name || "Administración"}
+                    <strong>Publicado por:</strong>{" "}
+                    {announcement.creator?.name || "Administración"}
                   </p>
                   <p className="announcement-card__date">
-                    {new Date(announcement.created_at).toLocaleDateString("es-ES", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+                    {new Date(announcement.created_at).toLocaleDateString(
+                      "es-ES",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      }
+                    )}
                   </p>
 
                   <div className="announcement-card__content">
@@ -566,71 +613,62 @@ export default function UserDashboard() {
     </section>
   );
 
+  const renderBottomNav = () => (
+    <nav className="user-bottom-nav">
+      <button
+        className={`user-bottom-nav__item ${
+          activeSection === "incidencias" ? "active" : ""
+        }`}
+        onClick={() => setActiveSection("incidencias")}
+      >
+        <Wrench size={20} />
+        <span>Incidencias</span>
+      </button>
+
+      <button
+        className={`user-bottom-nav__item ${
+          activeSection === "novedades" ? "active" : ""
+        }`}
+        onClick={() => setActiveSection("novedades")}
+      >
+        <div className="user-bottom-nav__icon-wrap">
+          <Bell size={20} />
+          {unreadCount > 0 && (
+            <span className="user-bottom-nav__badge">{unreadCount}</span>
+          )}
+        </div>
+        <span>Novedades</span>
+      </button>
+
+      <button
+        className={`user-bottom-nav__item ${
+          activeSection === "documentos" ? "active" : ""
+        }`}
+        onClick={() => setActiveSection("documentos")}
+      >
+        <FileText size={20} />
+        <span>Documentos</span>
+      </button>
+    </nav>
+  );
+
   return (
-    <div className="user-layout-shell">
-      <SidebarUser
-        activeSection={activeSection}
-        setActiveSection={setActiveSection}
-        onLogout={handleLogout}
-      />
+    <div className="user-dashboard-v2">
+      {activeSection === "inicio" ? (
+        renderInicio()
+      ) : (
+        <>
+          {renderTopHeader()}
 
-      <div className="user-layout-content">
-        <header className="user-topbar">
-          <div className="user-topbar__spacer" />
+          <main className="user-dashboard-v2__content">
+            {activeSection === "incidencias" && renderIncidencias()}
+            {activeSection === "documentos" && renderDocumentos()}
+            {activeSection === "novedades" && renderNovedades()}
+          </main>
 
-          <div className="user-profile-menu">
-            <button
-              className="user-profile-menu__trigger"
-              onClick={() => setProfileMenuOpen((prev) => !prev)}
-            >
-              <div className="user-profile-menu__avatar">
-                <UserCircle2 size={24} />
-              </div>
-
-              <div className="user-profile-menu__text">
-                <strong>{userName}</strong>
-                <span>{userHouse}</span>
-              </div>
-
-              <ChevronDown size={18} />
-            </button>
-
-            {profileMenuOpen && (
-              <div className="user-profile-menu__dropdown">
-                <div className="user-profile-menu__info">
-                  <p><strong>Nombre:</strong> {userName}</p>
-                  <p><strong>DNI:</strong> {userDni}</p>
-                  <p><strong>Vivienda:</strong> {userHouse}</p>
-                </div>
-
-                <button
-                  className="user-profile-menu__item"
-                  onClick={() => {
-                    setActiveSection("inicio");
-                    setProfileMenuOpen(false);
-                  }}
-                >
-                  Ver inicio
-                </button>
-
-                <button
-                  className="user-profile-menu__item user-profile-menu__item--danger"
-                  onClick={handleLogout}
-                >
-                  Cerrar sesión
-                </button>
-              </div>
-            )}
-          </div>
-        </header>
-
-        <main className="user-layout-main">
-          {activeSection === "inicio" && renderInicio()}
-          {activeSection === "documentos" && renderDocumentos()}
-          {activeSection === "incidencias" && renderIncidencias()}
-          {activeSection === "novedades" && renderNovedades()}
-        </main>
-      </div>
+          {renderBottomNav()}
+        </>
+      )}
     </div>
   );
 }
