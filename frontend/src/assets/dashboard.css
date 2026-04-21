@@ -1241,10 +1241,6 @@ aside.user-sketch-layout .user-sketch-profile-card {
    CALENDAR MEETINGS STYLES
    ============================================ */
 
-/* ============================================
-   CALENDAR MEETINGS STYLES
-   ============================================ */
-
 .calendar-meetings {
   display: grid;
   grid-template-columns: minmax(420px, 520px) minmax(0, 1fr);
