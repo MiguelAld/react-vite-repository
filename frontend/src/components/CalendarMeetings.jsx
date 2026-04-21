@@ -8,7 +8,7 @@ import {
   deleteMeeting,
 } from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { Plus, Edit2, Trash2, X } from "lucide-react";
+import { Edit2, Trash2, X } from "lucide-react";
 
 export default function CalendarMeetings() {
   const { user } = useAuth();
@@ -42,9 +42,23 @@ export default function CalendarMeetings() {
   };
 
   const getMeetingsForDate = (date) => {
-    return meetings.filter((m) => {
-      const meetingDate = new Date(m.meeting_date);
+    return meetings.filter((meeting) => {
+      const meetingDate = new Date(meeting.meeting_date);
       return meetingDate.toDateString() === date.toDateString();
+    });
+  };
+
+  const formatMeetingDateTime = (dateString) => {
+    if (!dateString) return "—";
+
+    const date = new Date(dateString);
+
+    return date.toLocaleString("es-ES", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
@@ -126,7 +140,6 @@ export default function CalendarMeetings() {
     try {
       setLoading(true);
       setError("");
-
       await deleteMeeting(id, user.id);
       await loadMeetings();
     } catch (err) {
@@ -141,14 +154,16 @@ export default function CalendarMeetings() {
 
   return (
     <div className="calendar-meetings">
-      <div className="calendar-meetings__calendar">
+      <div className="calendar-meetings__calendar calendar-meetings__calendar--wide">
         <Calendar
           value={selectedDate}
           onChange={setSelectedDate}
           onClickDay={handleDateClick}
           tileContent={({ date }) => {
             const count = getMeetingsForDate(date).length;
-            return count > 0 ? <div className="calendar-badge">{count}</div> : null;
+            return count > 0 ? (
+              <div className="calendar-badge">{count}</div>
+            ) : null;
           }}
         />
       </div>
@@ -163,14 +178,6 @@ export default function CalendarMeetings() {
               day: "numeric",
             })}
           </h3>
-
-          <button
-            className="btn btn-sm btn-primary"
-            onClick={() => handleDateClick(selectedDate)}
-          >
-            <Plus size={16} />
-            Nueva reunión
-          </button>
         </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
@@ -186,6 +193,7 @@ export default function CalendarMeetings() {
                     <button
                       className="btn btn-sm btn-outline-secondary"
                       onClick={() => handleEdit(meeting)}
+                      title="Editar reunión"
                     >
                       <Edit2 size={14} />
                     </button>
@@ -193,25 +201,30 @@ export default function CalendarMeetings() {
                     <button
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => handleDelete(meeting.id)}
+                      title="Eliminar reunión"
                     >
                       <Trash2 size={14} />
                     </button>
                   </div>
                 </div>
 
-                <p className="text-muted">
-                  {new Date(meeting.meeting_date).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </p>
+                <div className="calendar-meetings__item-body">
+                  <p className="calendar-meetings__item-description">
+                    {meeting.description || "Sin descripción"}
+                  </p>
 
-                {meeting.description && <p>{meeting.description}</p>}
+                  <p className="calendar-meetings__item-datetime">
+                    <strong>Fecha y hora:</strong>{" "}
+                    {formatMeetingDateTime(meeting.meeting_date)}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-muted">No hay reuniones para este día</p>
+          <p className="text-muted">
+            No hay reuniones para este día. Pulsa sobre una fecha del calendario para crear una.
+          </p>
         )}
 
         {showForm && (
@@ -221,6 +234,7 @@ export default function CalendarMeetings() {
                 <h4>{editingId ? "Editar reunión" : "Nueva reunión"}</h4>
 
                 <button
+                  type="button"
                   className="btn btn-close"
                   onClick={() => {
                     setShowForm(false);
@@ -230,6 +244,17 @@ export default function CalendarMeetings() {
                   <X size={20} />
                 </button>
               </div>
+
+              <p className="text-muted mb-3">
+                Fecha seleccionada:{" "}
+                <strong>
+                  {selectedDate.toLocaleDateString("es-ES", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </strong>
+              </p>
 
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">

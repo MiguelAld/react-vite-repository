@@ -1852,3 +1852,21 @@ aside.user-sketch-layout .user-sketch-profile-card {
     justify-content: space-around;
   }
 }
+
+.calendar-meetings__calendar--wide {
+  min-width: 390px;
+}
+
+.calendar-meetings__item-body {
+  margin-top: 10px;
+}
+
+.calendar-meetings__item-description {
+  margin-bottom: 12px;
+  color: #334155;
+}
+
+.calendar-meetings__item-datetime {
+  margin-bottom: 0;
+  color: #475569;
+}
