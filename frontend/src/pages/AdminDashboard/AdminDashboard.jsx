@@ -191,9 +191,9 @@ export default function AdminDashboard() {
         setDocumentsLoading(false);
       });
   }
-}, [section]);
+  }, [section]);
 
-const handleUploadDocument = async (e) => {
+  const handleUploadDocument = async (e) => {
   e.preventDefault();
 
   try {
@@ -219,9 +219,9 @@ const handleUploadDocument = async (e) => {
     console.error(err);
     alert(err.message || "Error subiendo documento");
   }
-};
+  };
 
-const handleDeleteDocument = async (documentId, title) => {
+  const handleDeleteDocument = async (documentId, title) => {
   const ok = window.confirm(
     `¿Seguro que quieres borrar el documento "${title}"?`
   );
@@ -235,7 +235,7 @@ const handleDeleteDocument = async (documentId, title) => {
     console.error(err);
     alert(err.message || "Error eliminando documento");
   }
-};
+  };
 
   const getIncidentZoneLabel = (incident) => {
     return incident.zone?.name || incident.custom_zone || "—";
@@ -262,7 +262,7 @@ const handleDeleteDocument = async (documentId, title) => {
     "4C", "4D",
     "5C", "5D",
   ],
-};
+  };
 
   const handleStatusChange = async (incidentId, newStatus) => {
     try {
