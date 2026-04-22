@@ -967,7 +967,10 @@ export default function AdminDashboard() {
                           </tr>
                         ) : (
                           getFilteredUsers().map((user) => (
-                            <tr key={user.id}>
+                            <tr
+                              key={user.id}
+                              className={!user.is_active ? "user-row-inactive" : ""}
+                            >
                               <td>{user.dni}</td>
                               <td>{user.name}</td>
                               <td>{user.apellidos || "—"}</td>
@@ -975,20 +978,36 @@ export default function AdminDashboard() {
                               <td>{user.portal || "—"}</td>
                               <td>{user.vivienda || "—"}</td>
                               <td>
-                                {user.role === "ADMIN" ? (
-                                  <span className="badge bg-dark">ADMIN</span>
-                                ) : (
-                                  <span className="badge bg-primary">VECINO</span>
-                                )}
+                                <div className="user-role-state-wrap">
+                                  {user.role === "ADMIN" ? (
+                                    <span className="badge bg-dark">ADMIN</span>
+                                  ) : (
+                                    <span className="badge bg-primary">VECINO</span>
+                                  )}
+
+                                  {!user.is_active && (
+                                    <span className="user-inactive-badge">INACTIVO</span>
+                                  )}
+                                </div>
                               </td>
                               <td>
-                                <button
-                                  className="btn btn-sm btn-outline-primary"
-                                  onClick={() => openEditModal(user)}
-                                  title="Editar usuario"
-                                >
-                                  <Pencil size={16} />
-                                </button>
+                                <div className="user-action-buttons">
+                                  <button
+                                    className="btn btn-sm btn-outline-primary"
+                                    onClick={() => openEditModal(user)}
+                                    title="Editar usuario"
+                                  >
+                                    <Pencil size={16} />
+                                  </button>
+
+                                  <button
+                                    className="btn btn-sm btn-outline-danger"
+                                    onClick={() => handleDeleteUser(user.id, user.name)}
+                                    title="Borrar usuario"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))
