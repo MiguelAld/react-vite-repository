@@ -1,6 +1,6 @@
-/* ============================================
-   SIDEBAR STYLES
-   ============================================ */
+/* // ============================================
+   // SIDEBAR
+   // ============================================ */
 
 .sidebar-user {
   background: linear-gradient(180deg, #ffffff 0%, #fafbfd 100%);
@@ -169,9 +169,9 @@
   flex-shrink: 0;
 }
 
-/* ============================================
-   DASHBOARD SHELL & LAYOUT
-   ============================================ */
+/* // ============================================
+   // DASHBOARD SHELL & LAYOUT
+   // ============================================ */
 
 .dashboard-shell {
   display: grid;
@@ -406,12 +406,6 @@
   margin-bottom: 6px;
 }
 
-.incident-card__description p {
-  margin: 0;
-  color: #475569;
-  line-height: 1.5;
-}
-
 .incident-card__date {
   margin: 0;
   color: #334155;
@@ -572,9 +566,9 @@
   }
 }
 
-/* ============================================
-   USER DASHBOARD STYLES
-   ============================================ */
+/* // ============================================
+   // USER DASHBOARD STYLES
+   // ============================================ */
 
 .user-sketch-shell {
   min-height: 100vh;
@@ -586,38 +580,14 @@
   width: 100%;
 }
 
-.user-sketch-layout {
-  display: none;
-}
-
-.user-sketch-top-icon {
-  display: none;
-}
-
-.user-sketch-home-btn {
-  display: none;
-}
-
-.user-sketch-profile-card {
-  display: none;
-}
-
-.user-sketch-profile-row {
-  display: none;
-}
-
-.user-sketch-profile-name {
-  display: none;
-}
-
-.user-sketch-nav {
-  display: none;
-}
-
-.user-sketch-nav-item {
-  display: none;
-}
-
+.user-sketch-layout { display: none; }
+.user-sketch-top-icon { display: none; }
+.user-sketch-home-btn { display: none; }
+.user-sketch-profile-card { display: none; }
+.user-sketch-profile-row { display: none; }
+.user-sketch-profile-name { display: none; }
+.user-sketch-nav { display: none; }
+.user-sketch-nav-item { display: none; }
 
 .user-sketch-nav-item--logout {
   color: #dc2626;
@@ -662,9 +632,9 @@
   color: #0f172a;
 }
 
-/* ============================================
-   BOTTOM NAVIGATION FOR USER DASHBOARD
-   ============================================ */
+/* // ============================================
+   // BOTTOM NAV USER DASHBOARD
+   // ============================================ */
 
 .user-sketch-nav-icon {
   width: 96px;
@@ -699,7 +669,6 @@
   transform: scale(1.08);
 }
 
-/* Bottom nav container */
 aside.user-sketch-layout {
   display: flex !important;
   position: fixed;
@@ -722,9 +691,7 @@ aside.user-sketch-layout {
   z-index: 100;
 }
 
-aside.user-sketch-layout > * {
-  display: flex !important;
-}
+aside.user-sketch-layout > * { display: flex !important; }
 
 aside.user-sketch-layout .user-sketch-top-icon {
   display: flex !important;
@@ -792,54 +759,24 @@ aside.user-sketch-layout .user-sketch-profile-card {
 }
 
 @media (max-width: 1100px) {
-  aside.user-sketch-layout {
-    padding: 16px;
-  }
-
-  aside.user-sketch-layout .user-sketch-nav {
-    gap: 16px;
-  }
-
-  .user-sketch-main {
-    padding-bottom: 200px;
-  }
+  aside.user-sketch-layout { padding: 16px; }
+  aside.user-sketch-layout .user-sketch-nav { gap: 16px; }
+  .user-sketch-main { padding-bottom: 200px; }
 }
 
 @media (max-width: 700px) {
-  aside.user-sketch-layout {
-    gap: 12px;
-    padding: 12px;
-  }
-
-  aside.user-sketch-layout .user-sketch-home-btn {
-    width: 70px;
-    height: 70px;
-    border-width: 2px;
-  }
-
-  .user-sketch-nav-icon {
-    width: 70px;
-    height: 70px;
-    border-width: 2px;
-  }
-
-  aside.user-sketch-layout .user-sketch-nav-item span {
-    font-size: 0.7rem;
-  }
-
-  .user-sketch-main {
-    padding: 16px;
-    padding-bottom: 160px;
-  }
-
-  .user-sketch-center {
-    padding: 40px 16px;
-  }
-
-  .user-sketch-welcome {
-    font-size: clamp(1.8rem, 4vw, 3rem);
-  }
+  aside.user-sketch-layout { gap: 12px; padding: 12px; }
+  aside.user-sketch-layout .user-sketch-home-btn { width: 70px; height: 70px; border-width: 2px; }
+  .user-sketch-nav-icon { width: 70px; height: 70px; border-width: 2px; }
+  aside.user-sketch-layout .user-sketch-nav-item span { font-size: 0.7rem; }
+  .user-sketch-main { padding: 16px; padding-bottom: 160px; }
+  .user-sketch-center { padding: 40px 16px; }
+  .user-sketch-welcome { font-size: clamp(1.8rem, 4vw, 3rem); }
 }
+
+/* // ============================================
+   // USER LAYOUT + HOME (V1)
+   // ============================================ */
 
 .user-layout-shell {
   display: grid;
@@ -854,9 +791,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
   min-width: 0;
 }
 
-.user-layout-main {
-  padding: 28px;
-}
+.user-layout-main { padding: 28px; }
 
 .user-app-sidebar {
   background: #ffffff;
@@ -924,87 +859,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
   padding: 20px 28px 0;
 }
 
-.user-topbar__spacer {
-  flex: 1;
-}
-
-.user-profile-menu {
-  position: relative;
-}
-
-.user-profile-menu__trigger {
-  border: 1px solid #e8eef5;
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 10px 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
-}
-
-.user-profile-menu__avatar {
-  color: #2563eb;
-  display: grid;
-  place-items: center;
-}
-
-.user-profile-menu__text {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.user-profile-menu__text strong {
-  font-size: 0.95rem;
-  color: #0f172a;
-}
-
-.user-profile-menu__text span {
-  font-size: 0.82rem;
-  color: #64748b;
-}
-
-.user-profile-menu__dropdown {
-  position: absolute;
-  top: calc(100% + 10px);
-  right: 0;
-  width: 280px;
-  background: #ffffff;
-  border: 1px solid #e8eef5;
-  border-radius: 18px;
-  padding: 14px;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12);
-  z-index: 30;
-}
-
-.user-profile-menu__info {
-  padding-bottom: 10px;
-  border-bottom: 1px solid #eef2f7;
-  margin-bottom: 10px;
-}
-
-.user-profile-menu__info p {
-  margin: 0 0 8px;
-  color: #334155;
-}
-
-.user-profile-menu__item {
-  width: 100%;
-  border: none;
-  background: #f8fbff;
-  border-radius: 12px;
-  padding: 10px 12px;
-  text-align: left;
-  font-weight: 600;
-  color: #0f172a;
-  margin-bottom: 8px;
-}
-
-.user-profile-menu__item--danger {
-  background: #fff1f2;
-  color: #9f1239;
-}
+.user-topbar__spacer { flex: 1; }
 
 .user-home {
   display: flex;
@@ -1012,9 +867,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
   gap: 28px;
 }
 
-.user-home__hero {
-  padding: 24px 8px 4px;
-}
+.user-home__hero { padding: 24px 8px 4px; }
 
 .user-home__title {
   font-size: clamp(2.1rem, 4vw, 3.6rem);
@@ -1024,9 +877,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
   margin: 0 0 10px;
 }
 
-.user-home__title span {
-  color: #0f172a;
-}
+.user-home__title span { color: #0f172a; }
 
 .user-home__subtitle {
   color: #64748b;
@@ -1076,45 +927,18 @@ aside.user-sketch-layout .user-sketch-profile-card {
 }
 
 @media (max-width: 1000px) {
-  .user-layout-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .user-app-sidebar {
-    border-right: none;
-    border-bottom: 1px solid #e8eef5;
-  }
-
-  .user-app-sidebar__nav {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-
-  .user-app-sidebar__logout {
-    margin-top: 0;
-  }
-
-  .user-home__grid {
-    grid-template-columns: 1fr;
-  }
+  .user-layout-shell { grid-template-columns: 1fr; }
+  .user-app-sidebar { border-right: none; border-bottom: 1px solid #e8eef5; }
+  .user-app-sidebar__nav { flex-direction: row; flex-wrap: wrap; }
+  .user-app-sidebar__logout { margin-top: 0; }
+  .user-home__grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 700px) {
-  .user-layout-main {
-    padding: 18px;
-  }
-
-  .user-topbar {
-    padding: 16px 18px 0;
-  }
-
-  .user-profile-menu__dropdown {
-    width: 240px;
-  }
-
-  .user-home-card {
-    padding: 18px;
-  }
+  .user-layout-main { padding: 18px; }
+  .user-topbar { padding: 16px 18px 0; }
+  .user-profile-menu__dropdown { width: 240px; }
+  .user-home-card { padding: 18px; }
 }
 
 .user-home__identity-card {
@@ -1137,6 +961,10 @@ aside.user-sketch-layout .user-sketch-profile-card {
   margin: 0 0 8px;
   color: #334155;
 }
+
+/* // ============================================
+   // INCIDENTS + ZONES
+   // ============================================ */
 
 .incident-card__mine-badge {
   margin-top: -4px;
@@ -1237,9 +1065,9 @@ aside.user-sketch-layout .user-sketch-profile-card {
   align-self: flex-start;
 }
 
-/* ============================================
-   CALENDAR MEETINGS STYLES
-   ============================================ */
+/* // ============================================
+   // CALENDAR MEETINGS
+   // ============================================ */
 
 .calendar-meetings {
   padding: 24px 0;
@@ -1483,9 +1311,9 @@ aside.user-sketch-layout .user-sketch-profile-card {
   }
 }
 
-/* ============================================
-   ANNOUNCEMENTS / NOVEDADES STYLES
-   ============================================ */
+/* // ============================================
+   // ANNOUNCEMENTS / NOVEDADES
+   // ============================================ */
 
 .announcements-grid {
   display: grid;
@@ -1574,9 +1402,9 @@ aside.user-sketch-layout .user-sketch-profile-card {
   margin: 12px 0;
 }
 
-/* =========================
-   USER DASHBOARD V2
-========================= */
+/* // ============================================
+   // USER DASHBOARD V2
+   // ============================================ */
 
 .user-dashboard-v2 {
   min-height: 100vh;
@@ -1687,15 +1515,8 @@ aside.user-sketch-layout .user-sketch-profile-card {
   box-shadow: 0 24px 48px rgba(15, 23, 42, 0.14);
 }
 
-.user-circle-access--large {
-  width: 190px;
-  height: 190px;
-}
-
-.user-circle-access--small {
-  width: 160px;
-  height: 160px;
-}
+.user-circle-access--large { width: 190px; height: 190px; }
+.user-circle-access--small { width: 160px; height: 160px; }
 
 .user-circle-access__icon {
   position: relative;
@@ -1730,9 +1551,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
   padding: 0 6px;
 }
 
-.user-home-v2__bottom {
-  min-height: 80px;
-}
+.user-home-v2__bottom { min-height: 80px; }
 
 .user-dashboard-v2__content {
   flex: 1;
@@ -1805,9 +1624,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
   padding: 0 5px;
 }
 
-.user-profile-menu {
-  position: relative;
-}
+.user-profile-menu { position: relative; }
 
 .user-profile-menu__trigger {
   border: 1px solid #dbe4f0;
@@ -1839,9 +1656,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
   line-height: 1.1;
 }
 
-.user-profile-menu__text strong {
-  font-size: 0.95rem;
-}
+.user-profile-menu__text strong { font-size: 0.95rem; }
 
 .user-profile-menu__text span {
   font-size: 0.8rem;
@@ -1892,42 +1707,17 @@ aside.user-sketch-layout .user-sketch-profile-card {
 }
 
 @media (max-width: 900px) {
-  .user-app-header {
-    padding: 16px 16px;
-  }
-
-  .user-dashboard-v2__content {
-    padding: 16px 16px 110px;
-  }
-
-  .user-home-v2__buttons {
-    gap: 18px;
-  }
-
-  .user-circle-access--large {
-    width: 160px;
-    height: 160px;
-  }
-
-  .user-circle-access--small {
-    width: 145px;
-    height: 145px;
-  }
-
-  .user-profile-menu__text {
-    display: none;
-  }
-
-  .user-bottom-nav__item {
-    min-width: 92px;
-    font-size: 0.8rem;
-  }
+  .user-app-header { padding: 16px 16px; }
+  .user-dashboard-v2__content { padding: 16px 16px 110px; }
+  .user-home-v2__buttons { gap: 18px; }
+  .user-circle-access--large { width: 160px; height: 160px; }
+  .user-circle-access--small { width: 145px; height: 145px; }
+  .user-profile-menu__text { display: none; }
+  .user-bottom-nav__item { min-width: 92px; font-size: 0.8rem; }
 }
 
 @media (max-width: 600px) {
-  .user-home-v2__buttons {
-    flex-direction: column;
-  }
+  .user-home-v2__buttons { flex-direction: column; }
 
   .user-circle-access--large,
   .user-circle-access--small {
@@ -1935,10 +1725,12 @@ aside.user-sketch-layout .user-sketch-profile-card {
     height: 170px;
   }
 
-  .user-bottom-nav {
-    justify-content: space-around;
-  }
+  .user-bottom-nav { justify-content: space-around; }
 }
+
+/* // ============================================
+   // USER STATES
+   // ============================================ */
 
 .user-row-inactive {
   opacity: 0.58;
