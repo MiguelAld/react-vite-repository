@@ -21,7 +21,7 @@ import {
   deleteDocument,
 } from "../../services/api";
 import "../../assets/dashboard.css";
-import { Pencil, Trash2, FileText } from "lucide-react";
+import { Pencil, Trash2, FileText, FileUp } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -51,6 +51,12 @@ export default function AdminDashboard() {
   const [openMenuId, setOpenMenuId] = useState(null);
   const [userSearchFilter, setUserSearchFilter] = useState("");
 
+  const [documents, setDocuments] = useState([]);
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [documentsError, setDocumentsError] = useState("");
+  const [documentTitle, setDocumentTitle] = useState("");
+  const [documentFile, setDocumentFile] = useState(null);
+
   const [userForm, setUserForm] = useState({
     dni: "",
     name: "",
@@ -66,12 +72,6 @@ export default function AdminDashboard() {
   const ok = window.confirm(
     `¿Seguro que quieres borrar al usuario ${userName}? Esta acción no se puede deshacer.`
   );
-
-  const [documents, setDocuments] = useState([]);
-  const [documentsLoading, setDocumentsLoading] = useState(false);
-  const [documentsError, setDocumentsError] = useState("");
-  const [documentTitle, setDocumentTitle] = useState("");
-  const [documentFile, setDocumentFile] = useState(null);
 
   if (!ok) return;
 
