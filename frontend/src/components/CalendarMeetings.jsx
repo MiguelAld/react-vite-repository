@@ -8,7 +8,7 @@ import {
   deleteMeeting,
 } from "../services/api";
 import { useAuth } from "../context/AuthContext";
-import { Edit2, Trash2, X } from "lucide-react";
+import { Edit2, Trash2, X, Plus } from "lucide-react";
 
 export default function CalendarMeetings() {
   const { user } = useAuth();
@@ -62,15 +62,18 @@ export default function CalendarMeetings() {
     });
   };
 
-  const handleDateClick = (date) => {
+  const handleDateSelect = (date) => {
     setSelectedDate(date);
-    setShowForm(true);
+  };
+
+  const handleOpenCreate = () => {
     setEditingId(null);
     setFormData({
       title: "",
       description: "",
       time: "10:00",
     });
+    setShowForm(true);
   };
 
   const handleEdit = (meeting) => {
@@ -153,23 +156,21 @@ export default function CalendarMeetings() {
   const dateMeetings = getMeetingsForDate(selectedDate);
 
   return (
-    <div className="calendar-meetings">
-      <div className="calendar-meetings__calendar calendar-meetings__calendar--wide">
+    <div className="calendar-meetings calendar-meetings--stacked">
+      <div className="calendar-meetings__calendar calendar-meetings__calendar--full">
         <Calendar
           value={selectedDate}
-          onChange={setSelectedDate}
-          onClickDay={handleDateClick}
+          onChange={handleDateSelect}
+          onClickDay={handleDateSelect}
           tileContent={({ date }) => {
             const count = getMeetingsForDate(date).length;
-            return count > 0 ? (
-              <div className="calendar-badge">{count}</div>
-            ) : null;
+            return count > 0 ? <div className="calendar-badge">{count}</div> : null;
           }}
         />
       </div>
 
-      <div className="calendar-meetings__content">
-        <div className="calendar-meetings__header">
+      <div className="calendar-meetings__below">
+        <div className="calendar-meetings__header calendar-meetings__header--column">
           <h3>
             {selectedDate.toLocaleDateString("es-ES", {
               weekday: "long",
@@ -178,6 +179,11 @@ export default function CalendarMeetings() {
               day: "numeric",
             })}
           </h3>
+
+          <button className="btn btn-primary" onClick={handleOpenCreate}>
+            <Plus size={16} />
+            Crear reunión
+          </button>
         </div>
 
         {error && <div className="alert alert-danger">{error}</div>}
@@ -222,100 +228,100 @@ export default function CalendarMeetings() {
             ))}
           </div>
         ) : (
-          <p className="text-muted">
-            No hay reuniones para este día. Pulsa sobre una fecha del calendario para crear una.
-          </p>
+          <div className="calendar-meetings__empty">
+            <p className="text-muted">No hay reuniones para este día.</p>
+          </div>
         )}
+      </div>
 
-        {showForm && (
-          <div className="calendar-meetings__form-overlay">
-            <div className="calendar-meetings__form">
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h4>{editingId ? "Editar reunión" : "Nueva reunión"}</h4>
+      {showForm && (
+        <div className="calendar-meetings__form-overlay">
+          <div className="calendar-meetings__form">
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <h4>{editingId ? "Editar reunión" : "Nueva reunión"}</h4>
+
+              <button
+                type="button"
+                className="btn btn-close"
+                onClick={() => {
+                  setShowForm(false);
+                  setEditingId(null);
+                }}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <p className="text-muted mb-3">
+              Día seleccionado:{" "}
+              <strong>
+                {selectedDate.toLocaleDateString("es-ES", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric",
+                })}
+              </strong>
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <label className="form-label">Título</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={formData.title}
+                  onChange={(e) =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Descripción</label>
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Hora</label>
+                <input
+                  type="time"
+                  className="form-control"
+                  value={formData.time}
+                  onChange={(e) =>
+                    setFormData({ ...formData, time: e.target.value })
+                  }
+                  required
+                />
+              </div>
+
+              <div className="d-flex gap-2 mt-4">
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? "Guardando..." : "Guardar"}
+                </button>
 
                 <button
                   type="button"
-                  className="btn btn-close"
+                  className="btn btn-secondary"
                   onClick={() => {
                     setShowForm(false);
                     setEditingId(null);
                   }}
                 >
-                  <X size={20} />
+                  Cancelar
                 </button>
               </div>
-
-              <p className="text-muted mb-3">
-                Fecha seleccionada:{" "}
-                <strong>
-                  {selectedDate.toLocaleDateString("es-ES", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
-                </strong>
-              </p>
-
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="form-label">Título</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Descripción</label>
-                  <textarea
-                    className="form-control"
-                    rows="3"
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Hora</label>
-                  <input
-                    type="time"
-                    className="form-control"
-                    value={formData.time}
-                    onChange={(e) =>
-                      setFormData({ ...formData, time: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="d-flex gap-2 mt-4">
-                  <button type="submit" className="btn btn-primary" disabled={loading}>
-                    {loading ? "Guardando..." : "Guardar"}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => {
-                      setShowForm(false);
-                      setEditingId(null);
-                    }}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </form>
-            </div>
+            </form>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -1242,27 +1242,26 @@ aside.user-sketch-layout .user-sketch-profile-card {
    ============================================ */
 
 .calendar-meetings {
-  display: grid;
-  grid-template-columns: minmax(420px, 520px) minmax(0, 1fr);
-  gap: 28px;
   padding: 24px 0;
-  align-items: start;
+}
+
+.calendar-meetings--stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .calendar-meetings__calendar {
   background: #ffffff;
   border: 1px solid #e8eef5;
   border-radius: 20px;
-  padding: 20px;
+  padding: 24px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
-  height: fit-content;
-  position: sticky;
-  top: 100px;
 }
 
-.calendar-meetings__calendar--wide {
-  min-width: 0;
+.calendar-meetings__calendar--full {
   width: 100%;
+  max-width: 760px;
 }
 
 .calendar-meetings__calendar .react-calendar {
@@ -1273,13 +1272,13 @@ aside.user-sketch-layout .user-sketch-profile-card {
 }
 
 .calendar-meetings__calendar .react-calendar__navigation {
-  margin-bottom: 14px;
+  margin-bottom: 18px;
 }
 
 .calendar-meetings__calendar .react-calendar__navigation button {
   color: #334155;
   font-weight: 700;
-  min-width: 40px;
+  min-width: 44px;
   background: transparent;
   border: none;
   border-radius: 10px;
@@ -1292,13 +1291,13 @@ aside.user-sketch-layout .user-sketch-profile-card {
 .calendar-meetings__calendar .react-calendar__month-view__weekdays {
   color: #64748b;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .calendar-meetings__calendar .react-calendar__month-view__weekdays__weekday {
-  padding: 6px 0;
+  padding: 8px 0;
 }
 
 .calendar-meetings__calendar .react-calendar__month-view__weekdays__weekday abbr {
@@ -1307,8 +1306,8 @@ aside.user-sketch-layout .user-sketch-profile-card {
 
 .calendar-meetings__calendar .react-calendar__tile {
   position: relative;
-  padding: 14px 8px;
-  border-radius: 12px;
+  padding: 18px 10px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
   background: transparent;
@@ -1352,20 +1351,23 @@ aside.user-sketch-layout .user-sketch-profile-card {
   line-height: 1;
 }
 
-.calendar-meetings__content {
+.calendar-meetings__below {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  min-width: 0;
+  gap: 16px;
+  max-width: 760px;
 }
 
 .calendar-meetings__header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
   gap: 16px;
   padding-bottom: 16px;
   border-bottom: 2px solid #e8eef5;
+}
+
+.calendar-meetings__header--column {
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .calendar-meetings__header h3 {
@@ -1430,6 +1432,13 @@ aside.user-sketch-layout .user-sketch-profile-card {
   color: #475569;
 }
 
+.calendar-meetings__empty {
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 16px;
+  padding: 18px;
+}
+
 .calendar-meetings__form-overlay {
   position: fixed;
   inset: 0;
@@ -1452,23 +1461,14 @@ aside.user-sketch-layout .user-sketch-profile-card {
   box-shadow: 0 20px 60px rgba(15, 23, 42, 0.3);
 }
 
-@media (max-width: 1100px) {
-  .calendar-meetings {
-    grid-template-columns: 1fr;
-  }
-
-  .calendar-meetings__calendar {
-    position: relative;
-    top: 0;
+@media (max-width: 900px) {
+  .calendar-meetings__calendar--full,
+  .calendar-meetings__below {
+    max-width: 100%;
   }
 }
 
 @media (max-width: 700px) {
-  .calendar-meetings__header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .calendar-meetings__item-header {
     flex-direction: column;
     align-items: flex-start;
@@ -1482,8 +1482,6 @@ aside.user-sketch-layout .user-sketch-profile-card {
     padding: 20px;
   }
 }
-
-
 
 /* ============================================
    ANNOUNCEMENTS / NOVEDADES STYLES
