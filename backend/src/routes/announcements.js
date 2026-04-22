@@ -2,11 +2,10 @@ import express from "express";
 import { Announcement } from "../models/Announcement.js";
 import { User } from "../models/User.js";
 import { NovededRead } from "../models/NovededRead.js";
-import { sequelize } from "../config/sequelize.js";
 
 const router = express.Router();
 
-/* Listar anuncios */
+/* listar anuncios */
 router.get("/", async (req, res) => {
   try {
     const { userId } = req.query;
@@ -19,10 +18,12 @@ router.get("/", async (req, res) => {
           attributes: ["id", "name", "apellidos"],
         },
       ],
-      order: [["created_at", "DESC"]],
+      order: [
+        ["is_featured", "DESC"],
+        ["created_at", "DESC"],
+      ],
     });
 
-    // Si tenemos userId, incluir estado de lectura
     if (userId) {
       const announcementsWithReadStatus = await Promise.all(
         announcements.map(async (ann) => {
@@ -51,10 +52,17 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* Crear anuncio */
+/* crear anuncio */
 router.post("/", async (req, res) => {
   try {
-    const { title, description, created_by } = req.body;
+    const {
+      title,
+      description,
+      type,
+      is_featured,
+      image_url,
+      created_by,
+    } = req.body;
 
     if (!title || !description || !created_by) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -68,10 +76,12 @@ router.post("/", async (req, res) => {
     const announcement = await Announcement.create({
       title,
       description,
+      type: type || "informacion",
+      is_featured: !!is_featured,
+      image_url: image_url || null,
       created_by,
     });
 
-    // Incluir creator en la respuesta
     const result = await Announcement.findByPk(announcement.id, {
       include: [
         {
@@ -89,19 +99,26 @@ router.post("/", async (req, res) => {
   }
 });
 
-/* Editar anuncio */
+/* editar anuncio */
 router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, created_by } = req.body;
+    const {
+      title,
+      description,
+      type,
+      is_featured,
+      image_url,
+      created_by,
+    } = req.body;
 
     const announcement = await Announcement.findByPk(id);
+
     if (!announcement) {
       return res.status(404).json({ error: "Anuncio no encontrado" });
     }
 
-    // Solo el creador puede editar
-    if (announcement.created_by !== created_by) {
+    if (Number(announcement.created_by) !== Number(created_by)) {
       return res
         .status(403)
         .json({ error: "No tienes permiso para editar este anuncio" });
@@ -113,9 +130,12 @@ router.put("/:id", async (req, res) => {
 
     announcement.title = title;
     announcement.description = description;
+    announcement.type = type || "informacion";
+    announcement.is_featured = !!is_featured;
+    announcement.image_url = image_url || null;
+
     await announcement.save();
 
-    // Incluir creator en la respuesta
     const result = await Announcement.findByPk(id, {
       include: [
         {
@@ -133,19 +153,41 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-/* Eliminar anuncio */
+/* destacar / quitar destacado */
+router.patch("/:id/feature", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { is_featured } = req.body;
+
+    const announcement = await Announcement.findByPk(id);
+
+    if (!announcement) {
+      return res.status(404).json({ error: "Anuncio no encontrado" });
+    }
+
+    announcement.is_featured = !!is_featured;
+    await announcement.save();
+
+    res.json({ message: "Estado destacado actualizado", announcement });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error actualizando destacado" });
+  }
+});
+
+/* eliminar anuncio */
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { created_by } = req.body;
 
     const announcement = await Announcement.findByPk(id);
+
     if (!announcement) {
       return res.status(404).json({ error: "Anuncio no encontrado" });
     }
 
-    // Solo el creador puede eliminar
-    if (announcement.created_by !== created_by) {
+    if (Number(announcement.created_by) !== Number(created_by)) {
       return res
         .status(403)
         .json({ error: "No tienes permiso para eliminar este anuncio" });

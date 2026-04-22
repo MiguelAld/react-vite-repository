@@ -13,6 +13,20 @@ export const Announcement = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    type: {
+      type: DataTypes.ENUM("informacion", "aviso", "urgente"),
+      allowNull: false,
+      defaultValue: "informacion",
+    },
+    is_featured: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
+    },
+    image_url: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     created_by: {
       type: DataTypes.BIGINT,
       allowNull: false,

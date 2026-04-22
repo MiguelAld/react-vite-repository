@@ -19,9 +19,23 @@ import {
   getDocuments,
   uploadDocument,
   deleteDocument,
+  getAnnouncements,
+  createAnnouncement,
+  updateAnnouncement,
+  deleteAnnouncement,
+  updateAnnouncementFeatured,
 } from "../../services/api";
 import "../../assets/dashboard.css";
-import { Pencil, Trash2, FileText, FileUp } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  FileText,
+  FileUp,
+  Megaphone,
+  Star,
+  Image as ImageIcon,
+  Edit3,
+} from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -56,6 +70,21 @@ export default function AdminDashboard() {
   const [documentsError, setDocumentsError] = useState("");
   const [documentTitle, setDocumentTitle] = useState("");
   const [documentFile, setDocumentFile] = useState(null);
+
+  const [announcements, setAnnouncements] = useState([]);
+  const [announcementsLoading, setAnnouncementsLoading] = useState(false);
+  const [announcementsError, setAnnouncementsError] = useState("");
+  const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
+  const [editingAnnouncement, setEditingAnnouncement] = useState(null);
+  const [announcementPreview, setAnnouncementPreview] = useState(null);
+
+  const [announcementForm, setAnnouncementForm] = useState({
+  title: "",
+  description: "",
+  type: "informacion",
+  is_featured: false,
+  image_url: "",
+  });
 
   const [userForm, setUserForm] = useState({
     dni: "",
@@ -235,6 +264,125 @@ export default function AdminDashboard() {
     console.error(err);
     alert(err.message || "Error eliminando documento");
   }
+  };
+
+  useEffect(() => {
+  if (section === "reportes") {
+    setAnnouncementsLoading(true);
+    setAnnouncementsError("");
+
+    getAnnouncements()
+      .then(setAnnouncements)
+      .catch((err) => {
+        console.error(err);
+        setAnnouncementsError(err.message || "Error al cargar comunicados");
+      })
+      .finally(() => {
+        setAnnouncementsLoading(false);
+      });
+  }
+  }, [section]);
+
+  const openCreateAnnouncementModal = () => {
+  setEditingAnnouncement(null);
+  setAnnouncementForm({
+    title: "",
+    description: "",
+    type: "informacion",
+    is_featured: false,
+    image_url: "",
+  });
+  setShowAnnouncementModal(true);
+  };
+
+  const openEditAnnouncementModal = (announcement) => {
+  setEditingAnnouncement(announcement);
+  setAnnouncementForm({
+    title: announcement.title || "",
+    description: announcement.description || "",
+    type: announcement.type || "informacion",
+    is_featured: !!announcement.is_featured,
+    image_url: announcement.image_url || "",
+  });
+  setShowAnnouncementModal(true);
+  };
+
+  const closeAnnouncementModal = () => {
+  setShowAnnouncementModal(false);
+  setEditingAnnouncement(null);
+  };
+
+  const handleAnnouncementFormChange = (e) => {
+  const { name, value, type, checked } = e.target;
+
+  setAnnouncementForm((prev) => ({
+    ...prev,
+    [name]: type === "checkbox" ? checked : value,
+  }));
+  };
+
+  const handleSubmitAnnouncement = async (e) => {
+  e.preventDefault();
+
+  try {
+    const payload = {
+      ...announcementForm,
+      created_by: user.id,
+    };
+
+    if (editingAnnouncement) {
+      const updated = await updateAnnouncement(editingAnnouncement.id, payload);
+
+      setAnnouncements((prev) =>
+        prev.map((a) => (a.id === editingAnnouncement.id ? updated : a))
+      );
+    } else {
+      const created = await createAnnouncement(payload);
+      setAnnouncements((prev) => [created, ...prev]);
+    }
+
+    closeAnnouncementModal();
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Error guardando comunicado");
+  }
+  };
+
+  const handleDeleteAnnouncement = async (announcementId, title) => {
+  const ok = window.confirm(
+    `¿Seguro que quieres eliminar el comunicado "${title}"?`
+  );
+
+  if (!ok) return;
+
+  try {
+    await deleteAnnouncement(announcementId, user.id);
+    setAnnouncements((prev) => prev.filter((a) => a.id !== announcementId));
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Error eliminando comunicado");
+  }
+  };
+
+  const handleToggleAnnouncementFeatured = async (announcementId, currentState) => {
+  try {
+    await updateAnnouncementFeatured(announcementId, !currentState);
+
+    setAnnouncements((prev) =>
+      prev.map((a) =>
+        a.id === announcementId ? { ...a, is_featured: !currentState } : a
+      )
+    );
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Error actualizando destacado");
+  }
+  };
+
+  const getAnnouncementTypeLabel = (type) => {
+  if (type === "urgente") return "URGENTE";
+  if (type === "aviso") return "AVISO";
+  return "INFORMACIÓN";
   };
 
   const getIncidentZoneLabel = (incident) => {
@@ -957,10 +1105,316 @@ export default function AdminDashboard() {
 
           {section === "reportes" && (
             <section className="dashboard-panel">
-              <h1 className="dashboard-title">Reportes</h1>
-              <p className="dashboard-subtitle">
-                Aquí irán estadísticas y reportes de la comunidad.
-              </p>
+              <div className="dashboard-header-row">
+                <div>
+                  <h1 className="dashboard-title">Comunicados</h1>
+                  <p className="dashboard-subtitle">
+                    Gestiona las novedades y avisos que verán los vecinos en la aplicación.
+                  </p>
+                </div>
+
+                <button className="btn btn-primary" onClick={openCreateAnnouncementModal}>
+                  Nuevo comunicado
+                </button>
+              </div>
+
+              {!announcementsLoading && !announcementsError && (
+                <div className="dashboard-cards mb-4">
+                  <div className="dashboard-card summary-accent-blue">
+                    <h5>Total</h5>
+                    <p className="summary-number">{announcements.length}</p>
+                  </div>
+
+                  <div className="dashboard-card summary-accent-yellow">
+                    <h5>Destacados</h5>
+                    <p className="summary-number">
+                      {announcements.filter((a) => a.is_featured).length}
+                    </p>
+                  </div>
+
+                  <div className="dashboard-card summary-accent-purple">
+                    <h5>Avisos</h5>
+                    <p className="summary-number">
+                      {announcements.filter((a) => a.type === "aviso").length}
+                    </p>
+                  </div>
+
+                  <div className="dashboard-card summary-accent-green">
+                    <h5>Urgentes</h5>
+                    <p className="summary-number">
+                      {announcements.filter((a) => a.type === "urgente").length}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {announcementsLoading && <p>Cargando comunicados...</p>}
+              {announcementsError && (
+                <div className="alert alert-danger">{announcementsError}</div>
+              )}
+
+              {!announcementsLoading && !announcementsError && (
+                <>
+                  {announcements.length === 0 ? (
+                    <p className="dashboard-empty">No hay comunicados creados todavía.</p>
+                  ) : (
+                    <div className="announcements-admin-grid">
+                      {announcements.map((announcement) => (
+                        <article
+                          key={announcement.id}
+                          className={`announcement-admin-card announcement-admin-card--${announcement.type}`}
+                        >
+                          <div className="announcement-admin-card__media">
+                            {announcement.image_url ? (
+                              <img
+                                src={announcement.image_url}
+                                alt={announcement.title}
+                                className="announcement-admin-card__image"
+                              />
+                            ) : (
+                              <div className="announcement-admin-card__placeholder">
+                                <ImageIcon size={34} />
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="announcement-admin-card__body">
+                            <div className="announcement-admin-card__top">
+                              <h3>{announcement.title}</h3>
+
+                              <div className="announcement-admin-card__badges">
+                                <span className={`announcement-type-badge announcement-type-badge--${announcement.type}`}>
+                                  {getAnnouncementTypeLabel(announcement.type)}
+                                </span>
+
+                                {announcement.is_featured && (
+                                  <span className="announcement-featured-badge">
+                                    DESTACADO
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <p className="announcement-admin-card__description">
+                              {announcement.description}
+                            </p>
+
+                            <div className="announcement-admin-card__meta">
+                              <span>
+                                <strong>Autor:</strong>{" "}
+                                {announcement.creator?.name || "Administración"}
+                              </span>
+                              <span>
+                                <strong>Fecha:</strong>{" "}
+                                {announcement.created_at
+                                  ? new Date(announcement.created_at).toLocaleDateString()
+                                  : "—"}
+                              </span>
+                            </div>
+
+                            <div className="announcement-admin-card__actions">
+                              <button
+                                className="btn btn-sm btn-outline-primary"
+                                onClick={() => openEditAnnouncementModal(announcement)}
+                              >
+                                <Edit3 size={14} className="me-1" />
+                                Editar
+                              </button>
+
+                              <button
+                                className={`btn btn-sm ${
+                                  announcement.is_featured
+                                    ? "btn-outline-warning"
+                                    : "btn-outline-dark"
+                                }`}
+                                onClick={() =>
+                                  handleToggleAnnouncementFeatured(
+                                    announcement.id,
+                                    announcement.is_featured
+                                  )
+                                }
+                              >
+                                <Star size={14} className="me-1" />
+                                {announcement.is_featured
+                                  ? "Quitar destacado"
+                                  : "Destacar"}
+                              </button>
+
+                              <button
+                                className="btn btn-sm btn-outline-danger"
+                                onClick={() =>
+                                  handleDeleteAnnouncement(
+                                    announcement.id,
+                                    announcement.title
+                                  )
+                                }
+                              >
+                                <Trash2 size={14} className="me-1" />
+                                Eliminar
+                              </button>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {showAnnouncementModal && (
+                <div className="admin-modal-backdrop">
+                  <div className="admin-modal-card admin-modal-card--xl">
+                    <div className="dashboard-header-row">
+                      <div>
+                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
+                          {editingAnnouncement ? "Editar comunicado" : "Nuevo comunicado"}
+                        </h2>
+                        <p className="dashboard-subtitle mb-0">
+                          Configura el comunicado y revisa la vista previa antes de publicarlo.
+                        </p>
+                      </div>
+
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={closeAnnouncementModal}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+
+                    <div className="announcement-modal-layout">
+                      <form onSubmit={handleSubmitAnnouncement} className="announcement-form-panel">
+                        <div className="mb-3">
+                          <label className="form-label">Título</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="title"
+                            value={announcementForm.title}
+                            onChange={handleAnnouncementFormChange}
+                            required
+                          />
+                        </div>
+
+                        <div className="mb-3">
+                          <label className="form-label">Descripción</label>
+                          <textarea
+                            className="form-control"
+                            name="description"
+                            rows="6"
+                            value={announcementForm.description}
+                            onChange={handleAnnouncementFormChange}
+                            required
+                          />
+                        </div>
+
+                        <div className="mb-3">
+                          <label className="form-label">Tipo</label>
+                          <select
+                            className="form-select"
+                            name="type"
+                            value={announcementForm.type}
+                            onChange={handleAnnouncementFormChange}
+                          >
+                            <option value="informacion">Información</option>
+                            <option value="aviso">Aviso</option>
+                            <option value="urgente">Urgente</option>
+                          </select>
+                        </div>
+
+                        <div className="mb-3">
+                          <label className="form-label">Imagen (URL opcional)</label>
+                          <input
+                            type="text"
+                            className="form-control"
+                            name="image_url"
+                            value={announcementForm.image_url}
+                            onChange={handleAnnouncementFormChange}
+                            placeholder="https://..."
+                          />
+                        </div>
+
+                        <div className="form-check mb-4">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="announcement-is-featured"
+                            name="is_featured"
+                            checked={announcementForm.is_featured}
+                            onChange={handleAnnouncementFormChange}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor="announcement-is-featured"
+                          >
+                            Destacar comunicado
+                          </label>
+                        </div>
+
+                        <div className="d-flex gap-2 justify-content-end">
+                          <button
+                            type="button"
+                            className="btn btn-outline-secondary"
+                            onClick={closeAnnouncementModal}
+                          >
+                            Cancelar
+                          </button>
+                          <button type="submit" className="btn btn-success">
+                            {editingAnnouncement ? "Guardar cambios" : "Publicar comunicado"}
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="announcement-preview-panel">
+                        <h4 className="announcement-preview-panel__title">Vista previa</h4>
+
+                        <article
+                          className={`announcement-preview-card announcement-preview-card--${announcementForm.type}`}
+                        >
+                          <div className="announcement-preview-card__media">
+                            {announcementForm.image_url ? (
+                              <img
+                                src={announcementForm.image_url}
+                                alt="Preview"
+                                className="announcement-preview-card__image"
+                              />
+                            ) : (
+                              <div className="announcement-preview-card__placeholder">
+                                <Megaphone size={34} />
+                              </div>
+                            )}
+                          </div>
+
+                          <div className="announcement-preview-card__body">
+                            <div className="announcement-preview-card__badges">
+                              <span className={`announcement-type-badge announcement-type-badge--${announcementForm.type}`}>
+                                {getAnnouncementTypeLabel(announcementForm.type)}
+                              </span>
+
+                              {announcementForm.is_featured && (
+                                <span className="announcement-featured-badge">
+                                  DESTACADO
+                                </span>
+                              )}
+                            </div>
+
+                            <h3>{announcementForm.title || "Título del comunicado"}</h3>
+                            <p>
+                              {announcementForm.description ||
+                                "Aquí se verá la descripción del comunicado para el vecino."}
+                            </p>
+
+                            <div className="announcement-preview-card__meta">
+                              <span>Administración</span>
+                              <span>{new Date().toLocaleDateString()}</span>
+                            </div>
+                          </div>
+                        </article>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </section>
           )}
 

@@ -504,3 +504,82 @@ export async function deleteDocument(id) {
 
   return data;
 }
+
+export async function getAnnouncements(userId) {
+  const url = userId
+    ? `${API_URL}/announcements?userId=${userId}`
+    : `${API_URL}/announcements`;
+
+  const res = await fetch(url);
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando comunicados");
+  }
+
+  return data;
+}
+
+export async function createAnnouncement(announcementData) {
+  const res = await fetch(`${API_URL}/announcements`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(announcementData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando comunicado");
+  }
+
+  return data;
+}
+
+export async function updateAnnouncement(id, announcementData) {
+  const res = await fetch(`${API_URL}/announcements/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(announcementData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error editando comunicado");
+  }
+
+  return data;
+}
+
+export async function deleteAnnouncement(id, created_by) {
+  const res = await fetch(`${API_URL}/announcements/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ created_by }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando comunicado");
+  }
+
+  return data;
+}
+
+export async function updateAnnouncementFeatured(id, is_featured) {
+  const res = await fetch(`${API_URL}/announcements/${id}/feature`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ is_featured }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando destacado");
+  }
+
+  return data;
+}
