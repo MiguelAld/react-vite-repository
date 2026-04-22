@@ -461,3 +461,46 @@ export async function markAllNovededAsRead(userId) {
 
   return data;
 }
+
+/* DOCUMENTS */
+
+export async function getDocuments() {
+  const res = await fetch(`${API_URL}/documents`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando documentos");
+  }
+
+  return data;
+}
+
+export async function uploadDocument(formData) {
+  const res = await fetch(`${API_URL}/documents`, {
+    method: "POST",
+    body: formData,
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error subiendo documento");
+  }
+
+  return data;
+}
+
+export async function deleteDocument(id) {
+  const res = await fetch(`${API_URL}/documents/${id}`, {
+    method: "DELETE",
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando documento");
+  }
+
+  return data;
+}

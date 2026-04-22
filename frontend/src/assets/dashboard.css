@@ -1766,3 +1766,53 @@ aside.user-sketch-layout .user-sketch-profile-card {
   align-items: center;
   gap: 8px;
 }
+
+/* // ============================================
+  // DOCUMENTS / ARCHIVOS
+  // ============================================ */
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.document-card {
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.document-card__icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: #eef5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #2563eb;
+}
+
+.document-card__content h4 {
+  margin-bottom: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.document-card__content p {
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+.document-card__actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: auto;
+}

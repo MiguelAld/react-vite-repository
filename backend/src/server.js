@@ -8,6 +8,7 @@ import incidentsRoutes from "./routes/incidents.js";
 import zonesRoutes from "./routes/zones.js";
 import announcementsRoutes from "./routes/announcements.js";
 import novededReadsRoutes from "./routes/novedad-reads.js";
+import documentsRoutes from "./routes/documents.js";
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use("/incidents", incidentsRoutes);
 app.use("/zones", zonesRoutes);
 app.use("/announcements", announcementsRoutes);
 app.use("/novedad-reads", novededReadsRoutes);
+app.use("/documents", documentsRoutes);
+app.use("/uploads", express.static("uploads"));
 
 app.get("/health", (req, res) => {
   res.json({ ok: true });

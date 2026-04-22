@@ -16,9 +16,12 @@ import {
   updateZoneActive,
   updateZoneOrder,
   getMeetings,
+  getDocuments,
+  uploadDocument,
+  deleteDocument,
 } from "../../services/api";
 import "../../assets/dashboard.css";
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, FileText } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -63,6 +66,12 @@ export default function AdminDashboard() {
   const ok = window.confirm(
     `¿Seguro que quieres borrar al usuario ${userName}? Esta acción no se puede deshacer.`
   );
+
+  const [documents, setDocuments] = useState([]);
+  const [documentsLoading, setDocumentsLoading] = useState(false);
+  const [documentsError, setDocumentsError] = useState("");
+  const [documentTitle, setDocumentTitle] = useState("");
+  const [documentFile, setDocumentFile] = useState(null);
 
   if (!ok) return;
 
@@ -166,6 +175,67 @@ export default function AdminDashboard() {
         });
     }
   }, [section]);
+
+  useEffect(() => {
+  if (section === "documentos") {
+    setDocumentsLoading(true);
+    setDocumentsError("");
+
+    getDocuments()
+      .then(setDocuments)
+      .catch((err) => {
+        console.error(err);
+        setDocumentsError(err.message || "Error al cargar documentos");
+      })
+      .finally(() => {
+        setDocumentsLoading(false);
+      });
+  }
+}, [section]);
+
+const handleUploadDocument = async (e) => {
+  e.preventDefault();
+
+  try {
+    if (!documentTitle.trim() || !documentFile) {
+      alert("Debes indicar título y seleccionar un PDF");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("title", documentTitle);
+    formData.append("uploaded_by", user.id);
+    formData.append("file", documentFile);
+
+    const newDocument = await uploadDocument(formData);
+
+    setDocuments((prev) => [newDocument, ...prev]);
+    setDocumentTitle("");
+    setDocumentFile(null);
+
+    const fileInput = document.getElementById("document-file-input");
+    if (fileInput) fileInput.value = "";
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Error subiendo documento");
+  }
+};
+
+const handleDeleteDocument = async (documentId, title) => {
+  const ok = window.confirm(
+    `¿Seguro que quieres borrar el documento "${title}"?`
+  );
+
+  if (!ok) return;
+
+  try {
+    await deleteDocument(documentId);
+    setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Error eliminando documento");
+  }
+};
 
   const getIncidentZoneLabel = (incident) => {
     return incident.zone?.name || incident.custom_zone || "—";
@@ -896,10 +966,106 @@ export default function AdminDashboard() {
 
           {section === "documentos" && (
             <section className="dashboard-panel">
-              <h1 className="dashboard-title">Documentos</h1>
-              <p className="dashboard-subtitle">
-                Aquí gestionarás los PDFs y documentos oficiales.
-              </p>
+              <div className="dashboard-header-row">
+                <div>
+                  <h1 className="dashboard-title">Documentos</h1>
+                  <p className="dashboard-subtitle">
+                    Aquí puedes subir PDFs, ver los documentos publicados y eliminarlos.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleUploadDocument} className="dashboard-block mb-4">
+                <div className="row g-3 align-items-end">
+                  <div className="col-md-5">
+                    <label className="form-label">Título del documento</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={documentTitle}
+                      onChange={(e) => setDocumentTitle(e.target.value)}
+                      placeholder="Ej: Acta junta abril 2026"
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-5">
+                    <label className="form-label">Archivo PDF</label>
+                    <input
+                      id="document-file-input"
+                      type="file"
+                      className="form-control"
+                      accept="application/pdf"
+                      onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-2">
+                    <button type="submit" className="btn btn-primary w-100">
+                      <FileUp size={16} className="me-2" />
+                      Subir
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              {documentsLoading && <p>Cargando documentos...</p>}
+              {documentsError && <div className="alert alert-danger">{documentsError}</div>}
+
+              {!documentsLoading && !documentsError && (
+                <>
+                  {documents.length === 0 ? (
+                    <p className="dashboard-empty">No hay documentos subidos todavía.</p>
+                  ) : (
+                    <div className="documents-grid">
+                      {documents.map((doc) => (
+                        <article key={doc.id} className="document-card">
+                          <div className="document-card__icon">
+                            <FileText size={36} />
+                          </div>
+
+                          <div className="document-card__content">
+                            <h4>{doc.title}</h4>
+                            <p>
+                              <strong>Archivo:</strong> {doc.original_name}
+                            </p>
+                            <p>
+                              <strong>Subido por:</strong>{" "}
+                              {doc.uploader?.name || "Administración"}
+                            </p>
+                            <p>
+                              <strong>Fecha:</strong>{" "}
+                              {doc.created_at
+                                ? new Date(doc.created_at).toLocaleDateString()
+                                : "—"}
+                            </p>
+                          </div>
+
+                          <div className="document-card__actions">
+                            <a
+                              href={`http://localhost:4000/uploads/${doc.stored_name}`}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn btn-sm btn-outline-primary"
+                            >
+                              Ver PDF
+                            </a>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleDeleteDocument(doc.id, doc.title)}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
             </section>
           )}
 
