@@ -1939,3 +1939,38 @@ aside.user-sketch-layout .user-sketch-profile-card {
     justify-content: space-around;
   }
 }
+
+.user-row-inactive {
+  opacity: 0.58;
+  background: #f8fafc;
+}
+
+.user-row-inactive td {
+  color: #64748b;
+}
+
+.user-role-state-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-inactive-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #7f1d1d;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.user-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

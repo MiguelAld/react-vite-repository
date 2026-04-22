@@ -17,7 +17,7 @@ import {
   getMeetings,
 } from "../../services/api";
 import "../../assets/dashboard.css";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -57,6 +57,26 @@ export default function AdminDashboard() {
     vivienda: "",
     role: "VECINO",
   });
+
+  const handleDeleteUser = async (userId, userName) => {
+  const ok = window.confirm(
+    `¿Seguro que quieres borrar al usuario ${userName}? Esta acción no se puede deshacer.`
+  );
+
+  if (!ok) return;
+
+  try {
+    await deleteUser(userId);
+
+    setUsers((prev) => prev.filter((u) => u.id !== userId));
+
+    if (editingUser && editingUser.id === userId) {
+      closeUserModal();
+    }
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Error eliminando usuario");
+  }};
 
   useEffect(() => {
     if (section === "usuarios") {

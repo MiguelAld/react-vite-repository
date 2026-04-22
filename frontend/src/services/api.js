@@ -171,6 +171,20 @@ export async function updateUserActive(id, is_active) {
   return data;
 }
 
+export async function deleteUser(id) {
+  const res = await fetch(`${API_URL}/users/${id}`, {
+    method: "DELETE",
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando usuario");
+  }
+
+  return data;
+}
+
 /* INCIDENTS */
 export async function getIncidents() {
   const res = await fetch(`${API_URL}/incidents`);
