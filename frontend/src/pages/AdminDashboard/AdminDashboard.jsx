@@ -7,6 +7,7 @@ import {
   createUser,
   updateUser,
   updateUserActive,
+  deleteUser,
   getIncidents,
   updateIncidentStatus,
   deleteIncident,
