@@ -23,7 +23,7 @@ import {
   createAnnouncement,
   updateAnnouncement,
   deleteAnnouncement,
-  updateAnnouncementFeatured,
+  updateAnnouncementFeatured
 } from "../../services/api";
 import "../../assets/dashboard.css";
 import {
@@ -34,7 +34,7 @@ import {
   Megaphone,
   Star,
   Image as ImageIcon,
-  Edit3,
+  Edit3
 } from "lucide-react";
 
 export default function AdminDashboard() {
