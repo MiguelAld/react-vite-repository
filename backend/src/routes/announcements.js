@@ -2,8 +2,46 @@ import express from "express";
 import { Announcement } from "../models/Announcement.js";
 import { User } from "../models/User.js";
 import { NovededRead } from "../models/NovededRead.js";
+import { sequelize } from "../config/sequelize.js";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 
 const router = express.Router();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, "../../uploads");
+
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (_req, file, cb) => {
+    const uniqueName = `${Date.now()}-${Math.round(
+      Math.random() * 1e9
+    )}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({
+  storage,
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Solo se permiten imágenes"));
+    }
+    cb(null, true);
+  },
+  limits: {
+    fileSize: 5 * 1024 * 1024,
+  },
+});
 
 /* listar anuncios */
 router.get("/", async (req, res) => {
@@ -19,7 +57,7 @@ router.get("/", async (req, res) => {
         },
       ],
       order: [
-        ["is_featured", "DESC"],
+        [sequelize.literal("CASE WHEN type = 'urgente' THEN 0 ELSE 1 END"), "ASC"],
         ["created_at", "DESC"],
       ],
     });
@@ -52,17 +90,10 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* crear anuncio */
-router.post("/", async (req, res) => {
+  /* crear anuncio */
+router.post("/", upload.single("image"), async (req, res) => {
   try {
-    const {
-      title,
-      description,
-      type,
-      is_featured,
-      image_url,
-      created_by,
-    } = req.body;
+  const { title, description, type, created_by } = req.body;
 
     if (!title || !description || !created_by) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
@@ -131,8 +162,13 @@ router.put("/:id", async (req, res) => {
     announcement.title = title;
     announcement.description = description;
     announcement.type = type || "informacion";
-    announcement.is_featured = !!is_featured;
-    announcement.image_url = image_url || null;
+    announcement.is_featured = type === "urgente";
+
+    if (req.file) {
+      announcement.image_url = `/uploads/${req.file.filename}`;
+    } else if (keep_image !== "true") {
+      announcement.image_url = null;
+    }
 
     await announcement.save();
 

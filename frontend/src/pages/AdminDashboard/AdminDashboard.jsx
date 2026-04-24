@@ -77,12 +77,11 @@ export default function AdminDashboard() {
   const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState(null);
   const [announcementPreview, setAnnouncementPreview] = useState(null);
-
+  const [announcementImageFile, setAnnouncementImageFile] = useState(null);
   const [announcementForm, setAnnouncementForm] = useState({
   title: "",
   description: "",
   type: "informacion",
-  is_featured: false,
   image_url: "",
   });
 
@@ -284,27 +283,27 @@ export default function AdminDashboard() {
   }, [section]);
 
   const openCreateAnnouncementModal = () => {
-  setEditingAnnouncement(null);
-  setAnnouncementForm({
-    title: "",
-    description: "",
-    type: "informacion",
-    is_featured: false,
-    image_url: "",
-  });
-  setShowAnnouncementModal(true);
+    setEditingAnnouncement(null);
+    setAnnouncementImageFile(null);
+    setAnnouncementForm({
+      title: "",
+      description: "",
+      type: "informacion",
+      image_url: "",
+    });
+    setShowAnnouncementModal(true);
   };
 
   const openEditAnnouncementModal = (announcement) => {
-  setEditingAnnouncement(announcement);
-  setAnnouncementForm({
-    title: announcement.title || "",
-    description: announcement.description || "",
-    type: announcement.type || "informacion",
-    is_featured: !!announcement.is_featured,
-    image_url: announcement.image_url || "",
-  });
-  setShowAnnouncementModal(true);
+    setEditingAnnouncement(announcement);
+    setAnnouncementImageFile(null);
+    setAnnouncementForm({
+      title: announcement.title || "",
+      description: announcement.description || "",
+      type: announcement.type || "informacion",
+      image_url: announcement.image_url || "",
+    });
+    setShowAnnouncementModal(true);
   };
 
   const closeAnnouncementModal = () => {
@@ -322,30 +321,40 @@ export default function AdminDashboard() {
   };
 
   const handleSubmitAnnouncement = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const payload = {
-      ...announcementForm,
-      created_by: user.id,
-    };
+    try {
+      const payload = new FormData();
 
-    if (editingAnnouncement) {
-      const updated = await updateAnnouncement(editingAnnouncement.id, payload);
+      payload.append("title", announcementForm.title);
+      payload.append("description", announcementForm.description);
+      payload.append("type", announcementForm.type);
+      payload.append("created_by", user.id);
 
-      setAnnouncements((prev) =>
-        prev.map((a) => (a.id === editingAnnouncement.id ? updated : a))
-      );
-    } else {
-      const created = await createAnnouncement(payload);
-      setAnnouncements((prev) => [created, ...prev]);
+      if (announcementImageFile) {
+        payload.append("image", announcementImageFile);
+      }
+
+      if (editingAnnouncement && announcementForm.image_url && !announcementImageFile) {
+        payload.append("keep_image", "true");
+      }
+
+      if (editingAnnouncement) {
+        const updated = await updateAnnouncement(editingAnnouncement.id, payload);
+
+        setAnnouncements((prev) =>
+          prev.map((a) => (a.id === editingAnnouncement.id ? updated : a))
+        );
+      } else {
+        const created = await createAnnouncement(payload);
+        setAnnouncements((prev) => [created, ...prev]);
+      }
+
+      closeAnnouncementModal();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error guardando comunicado");
     }
-
-    closeAnnouncementModal();
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Error guardando comunicado");
-  }
   };
 
   const handleDeleteAnnouncement = async (announcementId, title) => {
@@ -384,6 +393,12 @@ export default function AdminDashboard() {
   if (type === "aviso") return "AVISO";
   return "INFORMACIÓN";
   };
+
+  const previewImage = announcementImageFile
+  ? URL.createObjectURL(announcementImageFile)
+  : announcementForm.image_url
+  ? `http://localhost:4000${announcementForm.image_url}`
+  : "";
 
   const getIncidentZoneLabel = (incident) => {
     return incident.zone?.name || incident.custom_zone || "—";
@@ -1118,36 +1133,6 @@ export default function AdminDashboard() {
                 </button>
               </div>
 
-              {!announcementsLoading && !announcementsError && (
-                <div className="dashboard-cards mb-4">
-                  <div className="dashboard-card summary-accent-blue">
-                    <h5>Total</h5>
-                    <p className="summary-number">{announcements.length}</p>
-                  </div>
-
-                  <div className="dashboard-card summary-accent-yellow">
-                    <h5>Destacados</h5>
-                    <p className="summary-number">
-                      {announcements.filter((a) => a.is_featured).length}
-                    </p>
-                  </div>
-
-                  <div className="dashboard-card summary-accent-purple">
-                    <h5>Avisos</h5>
-                    <p className="summary-number">
-                      {announcements.filter((a) => a.type === "aviso").length}
-                    </p>
-                  </div>
-
-                  <div className="dashboard-card summary-accent-green">
-                    <h5>Urgentes</h5>
-                    <p className="summary-number">
-                      {announcements.filter((a) => a.type === "urgente").length}
-                    </p>
-                  </div>
-                </div>
-              )}
-
               {announcementsLoading && <p>Cargando comunicados...</p>}
               {announcementsError && (
                 <div className="alert alert-danger">{announcementsError}</div>
@@ -1167,7 +1152,7 @@ export default function AdminDashboard() {
                           <div className="announcement-admin-card__media">
                             {announcement.image_url ? (
                               <img
-                                src={announcement.image_url}
+                                src={`http://localhost:4000${announcement.image_url}`}
                                 alt={announcement.title}
                                 className="announcement-admin-card__image"
                               />
@@ -1219,25 +1204,6 @@ export default function AdminDashboard() {
                               >
                                 <Edit3 size={14} className="me-1" />
                                 Editar
-                              </button>
-
-                              <button
-                                className={`btn btn-sm ${
-                                  announcement.is_featured
-                                    ? "btn-outline-warning"
-                                    : "btn-outline-dark"
-                                }`}
-                                onClick={() =>
-                                  handleToggleAnnouncementFeatured(
-                                    announcement.id,
-                                    announcement.is_featured
-                                  )
-                                }
-                              >
-                                <Star size={14} className="me-1" />
-                                {announcement.is_featured
-                                  ? "Quitar destacado"
-                                  : "Destacar"}
                               </button>
 
                               <button
@@ -1323,32 +1289,18 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="mb-3">
-                          <label className="form-label">Imagen (URL opcional)</label>
+                          <label className="form-label">Imagen del comunicado</label>
                           <input
-                            type="text"
+                            type="file"
                             className="form-control"
-                            name="image_url"
-                            value={announcementForm.image_url}
-                            onChange={handleAnnouncementFormChange}
-                            placeholder="https://..."
+                            accept="image/*"
+                            onChange={(e) => setAnnouncementImageFile(e.target.files?.[0] || null)}
                           />
-                        </div>
-
-                        <div className="form-check mb-4">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            id="announcement-is-featured"
-                            name="is_featured"
-                            checked={announcementForm.is_featured}
-                            onChange={handleAnnouncementFormChange}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor="announcement-is-featured"
-                          >
-                            Destacar comunicado
-                          </label>
+                          {editingAnnouncement?.image_url && !announcementImageFile && (
+                            <small className="text-muted">
+                              Este comunicado ya tiene una imagen. Si seleccionas otra, se sustituirá.
+                            </small>
+                          )}
                         </div>
 
                         <div className="d-flex gap-2 justify-content-end">
@@ -1372,9 +1324,9 @@ export default function AdminDashboard() {
                           className={`announcement-preview-card announcement-preview-card--${announcementForm.type}`}
                         >
                           <div className="announcement-preview-card__media">
-                            {announcementForm.image_url ? (
+                            {previewImage ? (
                               <img
-                                src={announcementForm.image_url}
+                                src={previewImage}
                                 alt="Preview"
                                 className="announcement-preview-card__image"
                               />

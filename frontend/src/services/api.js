@@ -357,11 +357,10 @@ export async function getAnnouncements(userId) {
   return data;
 }
 
-export async function createAnnouncement(announcementData) {
+export async function createAnnouncement(formData) {
   const res = await fetch(`${API_URL}/announcements`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(announcementData),
+    body: formData,
   });
 
   const data = await res.json().catch(() => ({}));
@@ -373,11 +372,10 @@ export async function createAnnouncement(announcementData) {
   return data;
 }
 
-export async function updateAnnouncement(id, announcementData) {
+export async function updateAnnouncement(id, formData) {
   const res = await fetch(`${API_URL}/announcements/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(announcementData),
+    body: formData,
   });
 
   const data = await res.json().catch(() => ({}));
