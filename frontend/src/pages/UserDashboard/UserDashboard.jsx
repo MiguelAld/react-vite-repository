@@ -37,6 +37,7 @@ export default function UserDashboard() {
   const [incidentError, setIncidentError] = useState("");
   const [announcementError, setAnnouncementError] = useState("");
   const [showCreateIncidentModal, setShowCreateIncidentModal] = useState(false);
+  const [incidentImageFile, setIncidentImageFile] = useState(null);
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
@@ -142,13 +143,24 @@ export default function UserDashboard() {
     e.preventDefault();
 
     try {
-      const incidentPayload = {
-        zone_id: formData.zone_id === "other" ? null : Number(formData.zone_id),
-        custom_zone:
-          formData.zone_id === "other" ? formData.custom_zone.trim() : null,
-        created_by: user.id,
-        description: formData.description,
-      };
+      const incidentPayload = new FormData();
+
+      incidentPayload.append(
+        "zone_id",
+        formData.zone_id === "other" ? "" : Number(formData.zone_id)
+      );
+
+      incidentPayload.append(
+        "custom_zone",
+        formData.zone_id === "other" ? formData.custom_zone.trim() : ""
+      );
+
+      incidentPayload.append("created_by", user.id);
+      incidentPayload.append("description", formData.description);
+
+      if (incidentImageFile) {
+        incidentPayload.append("image", incidentImageFile);
+      }
 
       const newIncident = await createIncident(incidentPayload);
 
@@ -160,6 +172,7 @@ export default function UserDashboard() {
         description: "",
       });
 
+      setIncidentImageFile(null);
       setShowCreateIncidentModal(false);
     } catch (err) {
       console.error(err);
@@ -384,6 +397,12 @@ export default function UserDashboard() {
                   <div className="incident-card__description">
                     <p>{incident.description}</p>
                   </div>
+
+                  {incident.image_url && (
+                    <div className="incident-card__image">
+                      <img src={incident.image_url} alt="Incidencia" />
+                    </div>
+                  )}
                 </article>
               ))}
             </div>
@@ -458,6 +477,18 @@ export default function UserDashboard() {
                     onChange={handleChange}
                     required
                   />
+                </div>
+                <div className="col-md-12">
+                  <label className="form-label">Imagen opcional</label>
+                  <input
+                    type="file"
+                    className="form-control"
+                    accept="image/*"
+                    onChange={(e) => setIncidentImageFile(e.target.files?.[0] || null)}
+                  />
+                  <small className="text-muted">
+                    Puedes añadir una foto para mostrar mejor el problema.
+                  </small>
                 </div>
               </div>
 

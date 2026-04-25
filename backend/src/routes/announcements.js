@@ -1,12 +1,12 @@
 import express from "express";
-import { Announcement } from "../models/Announcement.js";
-import { User } from "../models/User.js";
-import { NovededRead } from "../models/NovededRead.js";
-import { sequelize } from "../config/sequelize.js";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { Announcement } from "../models/Announcement.js";
+import { User } from "../models/User.js";
+import { NovededRead } from "../models/NovededRead.js";
+import { sequelize } from "../config/sequelize.js";
 
 const router = express.Router();
 
@@ -26,6 +26,7 @@ const storage = multer.diskStorage({
     const uniqueName = `${Date.now()}-${Math.round(
       Math.random() * 1e9
     )}${path.extname(file.originalname)}`;
+
     cb(null, uniqueName);
   },
 });
@@ -36,6 +37,7 @@ const upload = multer({
     if (!file.mimetype.startsWith("image/")) {
       return cb(new Error("Solo se permiten imágenes"));
     }
+
     cb(null, true);
   },
   limits: {
@@ -90,26 +92,29 @@ router.get("/", async (req, res) => {
   }
 });
 
-  /* crear anuncio */
+/* crear anuncio */
 router.post("/", upload.single("image"), async (req, res) => {
   try {
-  const { title, description, type, created_by } = req.body;
+    const { title, description, type, created_by } = req.body;
 
     if (!title || !description || !created_by) {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
     const user = await User.findByPk(created_by);
+
     if (!user) {
       return res.status(404).json({ error: "Usuario no encontrado" });
     }
 
+    const finalType = type || "informacion";
+
     const announcement = await Announcement.create({
       title,
       description,
-      type: type || "informacion",
-      is_featured: !!is_featured,
-      image_url: image_url || null,
+      type: finalType,
+      is_featured: finalType === "urgente",
+      image_url: req.file ? `/uploads/${req.file.filename}` : null,
       created_by,
     });
 
@@ -126,22 +131,15 @@ router.post("/", upload.single("image"), async (req, res) => {
     res.status(201).json(result);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al crear anuncio" });
+    res.status(500).json({ error: error.message || "Error al crear anuncio" });
   }
 });
 
 /* editar anuncio */
-router.put("/:id", async (req, res) => {
+router.put("/:id", upload.single("image"), async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      title,
-      description,
-      type,
-      is_featured,
-      image_url,
-      created_by,
-    } = req.body;
+    const { title, description, type, created_by, keep_image } = req.body;
 
     const announcement = await Announcement.findByPk(id);
 
@@ -159,14 +157,38 @@ router.put("/:id", async (req, res) => {
       return res.status(400).json({ error: "Faltan datos obligatorios" });
     }
 
+    const finalType = type || "informacion";
+
     announcement.title = title;
     announcement.description = description;
-    announcement.type = type || "informacion";
-    announcement.is_featured = type === "urgente";
+    announcement.type = finalType;
+    announcement.is_featured = finalType === "urgente";
 
     if (req.file) {
+      if (announcement.image_url) {
+        const oldImagePath = path.join(
+          uploadsDir,
+          path.basename(announcement.image_url)
+        );
+
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+
       announcement.image_url = `/uploads/${req.file.filename}`;
     } else if (keep_image !== "true") {
+      if (announcement.image_url) {
+        const oldImagePath = path.join(
+          uploadsDir,
+          path.basename(announcement.image_url)
+        );
+
+        if (fs.existsSync(oldImagePath)) {
+          fs.unlinkSync(oldImagePath);
+        }
+      }
+
       announcement.image_url = null;
     }
 
@@ -185,29 +207,7 @@ router.put("/:id", async (req, res) => {
     res.json(result);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error al editar anuncio" });
-  }
-});
-
-/* destacar / quitar destacado */
-router.patch("/:id/feature", async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { is_featured } = req.body;
-
-    const announcement = await Announcement.findByPk(id);
-
-    if (!announcement) {
-      return res.status(404).json({ error: "Anuncio no encontrado" });
-    }
-
-    announcement.is_featured = !!is_featured;
-    await announcement.save();
-
-    res.json({ message: "Estado destacado actualizado", announcement });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error actualizando destacado" });
+    res.status(500).json({ error: error.message || "Error al editar anuncio" });
   }
 });
 
@@ -229,7 +229,16 @@ router.delete("/:id", async (req, res) => {
         .json({ error: "No tienes permiso para eliminar este anuncio" });
     }
 
+    if (announcement.image_url) {
+      const imagePath = path.join(uploadsDir, path.basename(announcement.image_url));
+
+      if (fs.existsSync(imagePath)) {
+        fs.unlinkSync(imagePath);
+      }
+    }
+
     await announcement.destroy();
+
     res.json({ message: "Anuncio eliminado correctamente" });
   } catch (error) {
     console.error(error);

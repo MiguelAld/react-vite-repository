@@ -27,6 +27,11 @@ export const Incident = sequelize.define(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    image_url: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    },
+
     status: {
       type: DataTypes.ENUM("PENDIENTE", "EN_PROCESO", "RESUELTA"),
       allowNull: false,

@@ -222,11 +222,10 @@ export async function getUserIncidents(userId) {
   return data;
 }
 
-export async function createIncident(incidentData) {
+export async function createIncident(formData) {
   const res = await fetch(`${API_URL}/incidents`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(incidentData),
+    body: formData,
   });
 
   const data = await res.json().catch(() => ({}));
