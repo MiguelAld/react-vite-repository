@@ -17,6 +17,7 @@ import {
   getAnnouncements,
   markAllNovededAsRead,
   getNovededCount,
+  getDocuments,
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
@@ -27,6 +28,9 @@ export default function UserDashboard() {
   const [zones, setZones] = useState([]);
   const [incidents, setIncidents] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
+  const [documents, setDocuments] = useState([]);
+  const [loadingDocuments, setLoadingDocuments] = useState(false);
+  const [documentsError, setDocumentsError] = useState("");
   const [unreadCount, setUnreadCount] = useState(0);
   const [loadingIncidents, setLoadingIncidents] = useState(false);
   const [loadingAnnouncements, setLoadingAnnouncements] = useState(false);
@@ -97,6 +101,23 @@ export default function UserDashboard() {
         });
     }
   }, [activeSection, user?.id]);
+
+  useEffect(() => {
+  if (activeSection === "documentos") {
+    setLoadingDocuments(true);
+    setDocumentsError("");
+
+    getDocuments()
+      .then(setDocuments)
+      .catch((err) => {
+        console.error(err);
+        setDocumentsError(err.message || "Error cargando documentos");
+      })
+      .finally(() => {
+        setLoadingDocuments(false);
+      });
+  }
+  }, [activeSection]);
 
   const userName = user?.name || "USER";
   const userDni = user?.dni || "Sin DNI";
@@ -235,6 +256,24 @@ export default function UserDashboard() {
       </div>
     </header>
   );
+
+  const getFileUrl = (path) => {
+    if (!path) return "";
+    if (path.startsWith("http")) return path;
+    return `http://localhost:4000${path}`;
+  };
+
+  const getAnnouncementTypeLabel = (type) => {
+    if (type === "urgente") return "Urgente";
+    if (type === "aviso") return "Aviso";
+    return "Información";
+  };
+
+  const getAnnouncementTypeClass = (type) => {
+    if (type === "urgente") return "user-announcement-card--urgent";
+    if (type === "aviso") return "user-announcement-card--warning";
+    return "user-announcement-card--info";
+  };
 
   const renderInicio = () => (
     <section className="user-home-v2">
@@ -540,77 +579,150 @@ export default function UserDashboard() {
     <section className="dashboard-panel user-section-panel">
       <h1 className="dashboard-title">Documentos</h1>
       <p className="dashboard-subtitle">
-        Aquí verás los documentos subidos por la administración.
+        Consulta los documentos oficiales publicados por la administración.
       </p>
 
-      <div className="dashboard-list">
-        <div className="dashboard-list-item">
-          <h5>Normativa piscina.pdf</h5>
-          <p>Publicado por administración</p>
-        </div>
-        <div className="dashboard-list-item">
-          <h5>Acta reunión marzo.pdf</h5>
-          <p>Publicado por administración</p>
-        </div>
-      </div>
-    </section>
-  );
+      {loadingDocuments && <p>Cargando documentos...</p>}
 
-  const renderNovedades = () => (
-    <section className="dashboard-panel user-section-panel">
-      <div className="dashboard-header-row">
-        <div>
-          <h1 className="dashboard-title">Novedades</h1>
-          <p className="dashboard-subtitle">
-            Avisos y comunicaciones importantes de la comunidad
-          </p>
-        </div>
-      </div>
-
-      {loadingAnnouncements && <p>Cargando anuncios...</p>}
-      {announcementError && (
-        <div className="alert alert-danger">{announcementError}</div>
+      {documentsError && (
+        <div className="alert alert-danger">{documentsError}</div>
       )}
 
-      {!loadingAnnouncements && !announcementError && (
+      {!loadingDocuments && !documentsError && (
         <>
-          {announcements.length === 0 ? (
-            <p className="dashboard-empty">No hay novedades disponibles.</p>
+          {documents.length === 0 ? (
+            <p className="dashboard-empty">
+              No hay documentos publicados todavía.
+            </p>
           ) : (
-            <div className="announcements-grid">
-              {announcements.map((announcement) => (
-                <div key={announcement.id} className="announcement-card">
-                  <div className="announcement-card__header">
-                    <h3>{announcement.title}</h3>
+            <div className="user-documents-grid">
+              {documents.map((doc) => (
+                <article key={doc.id} className="user-document-card">
+                  <div className="user-document-card__icon">
+                    <FileText size={34} />
                   </div>
 
-                  <p className="announcement-card__meta">
-                    <strong>Publicado por:</strong>{" "}
-                    {announcement.creator?.name || "Administración"}
-                  </p>
-                  <p className="announcement-card__date">
-                    {new Date(announcement.created_at).toLocaleDateString(
-                      "es-ES",
-                      {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      }
-                    )}
-                  </p>
+                  <div className="user-document-card__body">
+                    <h3>{doc.title}</h3>
 
-                  <div className="announcement-card__content">
-                    {announcement.description}
+                    <p>
+                      Publicado por{" "}
+                      <strong>{doc.uploader?.name || "Administración"}</strong>
+                    </p>
+
+                    <span>
+                      {doc.created_at
+                        ? new Date(doc.created_at).toLocaleDateString("es-ES")
+                        : "Fecha no disponible"}
+                    </span>
                   </div>
-                </div>
+
+                  <a
+                    href={`http://localhost:4000/uploads/${doc.stored_name}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-outline-primary btn-sm"
+                  >
+                    Ver PDF
+                  </a>
+                </article>
               ))}
             </div>
           )}
         </>
       )}
     </section>
+  );
+
+  const renderNovedades = () => (
+  <section className="dashboard-panel user-section-panel">
+    <div className="dashboard-header-row">
+      <div>
+        <h1 className="dashboard-title">Novedades</h1>
+        <p className="dashboard-subtitle">
+          Avisos y comunicaciones importantes de la comunidad.
+        </p>
+      </div>
+    </div>
+
+    {loadingAnnouncements && <p>Cargando novedades...</p>}
+
+    {announcementError && (
+      <div className="alert alert-danger">{announcementError}</div>
+    )}
+
+    {!loadingAnnouncements && !announcementError && (
+      <>
+        {announcements.length === 0 ? (
+          <p className="dashboard-empty">
+            No hay novedades publicadas todavía.
+          </p>
+        ) : (
+          <div className="user-announcements-list">
+            {announcements.map((announcement) => (
+              <article
+                key={announcement.id}
+                className={`user-announcement-card ${getAnnouncementTypeClass(
+                  announcement.type
+                )}`}
+              >
+                <div className="user-announcement-card__media">
+                  {announcement.image_url ? (
+                    <img
+                      src={getFileUrl(announcement.image_url)}
+                      alt={announcement.title}
+                    />
+                  ) : (
+                    <div className="user-announcement-card__placeholder">
+                      <Bell size={32} />
+                    </div>
+                  )}
+                </div>
+
+                <div className="user-announcement-card__content">
+                  <div className="user-announcement-card__top">
+                    <span className="user-announcement-card__type">
+                      {getAnnouncementTypeLabel(announcement.type)}
+                    </span>
+
+                    {announcement.type === "urgente" && (
+                      <span className="user-announcement-card__pinned">
+                        Fijado
+                      </span>
+                    )}
+                  </div>
+
+                  <h3>{announcement.title}</h3>
+
+                  <p className="user-announcement-card__description">
+                    {announcement.description}
+                  </p>
+
+                  <div className="user-announcement-card__meta">
+                    <span>
+                      {announcement.creator?.name || "Administración"}
+                    </span>
+                    <span>
+                      {announcement.created_at
+                        ? new Date(announcement.created_at).toLocaleDateString(
+                            "es-ES",
+                            {
+                              day: "2-digit",
+                              month: "long",
+                              year: "numeric",
+                            }
+                          )
+                        : "Fecha no disponible"}
+                    </span>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </>
+    )}
+  </section>
   );
 
   const renderBottomNav = () => (
