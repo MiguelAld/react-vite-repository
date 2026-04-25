@@ -288,12 +288,6 @@ export default function UserDashboard() {
     return "user-announcement-card--info";
   };
 
-  const getFileUrl = (path) => {
-  if (!path) return "";
-  if (path.startsWith("http")) return path;
-  return `http://localhost:4000${path}`;
-  };
-
   const renderInicio = () => (
     <section className="user-home-v2">
       {renderTopHeader()}
