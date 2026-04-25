@@ -973,6 +973,19 @@ export default function AdminDashboard() {
                         <p>{selectedIncident.description}</p>
                       </div>
 
+                      {selectedIncident.image_url && (
+                        <div className="incident-detail-block incident-detail-block--full">
+                          <label>Imagen adjunta</label>
+
+                          <div className="incident-detail-image">
+                            <img
+                              src={`http://localhost:4000${selectedIncident.image_url}`}
+                              alt="Imagen de la incidencia"
+                            />
+                          </div>
+                        </div>
+                      )}
+
                       <div className="incident-detail-block incident-detail-block--full">
                         <label>Estado</label>
 

@@ -2232,3 +2232,18 @@ aside.user-sketch-layout .user-sketch-profile-card {
   object-fit: cover;
   display: block;
 }
+
+.incident-detail-image {
+  margin-top: 10px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e8eef5;
+  background: #f8fafc;
+}
+
+.incident-detail-image img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: contain;
+  display: block;
+}

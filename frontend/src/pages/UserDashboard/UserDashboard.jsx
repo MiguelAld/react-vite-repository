@@ -288,6 +288,12 @@ export default function UserDashboard() {
     return "user-announcement-card--info";
   };
 
+  const getFileUrl = (path) => {
+  if (!path) return "";
+  if (path.startsWith("http")) return path;
+  return `http://localhost:4000${path}`;
+  };
+
   const renderInicio = () => (
     <section className="user-home-v2">
       {renderTopHeader()}
@@ -400,7 +406,7 @@ export default function UserDashboard() {
 
                   {incident.image_url && (
                     <div className="incident-card__image">
-                      <img src={incident.image_url} alt="Incidencia" />
+                      <img src={getFileUrl(incident.image_url)} alt="Imagen de la incidencia" />
                     </div>
                   )}
                 </article>
