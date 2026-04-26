@@ -21,7 +21,7 @@ import {
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
-import logo_comunidad from "../../assets/logo_comunidad.png";
+import logoComunidad from "../../assets/logoComunidad.png";
 
 export default function UserDashboard() {
   const [activeSection, setActiveSection] = useState("inicio");
