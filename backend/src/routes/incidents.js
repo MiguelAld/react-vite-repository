@@ -51,7 +51,7 @@ router.get("/", async (req, res) => {
         {
           model: User,
           as: "creator",
-          attributes: ["id", "name", "dni", "vivienda", "role"],
+          attributes: ["id", "name", "apellidos", "dni", "vivienda", "role"],
         },
         {
           model: Zone,
