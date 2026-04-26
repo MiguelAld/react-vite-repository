@@ -894,12 +894,23 @@ export default function AdminDashboard() {
                             </p>
                           </div>
 
-                          <button
-                            className="btn btn-sm btn-outline-primary incident-card__toggle"
-                            onClick={() => setSelectedIncident(incident)}
-                          >
-                            Ver detalle
-                          </button>
+                          <div className="incident-card__actions">
+                            <button
+                              className="btn btn-sm btn-outline-primary incident-card__toggle"
+                              onClick={() => setSelectedIncident(incident)}
+                            >
+                              Ver detalle
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleDeleteIncident(incident.id)}
+                              title="Eliminar incidencia"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
                         </article>
                       ))}
                     </div>
@@ -1029,14 +1040,7 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
-                    <div className="mt-4 d-flex justify-content-end gap-2">
-                      <button
-                        type="button"
-                        className="btn btn-outline-danger"
-                        onClick={() => handleDeleteIncident(selectedIncident.id)}
-                      >
-                        Eliminar incidencia
-                      </button>
+                    <div className="mt-4 d-flex justify-content-end">
                       <button
                         type="button"
                         className="btn btn-outline-secondary"
