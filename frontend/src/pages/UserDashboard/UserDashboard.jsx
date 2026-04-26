@@ -387,10 +387,8 @@ export default function UserDashboard() {
 
                   <div className="incident-card__meta">
                     <p>
-                      <strong>Creada por:</strong>{" "}
-                      {incident.creator
-                        ? `${incident.creator.name} (${incident.creator.apellidos})`
-                        : "—"}
+                      <strong>Enviado por:</strong>{" "}
+                    {incident.creator ? [incident.creator.name, incident.creator.apellidos] .filter(Boolean) .join(" "): "—"}
                     </p>
                     <p>
                       <strong>Fecha y hora:</strong>{" "}
