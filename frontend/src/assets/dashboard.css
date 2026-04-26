@@ -1565,19 +1565,38 @@ aside.user-sketch-layout .user-sketch-profile-card {
 }
 
 .user-app-home-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  border: 1px solid #dbe4f0;
-  background: #ffffff;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+
+  border: 1px solid #cdd9ea;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.95);
+  color: #0f172a;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  transition: all 0.2s ease;
+}
+
+.user-app-home-btn svg {
+  width: 28px;
+  height: 28px;
+  stroke-width: 2.2;
 }
 
 .user-app-home-btn:hover {
-  background: #f8fbff;
+  transform: translateY(-2px) scale(1.03);
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 12px 24px rgba(29, 78, 216, 0.14);
+}
+
+.user-app-home-btn:active {
+  transform: scale(0.97);
 }
 
 .user-app-brand {
@@ -2428,25 +2447,7 @@ aside.user-sketch-layout .user-sketch-profile-card {
   gap: 14px;
 }
 
-/* BOTÓN HOME */
-.user-app-home-btn {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  border: 1px solid #d7e2ef;
-  background: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0f172a !important;
-  padding: 0;
-}
 
-.user-app-home-btn svg {
-  width: 21px;
-  height: 21px;
-  stroke: #0f172a !important;
-}
 
 /* LOGO COMUNIDAD */
 .user-app-brand {
