@@ -2281,3 +2281,76 @@ aside.user-sketch-layout .user-sketch-profile-card {
   object-fit: contain;
   display: block;
 }
+
+/* HEADER MÁS GRANDE */
+.user-app-header {
+  min-height: 92px;
+  padding: 0 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* LADO IZQUIERDO */
+.user-app-header__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* BOTÓN HOME */
+.user-app-home-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid #d7e2ef;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0f172a !important;
+  padding: 0;
+}
+
+.user-app-home-btn svg {
+  width: 21px;
+  height: 21px;
+  stroke: #0f172a !important;
+}
+
+/* LOGO COMUNIDAD */
+.user-app-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.user-app-brand span {
+  font-size: 1.95rem;
+  font-weight: 800;
+  color: #172033;
+}
+
+/* CAJA LOGO */
+.user-app-brand__logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  overflow: hidden;
+  background: white;
+  border: 1px solid #d7e2ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-app-brand__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* PERFIL DERECHA */
+.user-profile-menu {
+  margin-left: auto;
+}
