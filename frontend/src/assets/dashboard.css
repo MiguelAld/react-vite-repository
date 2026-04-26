@@ -2354,3 +2354,33 @@ aside.user-sketch-layout .user-sketch-profile-card {
 .user-profile-menu {
   margin-left: auto;
 }
+
+.user-app-header {
+  min-height: 96px;
+  padding: 0 26px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  position: relative;
+  overflow: hidden;
+}
+
+/* capa para mejorar lectura */
+.user-app-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.78);
+  backdrop-filter: blur(2px);
+}
+
+/* contenido encima */
+.user-app-header > * {
+  position: relative;
+  z-index: 2;
+}

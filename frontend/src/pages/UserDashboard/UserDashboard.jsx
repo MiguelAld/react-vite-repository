@@ -21,7 +21,7 @@ import {
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
-import logoComunidad from "../../assets/logoComunidad.png";
+import headerBg from "../../assets/header-bg.jpg";
 
 export default function UserDashboard() {
   const [activeSection, setActiveSection] = useState("inicio");
@@ -196,7 +196,7 @@ export default function UserDashboard() {
   };
 
   const renderTopHeader = () => (
-    <header className="user-app-header">
+    <header className="user-app-header" style={{ backgroundImage: `url(${headerBg})` }}>
       <div className="user-app-header__left">
         {activeSection !== "inicio" && (
           <button
