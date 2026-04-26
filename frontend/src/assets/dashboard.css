@@ -1599,6 +1599,20 @@ aside.user-sketch-layout .user-sketch-profile-card {
   transform: scale(0.97);
 }
 
+@media (max-width: 560px) {
+  .user-app-home-btn {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 16px;
+  }
+
+  .user-app-home-btn svg {
+    width: 25px;
+    height: 25px;
+  }
+}
+
 .user-app-brand {
   display: flex;
   align-items: center;
