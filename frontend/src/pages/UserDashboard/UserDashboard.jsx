@@ -386,7 +386,9 @@ export default function UserDashboard() {
                   <div className="incident-card__meta">
                     <p>
                       <strong>Creada por:</strong>{" "}
-                      {incident.creator?.name || "—"}
+                      {incident.creator
+                        ? `${incident.creator.name} (${incident.creator.apellidos})`
+                        : "—"}
                     </p>
                     <p>
                       <strong>Fecha y hora:</strong>{" "}

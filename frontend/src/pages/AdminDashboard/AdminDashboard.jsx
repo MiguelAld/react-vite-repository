@@ -887,7 +887,9 @@ export default function AdminDashboard() {
 
                           <div className="incident-card__meta">
                             <p>
-                              <strong>Enviada por:</strong> {incident.creator?.name || "—"}
+                              <strong>Creada por:</strong> {incident.creator
+                                ? `${incident.creator.name} (${incident.creator.apellidos})`  
+                                : "—"}
                             </p>
                             <p>
                               <strong>Fecha y hora:</strong> {formatDateTime(incident.created_at)}
