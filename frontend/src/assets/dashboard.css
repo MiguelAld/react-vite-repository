@@ -1460,8 +1460,8 @@ aside.user-sketch-layout .user-sketch-profile-card {
 }
 
 .user-app-brand__logo {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   border-radius: 12px;
   background: #e8f0fb;
   display: flex;
@@ -2266,4 +2266,18 @@ aside.user-sketch-layout .user-sketch-profile-card {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+}
+
+.user-app-brand__logo--image {
+  background: #ffffff;
+  border: 1px solid #e5edf6;
+  overflow: hidden;
+  padding: 2px;
+}
+
+.user-app-brand__logo--image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
 }

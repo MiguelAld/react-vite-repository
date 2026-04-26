@@ -21,6 +21,7 @@ import {
 } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
+import logo_comunidad from "../../assets/logo_comunidad.png";
 
 export default function UserDashboard() {
   const [activeSection, setActiveSection] = useState("inicio");
@@ -208,8 +209,8 @@ export default function UserDashboard() {
         )}
 
         <div className="user-app-brand">
-          <div className="user-app-brand__logo">
-            <House size={20} />
+          <div className="user-app-brand__logo user-app-brand__logo--image">
+            <img src={logoComunidad} alt="Logo comunidad" />
           </div>
           <span>Mi Comunidad</span>
         </div>
