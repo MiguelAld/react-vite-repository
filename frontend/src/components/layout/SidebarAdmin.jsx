@@ -28,7 +28,7 @@ export default function SidebarAdmin({
   return (
     <aside className="sidebar-user">
       <div className="sidebar-user__top">
-        <h2 className="sidebar-user__logo">Comunidad</h2>
+        <h2 className="sidebar-user__logo">Jardines de las ramblas</h2>
 
         <nav className="sidebar-user__nav">
           <button
