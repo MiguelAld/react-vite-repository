@@ -82,7 +82,7 @@ export default function LoginForm() {
               className="form-control"
               value={dni}
               onChange={(e) => setDni(e.target.value)}
-              placeholder="Ej: 12345678A"
+              placeholder="Ejemplo: 12345678A"
               autoComplete="username"
               required
             />
@@ -102,7 +102,7 @@ export default function LoginForm() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Nueva contraseña</label>
+            <label className="form-label">Crear nueva contraseña:</label>
             <input
               className="form-control"
               type="password"
@@ -127,7 +127,7 @@ export default function LoginForm() {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Contraseña</label>
+            <label className="form-label">Inserte contraseña:</label>
             <input
               className="form-control"
               type="password"

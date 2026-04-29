@@ -103,13 +103,13 @@ router.post("/login", async (req, res) => {
     }
 
     if (!user.password_hash) {
-      return res.status(401).json({ error: "Credenciales incorrectas" });
+      return res.status(401).json({ error: "Contraseña incorrecta" });
     }
 
     const ok = await bcrypt.compare(password, user.password_hash);
 
     if (!ok) {
-      return res.status(401).json({ error: "Credenciales incorrectas" });
+      return res.status(401).json({ error: "Contraseña incorrecta" });
     }
 
     const token = jwt.sign(
