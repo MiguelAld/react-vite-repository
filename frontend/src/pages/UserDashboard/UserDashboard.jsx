@@ -297,7 +297,7 @@ export default function UserDashboard() {
     <div
       className="user-home-v2__center user-home-v2__center--banner"
       style={{
-        backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.62), rgba(244, 247, 251, 0.86)), url(${headerBg})`,
+        backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.62), rgba(244, 247, 251, 0.86)), url(${background})`,
       }}
     >
       <div className="user-home-v2__buttons">
