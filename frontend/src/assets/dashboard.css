@@ -2073,3 +2073,32 @@
 .user-profile-menu__item--danger:hover {
   background: #fee2e2;
 }
+
+/* ============================================
+   HOME USER CON BANNER DE FONDO
+   ============================================ */
+
+.user-home-v2__center--banner {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.user-home-v2__center--banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(244, 247, 251, 0.18);
+  pointer-events: none;
+}
+
+.user-home-v2__buttons {
+  position: relative;
+  z-index: 2;
+}
+
+.user-circle-access {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+}

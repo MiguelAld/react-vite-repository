@@ -291,49 +291,54 @@ export default function UserDashboard() {
   };
 
   const renderInicio = () => (
-    <section className="user-home-v2">
-      {renderTopHeader()}
+  <section className="user-home-v2">
+    {renderTopHeader()}
 
-      <div className="user-home-v2__center">
-        <div className="user-home-v2__buttons">
-          <button
-            className="user-circle-access user-circle-access--large"
-            onClick={() => setActiveSection("incidencias")}
-          >
-            <div className="user-circle-access__icon">
-              <Wrench size={34} />
-            </div>
-            <span>Incidencias</span>
-          </button>
+    <div
+      className="user-home-v2__center user-home-v2__center--banner"
+      style={{
+        backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.62), rgba(244, 247, 251, 0.86)), url(${headerBg})`,
+      }}
+    >
+      <div className="user-home-v2__buttons">
+        <button
+          className="user-circle-access user-circle-access--large"
+          onClick={() => setActiveSection("incidencias")}
+        >
+          <div className="user-circle-access__icon">
+            <Wrench size={34} />
+          </div>
+          <span>Incidencias</span>
+        </button>
 
-          <button
-            className="user-circle-access user-circle-access--small"
-            onClick={() => setActiveSection("novedades")}
-          >
-            <div className="user-circle-access__icon user-circle-access__icon--bell">
-              <Bell size={30} />
-              {unreadCount > 0 && (
-                <span className="user-circle-access__badge">{unreadCount}</span>
-              )}
-            </div>
-            <span>Novedades</span>
-          </button>
+        <button
+          className="user-circle-access user-circle-access--small"
+          onClick={() => setActiveSection("novedades")}
+        >
+          <div className="user-circle-access__icon user-circle-access__icon--bell">
+            <Bell size={30} />
+            {unreadCount > 0 && (
+              <span className="user-circle-access__badge">{unreadCount}</span>
+            )}
+          </div>
+          <span>Novedades</span>
+        </button>
 
-          <button
-            className="user-circle-access user-circle-access--large"
-            onClick={() => setActiveSection("documentos")}
-          >
-            <div className="user-circle-access__icon">
-              <FileText size={34} />
-            </div>
-            <span>Documentos</span>
-          </button>
-        </div>
+        <button
+          className="user-circle-access user-circle-access--large"
+          onClick={() => setActiveSection("documentos")}
+        >
+          <div className="user-circle-access__icon">
+            <FileText size={34} />
+          </div>
+          <span>Documentos</span>
+        </button>
       </div>
+    </div>
 
-      <div className="user-home-v2__bottom" />
-    </section>
-  );
+    <div className="user-home-v2__bottom" />
+  </section>
+);
 
   const renderIncidencias = () => (
     <section className="dashboard-panel user-section-panel">
