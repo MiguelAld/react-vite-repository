@@ -887,7 +887,7 @@ export default function AdminDashboard() {
 
                           <div className="incident-card__meta">
                             <p>
-                              <strong>Creado por:</strong>
+                              <strong>Creado por: </strong>
                               {incident.creator ? [incident.creator.name, incident.creator.apellidos] .filter(Boolean) .join(" "): "—"}
                             </p>
                             <p>
