@@ -1427,17 +1427,17 @@
 }
 
 .user-app-brand__logo {
-  width: 54px;
-  height: 54px;
-  min-width: 54px;
-  border-radius: 17px;
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  border-radius: 18px;
   overflow: hidden;
   background: #ffffff;
   border: 1px solid #d7e2ef;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2px;
+  padding: 3px;
 }
 
 .user-app-brand__logo img {
