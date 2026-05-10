@@ -132,7 +132,7 @@ export default function UserDashboard() {
     }
   }, [activeSection]);
 
-  const userName = user?.name || "USER";
+  const userName = [user?.name, user?.apellidos].filter(Boolean).join(" ") || "USER";
   const userDni = user?.dni || "Sin DNI";
   const userHouse = user?.vivienda || "Sin vivienda";
 

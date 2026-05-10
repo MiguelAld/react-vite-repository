@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SidebarAdmin from "../../components/layout/SidebarAdmin";
 import CalendarMeetings from "../../components/CalendarMeetings";
 import { useAuth } from "../../context/AuthContext";
+
 import {
   getUsers,
   createUser,
@@ -23,22 +24,23 @@ import {
   createAnnouncement,
   updateAnnouncement,
   deleteAnnouncement,
-  updateAnnouncementFeatured
 } from "../../services/api";
+
 import "../../assets/dashboard.css";
+
 import {
   Pencil,
   Trash2,
   FileText,
   FileUp,
   Megaphone,
-  Star,
   Image as ImageIcon,
-  Edit3
+  Edit3,
 } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
+
   const [section, setSection] = useState("inicio");
 
   const [users, setUsers] = useState([]);
@@ -57,8 +59,6 @@ export default function AdminDashboard() {
   const [zonesLoading, setZonesLoading] = useState(false);
   const [zonesError, setZonesError] = useState("");
   const [zoneName, setZoneName] = useState("");
-  const [showZonesManager, setShowZonesManager] = useState(false);
-  const [selectedZoneId, setSelectedZoneId] = useState(null);
 
   const [showUserModal, setShowUserModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
@@ -76,13 +76,13 @@ export default function AdminDashboard() {
   const [announcementsError, setAnnouncementsError] = useState("");
   const [showAnnouncementModal, setShowAnnouncementModal] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState(null);
-  const [announcementPreview, setAnnouncementPreview] = useState(null);
   const [announcementImageFile, setAnnouncementImageFile] = useState(null);
+
   const [announcementForm, setAnnouncementForm] = useState({
-  title: "",
-  description: "",
-  type: "informacion",
-  image_url: "",
+    title: "",
+    description: "",
+    type: "informacion",
+    image_url: "",
   });
 
   const [userForm, setUserForm] = useState({
@@ -96,25 +96,19 @@ export default function AdminDashboard() {
     role: "VECINO",
   });
 
-  const handleDeleteUser = async (userId, userName) => {
-  const ok = window.confirm(
-    `¿Seguro que quieres borrar al usuario ${userName}? Esta acción no se puede deshacer.`
-  );
+  const adminFullName =
+    [user?.name, user?.apellidos].filter(Boolean).join(" ") || "Admin";
 
-  if (!ok) return;
+  const adminProperty =
+    [user?.portal, user?.vivienda].filter(Boolean).join(" - ") || "—";
 
-  try {
-    await deleteUser(userId);
+  const isComunicadosSection =
+    section === "comunicados" || section === "reportes";
 
-    setUsers((prev) => prev.filter((u) => u.id !== userId));
-
-    if (editingUser && editingUser.id === userId) {
-      closeUserModal();
-    }
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Error eliminando usuario");
-  }};
+  const viviendasPorPortal = {
+    P1: ["1A", "1B", "2A", "2B", "3A", "3B", "4A", "4B", "5A", "5B"],
+    P2: ["1C", "1D", "2C", "2D", "3C", "3D", "4C", "4D", "5C", "5D"],
+  };
 
   useEffect(() => {
     if (section === "usuarios") {
@@ -137,23 +131,27 @@ export default function AdminDashboard() {
     if (section === "inicio") {
       setIncidentsLoading(true);
       setMeetingsLoading(true);
+      setDocumentsLoading(true);
 
       getIncidents()
         .then(setIncidents)
-        .catch((err) => {
-          console.error(err);
-        })
+        .catch(console.error)
         .finally(() => {
           setIncidentsLoading(false);
         });
 
       getMeetings()
         .then(setMeetings)
-        .catch((err) => {
-          console.error(err);
-        })
+        .catch(console.error)
         .finally(() => {
           setMeetingsLoading(false);
+        });
+
+      getDocuments()
+        .then(setDocuments)
+        .catch(console.error)
+        .finally(() => {
+          setDocumentsLoading(false);
         });
     }
   }, [section]);
@@ -162,8 +160,6 @@ export default function AdminDashboard() {
     if (section === "incidencias") {
       setIncidentsLoading(true);
       setIncidentsError("");
-      setZonesLoading(true);
-      setZonesError("");
 
       getIncidents()
         .then(setIncidents)
@@ -173,16 +169,6 @@ export default function AdminDashboard() {
         })
         .finally(() => {
           setIncidentsLoading(false);
-        });
-
-      getAllZones()
-        .then(setZones)
-        .catch((err) => {
-          console.error(err);
-          setZonesError(err.message || "Error al cargar zonas");
-        })
-        .finally(() => {
-          setZonesLoading(false);
         });
     }
   }, [section]);
@@ -205,226 +191,203 @@ export default function AdminDashboard() {
   }, [section]);
 
   useEffect(() => {
-  if (section === "documentos") {
-    setDocumentsLoading(true);
-    setDocumentsError("");
+    if (section === "documentos") {
+      setDocumentsLoading(true);
+      setDocumentsError("");
 
-    getDocuments()
-      .then(setDocuments)
-      .catch((err) => {
-        console.error(err);
-        setDocumentsError(err.message || "Error al cargar documentos");
-      })
-      .finally(() => {
-        setDocumentsLoading(false);
-      });
-  }
-  }, [section]);
-
-  const handleUploadDocument = async (e) => {
-  e.preventDefault();
-
-  try {
-    if (!documentTitle.trim() || !documentFile) {
-      alert("Debes indicar título y seleccionar un PDF");
-      return;
+      getDocuments()
+        .then(setDocuments)
+        .catch((err) => {
+          console.error(err);
+          setDocumentsError(err.message || "Error al cargar documentos");
+        })
+        .finally(() => {
+          setDocumentsLoading(false);
+        });
     }
-
-    const formData = new FormData();
-    formData.append("title", documentTitle);
-    formData.append("uploaded_by", user.id);
-    formData.append("file", documentFile);
-
-    const newDocument = await uploadDocument(formData);
-
-    setDocuments((prev) => [newDocument, ...prev]);
-    setDocumentTitle("");
-    setDocumentFile(null);
-
-    const fileInput = document.getElementById("document-file-input");
-    if (fileInput) fileInput.value = "";
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Error subiendo documento");
-  }
-  };
-
-  const handleDeleteDocument = async (documentId, title) => {
-  const ok = window.confirm(
-    `¿Seguro que quieres borrar el documento "${title}"?`
-  );
-
-  if (!ok) return;
-
-  try {
-    await deleteDocument(documentId);
-    setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Error eliminando documento");
-  }
-  };
+  }, [section]);
 
   useEffect(() => {
-  if (section === "reportes") {
-    setAnnouncementsLoading(true);
-    setAnnouncementsError("");
+    if (isComunicadosSection) {
+      setAnnouncementsLoading(true);
+      setAnnouncementsError("");
 
-    getAnnouncements()
-      .then(setAnnouncements)
-      .catch((err) => {
-        console.error(err);
-        setAnnouncementsError(err.message || "Error al cargar comunicados");
-      })
-      .finally(() => {
-        setAnnouncementsLoading(false);
-      });
-  }
-  }, [section]);
-
-  const openCreateAnnouncementModal = () => {
-    setEditingAnnouncement(null);
-    setAnnouncementImageFile(null);
-    setAnnouncementForm({
-      title: "",
-      description: "",
-      type: "informacion",
-      image_url: "",
-    });
-    setShowAnnouncementModal(true);
-  };
-
-  const openEditAnnouncementModal = (announcement) => {
-    setEditingAnnouncement(announcement);
-    setAnnouncementImageFile(null);
-    setAnnouncementForm({
-      title: announcement.title || "",
-      description: announcement.description || "",
-      type: announcement.type || "informacion",
-      image_url: announcement.image_url || "",
-    });
-    setShowAnnouncementModal(true);
-  };
-
-  const closeAnnouncementModal = () => {
-  setShowAnnouncementModal(false);
-  setEditingAnnouncement(null);
-  };
-
-  const handleAnnouncementFormChange = (e) => {
-  const { name, value, type, checked } = e.target;
-
-  setAnnouncementForm((prev) => ({
-    ...prev,
-    [name]: type === "checkbox" ? checked : value,
-  }));
-  };
-
-  const handleSubmitAnnouncement = async (e) => {
-    e.preventDefault();
-
-    try {
-      const payload = new FormData();
-
-      payload.append("title", announcementForm.title);
-      payload.append("description", announcementForm.description);
-      payload.append("type", announcementForm.type);
-      payload.append("created_by", user.id);
-
-      if (announcementImageFile) {
-        payload.append("image", announcementImageFile);
-      }
-
-      if (editingAnnouncement && announcementForm.image_url && !announcementImageFile) {
-        payload.append("keep_image", "true");
-      }
-
-      if (editingAnnouncement) {
-        const updated = await updateAnnouncement(editingAnnouncement.id, payload);
-
-        setAnnouncements((prev) =>
-          prev.map((a) => (a.id === editingAnnouncement.id ? updated : a))
-        );
-      } else {
-        const created = await createAnnouncement(payload);
-        setAnnouncements((prev) => [created, ...prev]);
-      }
-
-      closeAnnouncementModal();
-    } catch (err) {
-      console.error(err);
-      alert(err.message || "Error guardando comunicado");
+      getAnnouncements()
+        .then(setAnnouncements)
+        .catch((err) => {
+          console.error(err);
+          setAnnouncementsError(err.message || "Error al cargar comunicados");
+        })
+        .finally(() => {
+          setAnnouncementsLoading(false);
+        });
     }
-  };
+  }, [isComunicadosSection]);
 
-  const handleDeleteAnnouncement = async (announcementId, title) => {
-  const ok = window.confirm(
-    `¿Seguro que quieres eliminar el comunicado "${title}"?`
-  );
+  const formatDateTime = (dateString) => {
+    if (!dateString) return "—";
 
-  if (!ok) return;
+    const date = new Date(dateString);
 
-  try {
-    await deleteAnnouncement(announcementId, user.id);
-    setAnnouncements((prev) => prev.filter((a) => a.id !== announcementId));
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Error eliminando comunicado");
-  }
-  };
-
-  const handleToggleAnnouncementFeatured = async (announcementId, currentState) => {
-  try {
-    await updateAnnouncementFeatured(announcementId, !currentState);
-
-    setAnnouncements((prev) =>
-      prev.map((a) =>
-        a.id === announcementId ? { ...a, is_featured: !currentState } : a
-      )
+    return (
+      date.toLocaleDateString("es-ES") +
+      " " +
+      date.toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     );
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Error actualizando destacado");
-  }
   };
 
-  const getAnnouncementTypeLabel = (type) => {
-  if (type === "urgente") return "URGENTE";
-  if (type === "aviso") return "AVISO";
-  return "INFORMACIÓN";
+  const getFullName = (person) => {
+    if (!person) return "—";
+    return [person.name, person.apellidos].filter(Boolean).join(" ") || "—";
   };
-
-  const previewImage = announcementImageFile
-  ? URL.createObjectURL(announcementImageFile)
-  : announcementForm.image_url
-  ? `http://localhost:4000${announcementForm.image_url}`
-  : "";
 
   const getIncidentZoneLabel = (incident) => {
     return incident.zone?.name || incident.custom_zone || "—";
   };
 
-  const formatDateTime = (dateString) => {
-    if (!dateString) return "—";
-    const date = new Date(dateString);
-    return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const getAnnouncementTypeLabel = (type) => {
+    if (type === "urgente") return "URGENTE";
+    if (type === "aviso") return "AVISO";
+    return "INFORMACIÓN";
   };
 
-  const viviendasPorPortal = {
-  "PORTAL 1": [
-    "1A", "1B",
-    "2A", "2B",
-    "3A", "3B",
-    "4A", "4B",
-    "5A", "5B",
-  ],
-  "PORTAL 2": [
-    "1C", "1D",
-    "2C", "2D",
-    "3C", "3D",
-    "4C", "4D",
-    "5C", "5D",
-  ],
+  const previewImage = announcementImageFile
+    ? URL.createObjectURL(announcementImageFile)
+    : announcementForm.image_url
+    ? `http://localhost:4000${announcementForm.image_url}`
+    : "";
+
+  const handleDeleteUser = async (userId, userName) => {
+    const ok = window.confirm(
+      `¿Seguro que quieres borrar al usuario ${userName}? Esta acción no se puede deshacer.`
+    );
+
+    if (!ok) return;
+
+    try {
+      await deleteUser(userId);
+
+      setUsers((prev) => prev.filter((u) => u.id !== userId));
+
+      if (editingUser && editingUser.id === userId) {
+        closeUserModal();
+      }
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error eliminando usuario");
+    }
+  };
+
+  const handleUserFormChange = (e) => {
+    const { name, value } = e.target;
+
+    setUserForm((prev) => {
+      if (name === "portal") {
+        return {
+          ...prev,
+          portal: value,
+          vivienda: "",
+        };
+      }
+
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+
+  const openCreateModal = () => {
+    setEditingUser(null);
+    setUserForm({
+      dni: "",
+      name: "",
+      apellidos: "",
+      phone: "",
+      email: "",
+      portal: "",
+      vivienda: "",
+      role: "VECINO",
+    });
+    setShowUserModal(true);
+  };
+
+  const openEditModal = (user) => {
+    setEditingUser(user);
+    setUserForm({
+      dni: user.dni || "",
+      name: user.name || "",
+      apellidos: user.apellidos || "",
+      phone: user.phone || "",
+      email: user.email || "",
+      portal: user.portal || "",
+      vivienda: user.vivienda || "",
+      role: user.role || "VECINO",
+    });
+    setShowUserModal(true);
+  };
+
+  const closeUserModal = () => {
+    setShowUserModal(false);
+    setEditingUser(null);
+    setOpenMenuId(null);
+  };
+
+  const handleSubmitUser = async (e) => {
+    e.preventDefault();
+
+    try {
+      if (editingUser) {
+        const updated = await updateUser(editingUser.id, userForm);
+
+        setUsers((prev) =>
+          prev.map((u) => (u.id === editingUser.id ? updated : u))
+        );
+
+        setEditingUser(updated);
+      } else {
+        const newUser = await createUser(userForm);
+        setUsers((prev) => [...prev, newUser]);
+      }
+
+      closeUserModal();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error guardando usuario");
+    }
+  };
+
+  const handleToggleUserActive = async (userId, currentState) => {
+    try {
+      const response = await updateUserActive(userId, !currentState);
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === userId
+            ? { ...u, is_active: response.user?.is_active ?? !currentState }
+            : u
+        )
+      );
+
+      if (editingUser && editingUser.id === userId) {
+        setEditingUser((prev) =>
+          prev
+            ? {
+                ...prev,
+                is_active: response.user?.is_active ?? !currentState,
+              }
+            : prev
+        );
+      }
+
+      setOpenMenuId(null);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error actualizando usuario");
+    }
   };
 
   const handleStatusChange = async (incidentId, newStatus) => {
@@ -471,118 +434,13 @@ export default function AdminDashboard() {
 
     try {
       await deleteIncident(incidentId);
-      setIncidents((prev) => prev.filter((incident) => incident.id !== incidentId));
+      setIncidents((prev) =>
+        prev.filter((incident) => incident.id !== incidentId)
+      );
       setSelectedIncident(null);
     } catch (err) {
       console.error(err);
       alert(err.message || "Error eliminando incidencia");
-    }
-  };
-
-  const handleUserFormChange = (e) => {
-    const { name, value } = e.target;
-
-    setUserForm((prev) => {
-      if (name === "portal") {
-        return {
-          ...prev,
-          portal: value,
-          vivienda: "",
-        };
-      }
-
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  };
-
-    const openCreateModal = () => {
-      setEditingUser(null);
-      setUserForm({
-        dni: "",
-        name: "",
-        apellidos: "",
-        phone: "",
-        email: "",
-        portal: "",
-        vivienda: "",
-        role: "VECINO",
-      });
-      setShowUserModal(true);
-    };
-
-    const openEditModal = (user) => {
-      setEditingUser(user);
-      setUserForm({
-        dni: user.dni || "",
-        name: user.name || "",
-        apellidos: user.apellidos || "",
-        phone: user.phone || "",
-        email: user.email || "",
-        portal: user.portal || "",
-        vivienda: user.vivienda || "",
-        role: user.role || "VECINO",
-      });
-      setShowUserModal(true);
-    };
-
-  const closeUserModal = () => {
-    setShowUserModal(false);
-    setEditingUser(null);
-    setOpenMenuId(null);
-  };
-
-  const handleSubmitUser = async (e) => {
-    e.preventDefault();
-
-    try {
-      if (editingUser) {
-        const updated = await updateUser(editingUser.id, userForm);
-        setUsers((prev) =>
-          prev.map((u) => (u.id === editingUser.id ? updated : u))
-        );
-        setEditingUser(updated);
-      } else {
-        const newUser = await createUser(userForm);
-        setUsers((prev) => [...prev, newUser]);
-      }
-
-      closeUserModal();
-    } catch (err) {
-      console.error(err);
-      alert(err.message || "Error guardando usuario");
-    }
-  };
-
-  const handleToggleUserActive = async (userId, currentState) => {
-    try {
-      const response = await updateUserActive(userId, !currentState);
-
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === userId
-            ? { ...u, is_active: response.user?.is_active ?? !currentState }
-            : u
-        )
-      );
-
-      if (editingUser && editingUser.id === userId) {
-        setEditingUser((prev) =>
-          prev
-            ? {
-                ...prev,
-                is_active: response.user?.is_active ?? !currentState,
-              }
-            : prev
-        );
-      }
-
-      setOpenMenuId(null);
-    } catch (err) {
-      console.error(err);
-      alert(err.message || "Error actualizando usuario");
     }
   };
 
@@ -594,7 +452,10 @@ export default function AdminDashboard() {
         name: zoneName,
       });
 
-      setZones((prev) => [...prev, newZone].sort((a, b) => a.name.localeCompare(b.name)));
+      setZones((prev) =>
+        [...prev, newZone].sort((a, b) => a.name.localeCompare(b.name))
+      );
+
       setZoneName("");
     } catch (err) {
       console.error(err);
@@ -623,13 +484,148 @@ export default function AdminDashboard() {
     try {
       await updateZoneOrder(zoneId, direction);
 
-      // Recargar zonas para reflejar el nuevo orden
-      getAllZones()
-        .then(setZones)
-        .catch(console.error);
+      getAllZones().then(setZones).catch(console.error);
     } catch (err) {
       console.error(err);
       alert(err.message || "Error moviendo zona");
+    }
+  };
+
+  const handleUploadDocument = async (e) => {
+    e.preventDefault();
+
+    try {
+      if (!documentTitle.trim() || !documentFile) {
+        alert("Debes indicar título y seleccionar un PDF");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", documentTitle);
+      formData.append("uploaded_by", user.id);
+      formData.append("file", documentFile);
+
+      const newDocument = await uploadDocument(formData);
+
+      setDocuments((prev) => [newDocument, ...prev]);
+      setDocumentTitle("");
+      setDocumentFile(null);
+
+      const fileInput = document.getElementById("document-file-input");
+      if (fileInput) fileInput.value = "";
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error subiendo documento");
+    }
+  };
+
+  const handleDeleteDocument = async (documentId, title) => {
+    const ok = window.confirm(`¿Seguro que quieres borrar el documento "${title}"?`);
+
+    if (!ok) return;
+
+    try {
+      await deleteDocument(documentId);
+      setDocuments((prev) => prev.filter((doc) => doc.id !== documentId));
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error eliminando documento");
+    }
+  };
+
+  const openCreateAnnouncementModal = () => {
+    setEditingAnnouncement(null);
+    setAnnouncementImageFile(null);
+    setAnnouncementForm({
+      title: "",
+      description: "",
+      type: "informacion",
+      image_url: "",
+    });
+    setShowAnnouncementModal(true);
+  };
+
+  const openEditAnnouncementModal = (announcement) => {
+    setEditingAnnouncement(announcement);
+    setAnnouncementImageFile(null);
+    setAnnouncementForm({
+      title: announcement.title || "",
+      description: announcement.description || "",
+      type: announcement.type || "informacion",
+      image_url: announcement.image_url || "",
+    });
+    setShowAnnouncementModal(true);
+  };
+
+  const closeAnnouncementModal = () => {
+    setShowAnnouncementModal(false);
+    setEditingAnnouncement(null);
+    setAnnouncementImageFile(null);
+  };
+
+  const handleAnnouncementFormChange = (e) => {
+    const { name, value } = e.target;
+
+    setAnnouncementForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmitAnnouncement = async (e) => {
+    e.preventDefault();
+
+    try {
+      const payload = new FormData();
+
+      payload.append("title", announcementForm.title);
+      payload.append("description", announcementForm.description);
+      payload.append("type", announcementForm.type);
+      payload.append("created_by", user.id);
+
+      if (announcementImageFile) {
+        payload.append("image", announcementImageFile);
+      }
+
+      if (
+        editingAnnouncement &&
+        announcementForm.image_url &&
+        !announcementImageFile
+      ) {
+        payload.append("keep_image", "true");
+      }
+
+      if (editingAnnouncement) {
+        const updated = await updateAnnouncement(editingAnnouncement.id, payload);
+
+        setAnnouncements((prev) =>
+          prev.map((a) => (a.id === editingAnnouncement.id ? updated : a))
+        );
+      } else {
+        const created = await createAnnouncement(payload);
+        setAnnouncements((prev) => [created, ...prev]);
+      }
+
+      closeAnnouncementModal();
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error guardando comunicado");
+    }
+  };
+
+  const handleDeleteAnnouncement = async (announcementId, title) => {
+    const ok = window.confirm(
+      `¿Seguro que quieres eliminar el comunicado "${title}"?`
+    );
+
+    if (!ok) return;
+
+    try {
+      await deleteAnnouncement(announcementId, user.id);
+      setAnnouncements((prev) => prev.filter((a) => a.id !== announcementId));
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error eliminando comunicado");
     }
   };
 
@@ -638,15 +634,16 @@ export default function AdminDashboard() {
 
     const filter = userSearchFilter.toLowerCase();
 
-    return users.filter((user) =>
-      user.name?.toLowerCase().includes(filter) ||
-      user.apellidos?.toLowerCase().includes(filter) ||
-      user.dni?.toLowerCase().includes(filter) ||
-      user.email?.toLowerCase().includes(filter) ||
-      user.phone?.toLowerCase().includes(filter) ||
-      user.portal?.toLowerCase().includes(filter) ||
-      user.vivienda?.toLowerCase().includes(filter) ||
-      user.role?.toLowerCase().includes(filter)
+    return users.filter(
+      (user) =>
+        user.name?.toLowerCase().includes(filter) ||
+        user.apellidos?.toLowerCase().includes(filter) ||
+        user.dni?.toLowerCase().includes(filter) ||
+        user.email?.toLowerCase().includes(filter) ||
+        user.phone?.toLowerCase().includes(filter) ||
+        user.portal?.toLowerCase().includes(filter) ||
+        user.vivienda?.toLowerCase().includes(filter) ||
+        user.role?.toLowerCase().includes(filter)
     );
   };
 
@@ -655,9 +652,9 @@ export default function AdminDashboard() {
       <SidebarAdmin
         activeSection={section}
         setActiveSection={setSection}
-        userName={user?.name || "Admin"}
+        userName={adminFullName}
         userDni={user?.dni || "—"}
-        userHouse={user?.vivienda || "—"}
+        userHouse={adminProperty}
       />
 
       <div className="dashboard-content">
@@ -673,485 +670,54 @@ export default function AdminDashboard() {
                 <div className="dashboard-card summary-accent-yellow">
                   <h5>Incidencias pendientes</h5>
                   <p className="summary-number">
-                    {incidentsLoading ? "..." : incidents.filter((i) => i.status === "PENDIENTE").length}
+                    {incidentsLoading
+                      ? "..."
+                      : incidents.filter((i) => i.status === "PENDIENTE").length}
                   </p>
                 </div>
 
                 <div className="dashboard-card summary-accent-blue">
                   <h5>Documentos subidos</h5>
-                  <p className="summary-number">12</p>
+                  <p className="summary-number">
+                    {documentsLoading ? "..." : documents.length}
+                  </p>
                 </div>
 
                 <div className="dashboard-card summary-accent-green">
                   <h5>Próximas reuniones</h5>
                   <p className="summary-number">
-                    {meetingsLoading ? "..." : meetings.filter((m) => new Date(m.meeting_date) > new Date()).length}
+                    {meetingsLoading
+                      ? "..."
+                      : meetings.filter((m) => new Date(m.meeting_date) > new Date())
+                          .length}
                   </p>
                 </div>
               </div>
             </section>
           )}
 
-          {section === "incidencias" && (
-            <section className="dashboard-panel">
-              <div className="dashboard-header-row">
-                <div>
-                  <h1 className="dashboard-title">Gestión de incidencias</h1>
-                  <p className="dashboard-subtitle">
-                    Aquí puedes revisar quién envió cada incidencia y abrir su ficha completa.
-                  </p>
-                </div>
-              </div>
-
-              {!incidentsLoading && !incidentsError && (
-                <div className="mb-3">
-                  <button
-                    className="btn btn-outline-primary"
-                    onClick={() => setShowZonesManager(!showZonesManager)}
-                  >
-                    {showZonesManager ? "Cerrar" : "Gestionar zonas"}
-                  </button>
-                </div>
-              )}
-
-              {showZonesManager && (
-                <div className="admin-modal-backdrop">
-                  <div className="admin-modal-card" style={{ width: "min(500px, 100%)" }}>
-                    <div className="dashboard-header-row">
-                      <div>
-                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
-                          Gestionar zonas
-                        </h2>
-                        <p className="dashboard-subtitle mb-0">
-                          Crea nuevas zonas y controla su estado.
-                        </p>
-                      </div>
-
-                      <button
-                        className="btn btn-outline-secondary"
-                        onClick={() => setShowZonesManager(false)}
-                      >
-                        ✕
-                      </button>
-                    </div>
-
-                    <form onSubmit={handleCreateZone} className="mb-4">
-                      <div className="row g-2 align-items-end">
-                        <div className="col-md-8">
-                          <label className="form-label">Nueva zona</label>
-                          <input
-                            type="text"
-                            className="form-control"
-                            value={zoneName}
-                            onChange={(e) => setZoneName(e.target.value)}
-                            placeholder="Ej: Gimnasio, Portal..."
-                          />
-                        </div>
-
-                        <div className="col-md-4">
-                          <button
-                            type="submit"
-                            className="btn btn-success w-100"
-                            disabled={!zoneName.trim()}
-                          >
-                            Crear
-                          </button>
-                        </div>
-                      </div>
-                    </form>
-
-                    {zonesLoading && <p className="text-center">Cargando zonas...</p>}
-                    {zonesError && <div className="alert alert-danger">{zonesError}</div>}
-
-                    {!zonesLoading && !zonesError && zones.length > 0 && (
-                      <div className="zone-modal-list">
-                        {zones.map((zone, index) => (
-                          <div key={zone.id} className="zone-modal-item">
-                            <div style={{ flex: 1 }}>
-                              <strong>{zone.name}</strong>
-                              <span
-                                className={`badge ms-2 ${
-                                  zone.is_active ? "bg-success" : "bg-secondary"
-                                }`}
-                              >
-                                {zone.is_active ? "ACTIVA" : "INACTIVA"}
-                              </span>
-                            </div>
-
-                            <div className="zone-modal-item__actions">
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-outline-secondary"
-                                onClick={() => handleMoveZone(zone.id, "up")}
-                                disabled={index === 0}
-                                title="Mover arriba"
-                              >
-                                ↑
-                              </button>
-
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-outline-secondary"
-                                onClick={() => handleMoveZone(zone.id, "down")}
-                                disabled={index === zones.length - 1}
-                                title="Mover abajo"
-                              >
-                                ↓
-                              </button>
-
-                              <button
-                                type="button"
-                                className={`btn btn-sm ${
-                                  zone.is_active ? "btn-outline-danger" : "btn-outline-success"
-                                }`}
-                                onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
-                              >
-                                {zone.is_active ? "Desactivar" : "Activar"}
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {!zonesLoading && !zonesError && zones.length === 0 && (
-                      <p className="text-center text-muted">No hay zonas creadas aún.</p>
-                    )}
-
-                    <div className="mt-4 d-flex justify-content-end">
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={() => setShowZonesManager(false)}
-                      >
-                        Cerrar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {!incidentsLoading && !incidentsError && (
-                <div className="dashboard-cards incidents-summary-cards mb-4">
-                  <div className="dashboard-card summary-accent-yellow">
-                    <h5>Pendientes</h5>
-                    <p className="summary-number">
-                      {incidents.filter((i) => i.status === "PENDIENTE").length}
-                    </p>
-                  </div>
-
-                  <div className="dashboard-card summary-accent-blue">
-                    <h5>En proceso</h5>
-                    <p className="summary-number">
-                      {incidents.filter((i) => i.status === "EN_PROCESO").length}
-                    </p>
-                  </div>
-
-                  <div className="dashboard-card summary-accent-green">
-                    <h5>Resueltas</h5>
-                    <p className="summary-number">
-                      {incidents.filter((i) => i.status === "RESUELTA").length}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {incidentsLoading && <p>Cargando incidencias...</p>}
-              {incidentsError && <div className="alert alert-danger">{incidentsError}</div>}
-
-              {!incidentsLoading && !incidentsError && (
-                <>
-                  {incidents.length === 0 ? (
-                    <p className="dashboard-empty">No hay incidencias registradas.</p>
-                  ) : (
-                    <div className="incidents-grid">
-                      {incidents.map((incident) => (
-                        <article key={incident.id} className="incident-card">
-                          <div className="incident-card__top">
-                            <h4>{getIncidentZoneLabel(incident)}</h4>
-
-                            <span
-                              className={`badge ${
-                                incident.status === "PENDIENTE"
-                                  ? "text-bg-warning"
-                                  : incident.status === "EN_PROCESO"
-                                  ? "text-bg-primary"
-                                  : "text-bg-success"
-                              }`}
-                            >
-                              {incident.status === "EN_PROCESO"
-                                ? "EN PROCESO"
-                                : incident.status}
-                            </span>
-                          </div>
-
-                          <div className="incident-card__meta">
-                            <p>
-                              <strong>Creado por: </strong>
-                              {incident.creator ? [incident.creator.name, incident.creator.apellidos] .filter(Boolean) .join(" "): "—"}
-                            </p>
-                            <p>
-                              <strong>Fecha y hora:</strong> {formatDateTime(incident.created_at)}
-                            </p>
-                          </div>
-
-                          <div className="incident-card__actions">
-                            <button
-                              className="btn btn-sm btn-outline-primary incident-card__toggle"
-                              onClick={() => setSelectedIncident(incident)}
-                            >
-                              Ver detalle
-                            </button>
-
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-outline-danger"
-                              onClick={() => handleDeleteIncident(incident.id)}
-                              title="Eliminar incidencia"
-                            >
-                              <Trash2 size={16} />
-                            </button>
-                          </div>
-                        </article>
-                      ))}
-                    </div>
-                  )}
-                </>
-              )}
-
-              {selectedIncident && (
-                <div className="admin-modal-backdrop">
-                  <div className="admin-modal-card incident-detail-modal">
-                    <div className="dashboard-header-row">
-                      <div>
-                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
-                          Detalle de incidencia
-                        </h2>
-                        <p className="dashboard-subtitle mb-0">
-                          Revisa toda la información y gestiona esta incidencia.
-                        </p>
-                      </div>
-
-                      <button
-                        className="btn btn-outline-secondary"
-                        onClick={() => setSelectedIncident(null)}
-                      >
-                        Cerrar
-                      </button>
-                    </div>
-
-                    <div className="incident-detail-grid">
-                      <div className="incident-detail-block">
-                        <label>Zona</label>
-                        <p>{getIncidentZoneLabel(selectedIncident)}</p>
-                      </div>
-
-                      <div className="incident-detail-block">
-                        <label>Estado actual</label>
-                        <p>
-                          <span
-                            className={`badge ${
-                              selectedIncident.status === "PENDIENTE"
-                                ? "text-bg-warning"
-                                : selectedIncident.status === "EN_PROCESO"
-                                ? "text-bg-primary"
-                                : "text-bg-success"
-                            }`}
-                          >
-                            {selectedIncident.status === "EN_PROCESO"
-                              ? "EN PROCESO"
-                              : selectedIncident.status}
-                          </span>
-                        </p>
-                      </div>
-
-                      <div className="incident-detail-block">
-                        <label>Vecino</label>
-                        <p>{selectedIncident.creator?.name || "—"}</p>
-                      </div>
-
-                      <div className="incident-detail-block">
-                        <label>DNI</label>
-                        <p>{selectedIncident.creator?.dni || "—"}</p>
-                      </div>
-
-                      <div className="incident-detail-block">
-                        <label>Fecha y hora</label>
-                        <p>{formatDateTime(selectedIncident.created_at)}</p>
-                      </div>
-
-                      <div className="incident-detail-block incident-detail-block--full">
-                        <label>Descripción</label>
-                        <p>{selectedIncident.description}</p>
-                      </div>
-
-                      {selectedIncident.image_url && (
-                        <div className="incident-detail-block incident-detail-block--full">
-                          <label>Imagen adjunta</label>
-
-                          <div className="incident-detail-image">
-                            <img
-                              src={`http://localhost:4000${selectedIncident.image_url}`}
-                              alt="Imagen de la incidencia"
-                            />
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="incident-detail-block incident-detail-block--full">
-                        <label>Estado</label>
-
-                        <div className="incident-status-actions">
-                          <button
-                            type="button"
-                            className={`incident-status-btn incident-status-btn--pending ${
-                              selectedIncident.status === "PENDIENTE" ? "active" : ""
-                            }`}
-                            onClick={() =>
-                              handleStatusChange(selectedIncident.id, "PENDIENTE")
-                            }
-                          >
-                            Pendiente
-                          </button>
-
-                          <button
-                            type="button"
-                            className={`incident-status-btn incident-status-btn--progress ${
-                              selectedIncident.status === "EN_PROCESO" ? "active" : ""
-                            }`}
-                            onClick={() =>
-                              handleStatusChange(selectedIncident.id, "EN_PROCESO")
-                            }
-                          >
-                            En proceso
-                          </button>
-
-                          <button
-                            type="button"
-                            className={`incident-status-btn incident-status-btn--resolved ${
-                              selectedIncident.status === "RESUELTA" ? "active" : ""
-                            }`}
-                            onClick={() =>
-                              handleStatusChange(selectedIncident.id, "RESUELTA")
-                            }
-                          >
-                            Resuelta
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="mt-4 d-flex justify-content-end">
-                      <button
-                        type="button"
-                        className="btn btn-outline-secondary"
-                        onClick={() => setSelectedIncident(null)}
-                      >
-                        Cerrar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </section>
-          )}
-
-          {section === "zonas" && (
-            <section className="dashboard-panel">
-              <div className="dashboard-header-row">
-                <div>
-                  <h1 className="dashboard-title">Zonas comunes</h1>
-                  <p className="dashboard-subtitle">
-                    Aquí puedes crear, activar o desactivar las zonas que verán los usuarios al crear incidencias.
-                  </p>
-                </div>
-              </div>
-
-              <form onSubmit={handleCreateZone} className="dashboard-block mb-4">
-                <div className="row g-3 align-items-end">
-                  <div className="col-md-9">
-                    <label className="form-label">Nueva zona</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={zoneName}
-                      onChange={(e) => setZoneName(e.target.value)}
-                      placeholder="Ej: Trasteros"
-                      required
-                    />
-                  </div>
-
-                  <div className="col-md-3">
-                    <button type="submit" className="btn btn-success w-100">
-                      Añadir zona
-                    </button>
-                  </div>
-                </div>
-              </form>
-
-              {zonesLoading && <p>Cargando zonas...</p>}
-              {zonesError && <div className="alert alert-danger">{zonesError}</div>}
-
-              {!zonesLoading && !zonesError && (
-                <div className="incidents-grid">
-                  {zones.length === 0 ? (
-                    <p className="dashboard-empty">No hay zonas registradas.</p>
-                  ) : (
-                    zones.map((zone) => (
-                      <article key={zone.id} className="incident-card">
-                        <div className="incident-card__top">
-                          <h4>{zone.name}</h4>
-
-                          {zone.is_active ? (
-                            <span className="badge bg-success">ACTIVA</span>
-                          ) : (
-                            <span className="badge bg-secondary">INACTIVA</span>
-                          )}
-                        </div>
-
-                        <div className="incident-card__meta">
-                          <p>
-                            <strong>Alta:</strong>{" "}
-                            {zone.created_at
-                              ? new Date(zone.created_at).toLocaleDateString()
-                              : "—"}
-                          </p>
-                        </div>
-
-                        <button
-                          className={`btn btn-sm ${
-                            zone.is_active ? "btn-outline-danger" : "btn-outline-success"
-                          }`}
-                          onClick={() =>
-                            handleToggleZoneActive(zone.id, zone.is_active)
-                          }
-                        >
-                          {zone.is_active ? "Desactivar" : "Activar"}
-                        </button>
-                      </article>
-                    ))
-                  )}
-                </div>
-              )}
-            </section>
-          )}
-
-          {section === "reportes" && (
+          {isComunicadosSection && (
             <section className="dashboard-panel">
               <div className="dashboard-header-row">
                 <div>
                   <h1 className="dashboard-title">Comunicados</h1>
                   <p className="dashboard-subtitle">
-                    Gestiona las novedades y avisos que verán los vecinos en la aplicación.
+                    Gestiona las novedades y avisos que verán los vecinos en la
+                    aplicación.
                   </p>
                 </div>
 
-                <button className="btn btn-primary" onClick={openCreateAnnouncementModal}>
+                <button
+                  className="btn btn-primary"
+                  onClick={openCreateAnnouncementModal}
+                  type="button"
+                >
                   Nuevo comunicado
                 </button>
               </div>
 
               {announcementsLoading && <p>Cargando comunicados...</p>}
+
               {announcementsError && (
                 <div className="alert alert-danger">{announcementsError}</div>
               )}
@@ -1159,7 +725,9 @@ export default function AdminDashboard() {
               {!announcementsLoading && !announcementsError && (
                 <>
                   {announcements.length === 0 ? (
-                    <p className="dashboard-empty">No hay comunicados creados todavía.</p>
+                    <p className="dashboard-empty">
+                      No hay comunicados creados todavía.
+                    </p>
                   ) : (
                     <div className="announcements-admin-grid">
                       {announcements.map((announcement) => (
@@ -1186,7 +754,9 @@ export default function AdminDashboard() {
                               <h3>{announcement.title}</h3>
 
                               <div className="announcement-admin-card__badges">
-                                <span className={`announcement-type-badge announcement-type-badge--${announcement.type}`}>
+                                <span
+                                  className={`announcement-type-badge announcement-type-badge--${announcement.type}`}
+                                >
                                   {getAnnouncementTypeLabel(announcement.type)}
                                 </span>
 
@@ -1205,12 +775,15 @@ export default function AdminDashboard() {
                             <div className="announcement-admin-card__meta">
                               <span>
                                 <strong>Autor:</strong>{" "}
-                                {announcement.creator?.name || "Administración"}
+                                {getFullName(announcement.creator) ||
+                                  "Administración"}
                               </span>
                               <span>
                                 <strong>Fecha:</strong>{" "}
                                 {announcement.created_at
-                                  ? new Date(announcement.created_at).toLocaleDateString()
+                                  ? new Date(
+                                      announcement.created_at
+                                    ).toLocaleDateString("es-ES")
                                   : "—"}
                               </span>
                             </div>
@@ -1218,7 +791,10 @@ export default function AdminDashboard() {
                             <div className="announcement-admin-card__actions">
                               <button
                                 className="btn btn-sm btn-outline-primary"
-                                onClick={() => openEditAnnouncementModal(announcement)}
+                                onClick={() =>
+                                  openEditAnnouncementModal(announcement)
+                                }
+                                type="button"
                               >
                                 <Edit3 size={14} className="me-1" />
                                 Editar
@@ -1232,6 +808,7 @@ export default function AdminDashboard() {
                                     announcement.title
                                   )
                                 }
+                                type="button"
                               >
                                 <Trash2 size={14} className="me-1" />
                                 Eliminar
@@ -1250,24 +827,34 @@ export default function AdminDashboard() {
                   <div className="admin-modal-card admin-modal-card--xl">
                     <div className="dashboard-header-row">
                       <div>
-                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
-                          {editingAnnouncement ? "Editar comunicado" : "Nuevo comunicado"}
+                        <h2
+                          className="dashboard-title"
+                          style={{ fontSize: "1.5rem" }}
+                        >
+                          {editingAnnouncement
+                            ? "Editar comunicado"
+                            : "Nuevo comunicado"}
                         </h2>
                         <p className="dashboard-subtitle mb-0">
-                          Configura el comunicado y revisa la vista previa antes de publicarlo.
+                          Configura el comunicado y revisa la vista previa antes
+                          de publicarlo.
                         </p>
                       </div>
 
                       <button
                         className="btn btn-outline-secondary"
                         onClick={closeAnnouncementModal}
+                        type="button"
                       >
                         Cerrar
                       </button>
                     </div>
 
                     <div className="announcement-modal-layout">
-                      <form onSubmit={handleSubmitAnnouncement} className="announcement-form-panel">
+                      <form
+                        onSubmit={handleSubmitAnnouncement}
+                        className="announcement-form-panel"
+                      >
                         <div className="mb-3">
                           <label className="form-label">Título</label>
                           <input
@@ -1307,18 +894,27 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="mb-3">
-                          <label className="form-label">Imagen del comunicado</label>
+                          <label className="form-label">
+                            Imagen del comunicado
+                          </label>
                           <input
                             type="file"
                             className="form-control"
                             accept="image/*"
-                            onChange={(e) => setAnnouncementImageFile(e.target.files?.[0] || null)}
+                            onChange={(e) =>
+                              setAnnouncementImageFile(
+                                e.target.files?.[0] || null
+                              )
+                            }
                           />
-                          {editingAnnouncement?.image_url && !announcementImageFile && (
-                            <small className="text-muted">
-                              Este comunicado ya tiene una imagen. Si seleccionas otra, se sustituirá.
-                            </small>
-                          )}
+
+                          {editingAnnouncement?.image_url &&
+                            !announcementImageFile && (
+                              <small className="text-muted">
+                                Este comunicado ya tiene una imagen. Si
+                                seleccionas otra, se sustituirá.
+                              </small>
+                            )}
                         </div>
 
                         <div className="d-flex gap-2 justify-content-end">
@@ -1330,13 +926,17 @@ export default function AdminDashboard() {
                             Cancelar
                           </button>
                           <button type="submit" className="btn btn-success">
-                            {editingAnnouncement ? "Guardar cambios" : "Publicar comunicado"}
+                            {editingAnnouncement
+                              ? "Guardar cambios"
+                              : "Publicar comunicado"}
                           </button>
                         </div>
                       </form>
 
                       <div className="announcement-preview-panel">
-                        <h4 className="announcement-preview-panel__title">Vista previa</h4>
+                        <h4 className="announcement-preview-panel__title">
+                          Vista previa
+                        </h4>
 
                         <article
                           className={`announcement-preview-card announcement-preview-card--${announcementForm.type}`}
@@ -1357,26 +957,28 @@ export default function AdminDashboard() {
 
                           <div className="announcement-preview-card__body">
                             <div className="announcement-preview-card__badges">
-                              <span className={`announcement-type-badge announcement-type-badge--${announcementForm.type}`}>
-                                {getAnnouncementTypeLabel(announcementForm.type)}
+                              <span
+                                className={`announcement-type-badge announcement-type-badge--${announcementForm.type}`}
+                              >
+                                {getAnnouncementTypeLabel(
+                                  announcementForm.type
+                                )}
                               </span>
-
-                              {announcementForm.is_featured && (
-                                <span className="announcement-featured-badge">
-                                  DESTACADO
-                                </span>
-                              )}
                             </div>
 
-                            <h3>{announcementForm.title || "Título del comunicado"}</h3>
+                            <h3>
+                              {announcementForm.title || "Título del comunicado"}
+                            </h3>
                             <p>
                               {announcementForm.description ||
                                 "Aquí se verá la descripción del comunicado para el vecino."}
                             </p>
 
                             <div className="announcement-preview-card__meta">
-                              <span>Administración</span>
-                              <span>{new Date().toLocaleDateString()}</span>
+                              <span>{adminFullName}</span>
+                              <span>
+                                {new Date().toLocaleDateString("es-ES")}
+                              </span>
                             </div>
                           </div>
                         </article>
@@ -1388,13 +990,394 @@ export default function AdminDashboard() {
             </section>
           )}
 
+          {section === "incidencias" && (
+            <section className="dashboard-panel">
+              <div className="dashboard-header-row">
+                <div>
+                  <h1 className="dashboard-title">Gestión de incidencias</h1>
+                  <p className="dashboard-subtitle">
+                    Aquí puedes revisar quién envió cada incidencia, consultar su
+                    ficha completa y cambiar su estado.
+                  </p>
+                </div>
+              </div>
+
+              {!incidentsLoading && !incidentsError && (
+                <div className="dashboard-cards incidents-summary-cards mb-4">
+                  <div className="dashboard-card summary-accent-yellow">
+                    <h5>Pendientes</h5>
+                    <p className="summary-number">
+                      {incidents.filter((i) => i.status === "PENDIENTE").length}
+                    </p>
+                  </div>
+
+                  <div className="dashboard-card summary-accent-blue">
+                    <h5>En proceso</h5>
+                    <p className="summary-number">
+                      {
+                        incidents.filter((i) => i.status === "EN_PROCESO")
+                          .length
+                      }
+                    </p>
+                  </div>
+
+                  <div className="dashboard-card summary-accent-green">
+                    <h5>Resueltas</h5>
+                    <p className="summary-number">
+                      {incidents.filter((i) => i.status === "RESUELTA").length}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {incidentsLoading && <p>Cargando incidencias...</p>}
+
+              {incidentsError && (
+                <div className="alert alert-danger">{incidentsError}</div>
+              )}
+
+              {!incidentsLoading && !incidentsError && (
+                <>
+                  {incidents.length === 0 ? (
+                    <p className="dashboard-empty">
+                      No hay incidencias registradas.
+                    </p>
+                  ) : (
+                    <div className="incidents-grid">
+                      {incidents.map((incident) => (
+                        <article key={incident.id} className="incident-card">
+                          <div className="incident-card__top">
+                            <h4>{getIncidentZoneLabel(incident)}</h4>
+
+                            <span
+                              className={`badge ${
+                                incident.status === "PENDIENTE"
+                                  ? "text-bg-warning"
+                                  : incident.status === "EN_PROCESO"
+                                  ? "text-bg-primary"
+                                  : "text-bg-success"
+                              }`}
+                            >
+                              {incident.status === "EN_PROCESO"
+                                ? "EN PROCESO"
+                                : incident.status}
+                            </span>
+                          </div>
+
+                          <div className="incident-card__meta">
+                            <p>
+                              <strong>Creado por:</strong>{" "}
+                              {getFullName(incident.creator)}
+                            </p>
+                            <p>
+                              <strong>Fecha y hora:</strong>{" "}
+                              {formatDateTime(incident.created_at)}
+                            </p>
+                          </div>
+
+                          <div className="incident-card__actions">
+                            <button
+                              className="btn btn-sm btn-outline-primary incident-card__toggle"
+                              onClick={() => setSelectedIncident(incident)}
+                              type="button"
+                            >
+                              Ver detalle
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleDeleteIncident(incident.id)}
+                              title="Eliminar incidencia"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {selectedIncident && (
+                <div className="admin-modal-backdrop">
+                  <div className="admin-modal-card incident-detail-modal">
+                    <div className="dashboard-header-row">
+                      <div>
+                        <h2
+                          className="dashboard-title"
+                          style={{ fontSize: "1.5rem" }}
+                        >
+                          Detalle de incidencia
+                        </h2>
+                        <p className="dashboard-subtitle mb-0">
+                          Revisa toda la información y gestiona esta incidencia.
+                        </p>
+                      </div>
+
+                      <button
+                        className="btn btn-outline-secondary"
+                        onClick={() => setSelectedIncident(null)}
+                        type="button"
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+
+                    <div className="incident-detail-grid">
+                      <div className="incident-detail-block">
+                        <label>Zona</label>
+                        <p>{getIncidentZoneLabel(selectedIncident)}</p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>Estado actual</label>
+                        <p>
+                          <span
+                            className={`badge ${
+                              selectedIncident.status === "PENDIENTE"
+                                ? "text-bg-warning"
+                                : selectedIncident.status === "EN_PROCESO"
+                                ? "text-bg-primary"
+                                : "text-bg-success"
+                            }`}
+                          >
+                            {selectedIncident.status === "EN_PROCESO"
+                              ? "EN PROCESO"
+                              : selectedIncident.status}
+                          </span>
+                        </p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>Vecino</label>
+                        <p>{getFullName(selectedIncident.creator)}</p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>DNI</label>
+                        <p>{selectedIncident.creator?.dni || "—"}</p>
+                      </div>
+
+                      <div className="incident-detail-block">
+                        <label>Fecha y hora</label>
+                        <p>{formatDateTime(selectedIncident.created_at)}</p>
+                      </div>
+
+                      <div className="incident-detail-block incident-detail-block--full">
+                        <label>Descripción</label>
+                        <p>{selectedIncident.description}</p>
+                      </div>
+
+                      {selectedIncident.image_url && (
+                        <div className="incident-detail-block incident-detail-block--full">
+                          <label>Imagen adjunta</label>
+
+                          <div className="incident-detail-image">
+                            <img
+                              src={`http://localhost:4000${selectedIncident.image_url}`}
+                              alt="Imagen de la incidencia"
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      <div className="incident-detail-block incident-detail-block--full">
+                        <label>Estado</label>
+
+                        <div className="incident-status-actions">
+                          <button
+                            type="button"
+                            className={`incident-status-btn incident-status-btn--pending ${
+                              selectedIncident.status === "PENDIENTE"
+                                ? "active"
+                                : ""
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(
+                                selectedIncident.id,
+                                "PENDIENTE"
+                              )
+                            }
+                          >
+                            Pendiente
+                          </button>
+
+                          <button
+                            type="button"
+                            className={`incident-status-btn incident-status-btn--progress ${
+                              selectedIncident.status === "EN_PROCESO"
+                                ? "active"
+                                : ""
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(
+                                selectedIncident.id,
+                                "EN_PROCESO"
+                              )
+                            }
+                          >
+                            En proceso
+                          </button>
+
+                          <button
+                            type="button"
+                            className={`incident-status-btn incident-status-btn--resolved ${
+                              selectedIncident.status === "RESUELTA"
+                                ? "active"
+                                : ""
+                            }`}
+                            onClick={() =>
+                              handleStatusChange(
+                                selectedIncident.id,
+                                "RESUELTA"
+                              )
+                            }
+                          >
+                            Resuelta
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 d-flex justify-content-end">
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() => setSelectedIncident(null)}
+                      >
+                        Cerrar
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </section>
+          )}
+
+          {section === "zonas" && (
+            <section className="dashboard-panel">
+              <div className="dashboard-header-row">
+                <div>
+                  <h1 className="dashboard-title">Zonas Públicas</h1>
+                  <p className="dashboard-subtitle">
+                    Crea, ordena, activa o desactiva las zonas que verán los
+                    usuarios al crear incidencias.
+                  </p>
+                </div>
+              </div>
+
+              <form onSubmit={handleCreateZone} className="dashboard-block mb-4">
+                <div className="row g-3 align-items-end">
+                  <div className="col-md-9">
+                    <label className="form-label">Nueva zona</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={zoneName}
+                      onChange={(e) => setZoneName(e.target.value)}
+                      placeholder="Ej: Piscina, Jardines, Garaje..."
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-3">
+                    <button type="submit" className="btn btn-success w-100">
+                      Añadir zona
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              {zonesLoading && <p>Cargando zonas...</p>}
+
+              {zonesError && <div className="alert alert-danger">{zonesError}</div>}
+
+              {!zonesLoading && !zonesError && (
+                <>
+                  {zones.length === 0 ? (
+                    <p className="dashboard-empty">No hay zonas registradas.</p>
+                  ) : (
+                    <div className="zone-list-admin">
+                      {zones.map((zone, index) => (
+                        <div key={zone.id} className="zone-item-admin">
+                          <div className="zone-item-admin__info">
+                            <strong>{zone.name}</strong>
+
+                            {zone.is_active ? (
+                              <span className="badge bg-success">ACTIVA</span>
+                            ) : (
+                              <span className="badge bg-secondary">
+                                INACTIVA
+                              </span>
+                            )}
+                          </div>
+
+                          <div className="zone-modal-item__actions">
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-secondary"
+                              onClick={() => handleMoveZone(zone.id, "up")}
+                              disabled={index === 0}
+                              title="Mover arriba"
+                            >
+                              ↑
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-secondary"
+                              onClick={() => handleMoveZone(zone.id, "down")}
+                              disabled={index === zones.length - 1}
+                              title="Mover abajo"
+                            >
+                              ↓
+                            </button>
+
+                            <button
+                              type="button"
+                              className={`btn btn-sm ${
+                                zone.is_active
+                                  ? "btn-outline-danger"
+                                  : "btn-outline-success"
+                              }`}
+                              onClick={() =>
+                                handleToggleZoneActive(zone.id, zone.is_active)
+                              }
+                            >
+                              {zone.is_active ? "Desactivar" : "Activar"}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+            </section>
+          )}
+
+          {section === "reuniones" && (
+            <section className="dashboard-panel">
+              <h1 className="dashboard-title">Reuniones</h1>
+              <p className="dashboard-subtitle">
+                Crea y organiza reuniones para la comunidad con el calendario
+                interactivo.
+              </p>
+
+              <CalendarMeetings />
+            </section>
+          )}
+
           {section === "documentos" && (
             <section className="dashboard-panel">
               <div className="dashboard-header-row">
                 <div>
                   <h1 className="dashboard-title">Documentos</h1>
                   <p className="dashboard-subtitle">
-                    Aquí puedes subir PDFs, ver los documentos publicados y eliminarlos.
+                    Aquí puedes subir PDFs, ver los documentos publicados y
+                    eliminarlos.
                   </p>
                 </div>
               </div>
@@ -1420,7 +1403,9 @@ export default function AdminDashboard() {
                       type="file"
                       className="form-control"
                       accept="application/pdf"
-                      onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
+                      onChange={(e) =>
+                        setDocumentFile(e.target.files?.[0] || null)
+                      }
                       required
                     />
                   </div>
@@ -1435,12 +1420,17 @@ export default function AdminDashboard() {
               </form>
 
               {documentsLoading && <p>Cargando documentos...</p>}
-              {documentsError && <div className="alert alert-danger">{documentsError}</div>}
+
+              {documentsError && (
+                <div className="alert alert-danger">{documentsError}</div>
+              )}
 
               {!documentsLoading && !documentsError && (
                 <>
                   {documents.length === 0 ? (
-                    <p className="dashboard-empty">No hay documentos subidos todavía.</p>
+                    <p className="dashboard-empty">
+                      No hay documentos subidos todavía.
+                    </p>
                   ) : (
                     <div className="documents-grid">
                       {documents.map((doc) => (
@@ -1456,12 +1446,14 @@ export default function AdminDashboard() {
                             </p>
                             <p>
                               <strong>Subido por:</strong>{" "}
-                              {doc.uploader?.name || "Administración"}
+                              {getFullName(doc.uploader) || "Administración"}
                             </p>
                             <p>
                               <strong>Fecha:</strong>{" "}
                               {doc.created_at
-                                ? new Date(doc.created_at).toLocaleDateString()
+                                ? new Date(doc.created_at).toLocaleDateString(
+                                    "es-ES"
+                                  )
                                 : "—"}
                             </p>
                           </div>
@@ -1479,7 +1471,9 @@ export default function AdminDashboard() {
                             <button
                               type="button"
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() => handleDeleteDocument(doc.id, doc.title)}
+                              onClick={() =>
+                                handleDeleteDocument(doc.id, doc.title)
+                              }
                             >
                               <Trash2 size={16} />
                             </button>
@@ -1493,24 +1487,14 @@ export default function AdminDashboard() {
             </section>
           )}
 
-          {section === "reuniones" && (
-            <section className="dashboard-panel">
-              <h1 className="dashboard-title">Reuniones</h1>
-              <p className="dashboard-subtitle">
-                Crea y organiza reuniones para la comunidad con el calendario interactivo.
-              </p>
-
-              <CalendarMeetings />
-            </section>
-          )}
-
           {section === "usuarios" && (
             <section className="dashboard-panel">
               <div className="dashboard-header-row">
                 <div>
                   <h1 className="dashboard-title">Usuarios</h1>
                   <p className="dashboard-subtitle">
-                    Aquí podrás ver, crear, editar y activar o desactivar vecinos y administradores.
+                    Aquí podrás ver, crear, editar y activar o desactivar vecinos
+                    y administradores.
                   </p>
                 </div>
 
@@ -1520,6 +1504,7 @@ export default function AdminDashboard() {
               </div>
 
               {usersLoading && <p>Cargando usuarios...</p>}
+
               {usersError && <div className="alert alert-danger">{usersError}</div>}
 
               {!usersLoading && !usersError && (
@@ -1528,7 +1513,7 @@ export default function AdminDashboard() {
                     <input
                       type="text"
                       className="form-control"
-                      placeholder="Buscar por nombre, DNI, email, teléfono o vivienda..."
+                      placeholder="Buscar por nombre, DNI, email, teléfono, portal o propiedad..."
                       value={userSearchFilter}
                       onChange={(e) => setUserSearchFilter(e.target.value)}
                     />
@@ -1543,7 +1528,7 @@ export default function AdminDashboard() {
                           <th>Apellidos</th>
                           <th>Teléfono</th>
                           <th>Portal</th>
-                          <th>Vivienda</th>
+                          <th>Propiedad</th>
                           <th>Rol</th>
                           <th>Acción</th>
                         </tr>
@@ -1572,11 +1557,15 @@ export default function AdminDashboard() {
                                   {user.role === "ADMIN" ? (
                                     <span className="badge bg-dark">ADMIN</span>
                                   ) : (
-                                    <span className="badge bg-primary">VECINO</span>
+                                    <span className="badge bg-primary">
+                                      VECINO
+                                    </span>
                                   )}
 
                                   {!user.is_active && (
-                                    <span className="user-inactive-badge">INACTIVO</span>
+                                    <span className="user-inactive-badge">
+                                      INACTIVO
+                                    </span>
                                   )}
                                 </div>
                               </td>
@@ -1586,14 +1575,18 @@ export default function AdminDashboard() {
                                     className="btn btn-sm btn-outline-primary"
                                     onClick={() => openEditModal(user)}
                                     title="Editar usuario"
+                                    type="button"
                                   >
                                     <Pencil size={16} />
                                   </button>
 
                                   <button
                                     className="btn btn-sm btn-outline-danger"
-                                    onClick={() => handleDeleteUser(user.id, user.name)}
+                                    onClick={() =>
+                                      handleDeleteUser(user.id, getFullName(user))
+                                    }
                                     title="Borrar usuario"
+                                    type="button"
                                   >
                                     <Trash2 size={16} />
                                   </button>
@@ -1613,7 +1606,10 @@ export default function AdminDashboard() {
                   <div className="admin-modal-card">
                     <div className="dashboard-header-row">
                       <div>
-                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
+                        <h2
+                          className="dashboard-title"
+                          style={{ fontSize: "1.5rem" }}
+                        >
                           {editingUser ? "Editar usuario" : "Nuevo usuario"}
                         </h2>
                         <p className="dashboard-subtitle mb-0">
@@ -1626,6 +1622,7 @@ export default function AdminDashboard() {
                       <button
                         className="btn btn-outline-secondary"
                         onClick={closeUserModal}
+                        type="button"
                       >
                         Cerrar
                       </button>
@@ -1699,31 +1696,35 @@ export default function AdminDashboard() {
                             onChange={handleUserFormChange}
                           >
                             <option value="">Selecciona un portal</option>
-                            <option value="PORTAL 1">PORTAL 1</option>
-                            <option value="PORTAL 2">PORTAL 2</option>
+                            <option value="P1">P1</option>
+                            <option value="P2">P2</option>
                           </select>
                         </div>
 
-                      <div className="col-md-6">
-                        <label className="form-label">Vivienda</label>
-                        <select
-                          className="form-select"
-                          name="vivienda"
-                          value={userForm.vivienda}
-                          onChange={handleUserFormChange}
-                          disabled={!userForm.portal}
-                        >
-                          <option value="">
-                            {userForm.portal ? "Selecciona vivienda" : "Primero selecciona portal"}
-                          </option>
-
-                          {(viviendasPorPortal[userForm.portal] || []).map((vivienda) => (
-                            <option key={vivienda} value={vivienda}>
-                              {vivienda}
+                        <div className="col-md-6">
+                          <label className="form-label">Propiedad</label>
+                          <select
+                            className="form-select"
+                            name="vivienda"
+                            value={userForm.vivienda}
+                            onChange={handleUserFormChange}
+                            disabled={!userForm.portal}
+                          >
+                            <option value="">
+                              {userForm.portal
+                                ? "Selecciona propiedad"
+                                : "Primero selecciona portal"}
                             </option>
-                          ))}
-                        </select>
-                      </div>
+
+                            {(viviendasPorPortal[userForm.portal] || []).map(
+                              (vivienda) => (
+                                <option key={vivienda} value={vivienda}>
+                                  {vivienda}
+                                </option>
+                              )
+                            )}
+                          </select>
+                        </div>
 
                         <div className="col-md-12">
                           <label className="form-label">Rol</label>
@@ -1747,7 +1748,9 @@ export default function AdminDashboard() {
                             {editingUser.is_active ? (
                               <span className="badge bg-success">ACTIVO</span>
                             ) : (
-                              <span className="badge bg-secondary">INACTIVO</span>
+                              <span className="badge bg-secondary">
+                                INACTIVO
+                              </span>
                             )}
                           </div>
 

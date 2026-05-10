@@ -32,59 +32,38 @@ export default function SidebarAdmin({
 
         <nav className="sidebar-user__nav">
           <button
-            className={`sidebar-user__link ${activeSection === "inicio" ? "active" : ""}`}
-            onClick={() => setActiveSection("inicio")}
+            className={`sidebar-user__link ${activeSection === "comunicados" ? "active" : ""}`}
+            onClick={() => setActiveSection("comunicados")}
           >
-            <LayoutDashboard size={18} />
-            <span>Inicio</span>
+            Comunicados
           </button>
 
           <button
             className={`sidebar-user__link ${activeSection === "incidencias" ? "active" : ""}`}
             onClick={() => setActiveSection("incidencias")}
           >
-            <Wrench size={18} />
-            <span>Incidencias</span>
+            Incidencias
           </button>
 
           <button
             className={`sidebar-user__link ${activeSection === "zonas" ? "active" : ""}`}
             onClick={() => setActiveSection("zonas")}
           >
-            <MapPinned size={18} />
-            <span>Zonas</span>
-          </button>
-
-          <button
-            className={`sidebar-user__link ${activeSection === "documentos" ? "active" : ""}`}
-            onClick={() => setActiveSection("documentos")}
-          >
-            <FileText size={18} />
-            <span>Documentos</span>
+            Zonas Públicas
           </button>
 
           <button
             className={`sidebar-user__link ${activeSection === "reuniones" ? "active" : ""}`}
             onClick={() => setActiveSection("reuniones")}
           >
-            <CalendarDays size={18} />
-            <span>Reuniones</span>
+            Reuniones
           </button>
 
           <button
-            className={`sidebar-user__link ${activeSection === "usuarios" ? "active" : ""}`}
-            onClick={() => setActiveSection("usuarios")}
+            className={`sidebar-user__link ${activeSection === "documentos" ? "active" : ""}`}
+            onClick={() => setActiveSection("documentos")}
           >
-            <Users size={18} />
-            <span>Usuarios</span>
-          </button>
-
-          <button
-            className={`sidebar-user__link ${activeSection === "reportes" ? "active" : ""}`}
-            onClick={() => setActiveSection("reportes")}
-          >
-            <BarChart3 size={18} />
-            <span>Reportes</span>
+            Documentos
           </button>
         </nav>
       </div>
@@ -98,7 +77,7 @@ export default function SidebarAdmin({
           <div className="sidebar-user__info">
             <strong>{userName}</strong>
             <span>DNI: {userDni}</span>
-            <span>Casa: {userHouse}</span>
+            <span>Propiedad: {userHouse}</span>
           </div>
         </div>
 
