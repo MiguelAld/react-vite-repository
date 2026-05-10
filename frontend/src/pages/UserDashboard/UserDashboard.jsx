@@ -369,7 +369,13 @@ export default function UserDashboard() {
       <div
         className="user-home-v2__center user-home-v2__center--banner"
         style={{
-          backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.62), rgba(244, 247, 251, 0.86)), url(${headerBg})`,
+          /*
+            INICIO:
+            Se ve más la piscina, menos gris.
+            Si quieres más color todavía baja los números:
+            0.42 / 0.70
+          */
+          backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.42), rgba(244, 247, 251, 0.70)), url(${headerBg})`,
         }}
       >
         <div className="user-home-v2__buttons">
@@ -953,11 +959,16 @@ export default function UserDashboard() {
         <>
           {renderTopHeader()}
 
-          <main className="user-dashboard-v2__content">
-            {activeSection === "incidencias" && renderIncidencias()}
-            {activeSection === "documentos" && renderDocumentos()}
-            {activeSection === "novedades" && renderNovedades()}
-          </main>
+            <main
+              className="user-dashboard-v2__content user-dashboard-v2__content--section-bg"
+              style={{
+                backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.62), rgba(244, 247, 251, 0.86)), url(${headerBg})`,
+              }}
+            >
+              {activeSection === "incidencias" && renderIncidencias()}
+              {activeSection === "documentos" && renderDocumentos()}
+              {activeSection === "novedades" && renderNovedades()}
+            </main>
 
           {renderBottomNav()}
         </>

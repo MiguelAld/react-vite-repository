@@ -2387,3 +2387,57 @@
     height: 165px;
   }
 }
+
+/* ============================================
+   FONDOS CON IMAGEN - INICIO Y SECCIONES USER
+   ============================================ */
+
+/*
+  Fondo de las secciones:
+  Incidencias, Documentos y Novedades.
+  La imagen se aplica desde React con inline style usando headerBg.
+*/
+.user-dashboard-v2__content--section-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: local;
+}
+
+/*
+  Panel blanco encima del fondo.
+  Lo hacemos un poco transparente para que se intuya la piscina,
+  pero sin perder lectura.
+*/
+.user-dashboard-v2__content--section-bg .dashboard-panel {
+  background: rgba(255, 255, 255, 0.93);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(232, 238, 245, 0.9);
+}
+
+/*
+  Las tarjetas interiores también más limpias encima del fondo.
+*/
+.user-dashboard-v2__content--section-bg .incident-card,
+.user-dashboard-v2__content--section-bg .user-document-card,
+.user-dashboard-v2__content--section-bg .user-announcement-card {
+  backdrop-filter: blur(6px);
+}
+
+/*
+  Inicio:
+  Mantiene la imagen centrada y bien cubierta.
+*/
+.user-home-v2__center--banner {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/*
+  Quitamos un poco el gris extra del ::before del inicio,
+  porque ahora el gris ya lo controlamos desde React con el linear-gradient.
+*/
+.user-home-v2__center--banner::before {
+  background: rgba(244, 247, 251, 0.05);
+}
