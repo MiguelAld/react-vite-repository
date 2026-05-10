@@ -2697,3 +2697,176 @@
     height: 21px;
   }
 }
+
+/* ============================================
+   HEADER USER: HOME IZQUIERDA + LOGO ENTRE HOME Y TÍTULO
+   ============================================ */
+
+.user-app-header {
+  position: sticky;
+  top: 0;
+  height: 112px;
+  min-height: 112px;
+  padding: 0 28px;
+  overflow: visible;
+}
+
+/* Contenedor izquierdo */
+.user-app-header__left {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  min-width: 0;
+  z-index: 5;
+}
+
+/* Botón Home fijo a la izquierda */
+.user-app-home-btn {
+  position: relative;
+  z-index: 6;
+
+  width: 62px;
+  height: 62px;
+  min-width: 62px;
+
+  border-radius: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Contenedor logo + título */
+.user-app-brand {
+  position: static;
+  transform: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  min-width: 0;
+  z-index: 5;
+}
+
+/* Logo colocado entre Home y el título, sin afectar al título */
+.user-app-brand__logo {
+  position: relative;
+  z-index: 6;
+
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid #d7e2ef;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 3px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.user-app-brand__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Título centrado real en el banner */
+.user-app-brand span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  
+  max-width: calc(100% - 440px);
+
+  font-size: 1.85rem;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: #172033;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Perfil derecha */
+.user-profile-menu {
+  position: relative;
+  margin-left: auto;
+  z-index: 800;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  .user-app-header {
+    height: 96px;
+    min-height: 96px;
+    padding: 0 18px;
+  }
+
+  .user-app-header__left {
+    gap: 16px;
+  }
+
+  .user-app-home-btn {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+  }
+
+  .user-app-brand__logo {
+    width: 66px;
+    height: 66px;
+    min-width: 66px;
+    border-radius: 18px;
+  }
+
+  .user-app-brand span {
+    font-size: 1.35rem;
+    max-width: calc(100% - 310px);
+  }
+}
+
+/* MÓVIL */
+@media (max-width: 560px) {
+  .user-app-header {
+    height: 82px;
+    min-height: 82px;
+    padding: 0 12px;
+  }
+
+  .user-app-header__left {
+    gap: 10px;
+  }
+
+  .user-app-home-btn {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 14px;
+  }
+
+  .user-app-brand__logo {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 15px;
+  }
+
+  .user-app-brand span {
+    font-size: 0.95rem;
+    max-width: 130px;
+  }
+}
