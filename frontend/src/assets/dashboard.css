@@ -371,11 +371,6 @@
    ============================================ */
 
 .user-app-header {
-  /* 
-    Para mover el logo sin que se desplace al aparecer/desaparecer Home:
-    - Menos px = más a la izquierda
-    - Más px = más a la derecha
-  */
   --logo-left: 125px;
 
   position: sticky;
@@ -445,7 +440,7 @@
   box-shadow: 0 12px 24px rgba(29, 78, 216, 0.14);
 }
 
-/* 
+/*
    El botón se oculta en Inicio, pero mantiene su hueco.
    Así el logo y el título no saltan de posición.
 */
@@ -513,7 +508,7 @@
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  
+
   max-width: calc(100% - 460px);
 
   font-size: 1.85rem;
@@ -1454,9 +1449,10 @@
 
 /* ============================================
    11. COMUNICADOS / NOVEDADES
-   Comunicados del admin y novedades del usuario
+   Comunicados normales, avisos, urgentes y reuniones
    ============================================ */
 
+/* GRID GENERAL */
 .announcements-admin-grid,
 .user-announcements-list {
   display: grid;
@@ -1469,6 +1465,11 @@
   gap: 20px;
   margin-top: 24px;
 }
+
+
+/* ============================================
+   11.1 TARJETAS ANTIGUAS / ADMIN
+   ============================================ */
 
 .announcement-card {
   background: linear-gradient(135deg, #f8fbff 0%, #ffffff 100%);
@@ -1549,6 +1550,11 @@
   line-height: 1.6;
   margin: 12px 0;
 }
+
+
+/* ============================================
+   11.2 COMUNICADOS ADMIN
+   ============================================ */
 
 .announcement-admin-card {
   display: grid;
@@ -1671,6 +1677,11 @@
   flex-wrap: wrap;
 }
 
+
+/* ============================================
+   11.3 MODAL / PREVIEW COMUNICADOS ADMIN
+   ============================================ */
+
 .announcement-modal-layout {
   display: grid;
   grid-template-columns: 1fr 420px;
@@ -1741,26 +1752,18 @@
   font-size: 0.9rem;
 }
 
+
+/* ============================================
+   11.4 NOVEDADES USER - BASE
+   ============================================ */
+
 .user-announcement-card {
   display: grid;
   grid-template-columns: 180px 1fr;
-  background: #ffffff;
   border: 1px solid #e8eef5;
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
-}
-
-.user-announcement-card--info {
-  border-left: 5px solid #2563eb;
-}
-
-.user-announcement-card--warning {
-  border-left: 5px solid #d97706;
-}
-
-.user-announcement-card--urgent {
-  border-left: 5px solid #dc2626;
 }
 
 .user-announcement-card__media {
@@ -1781,8 +1784,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #475569;
-  background: #f1f5f9;
 }
 
 .user-announcement-card__content {
@@ -1808,16 +1809,6 @@
   font-weight: 800;
 }
 
-.user-announcement-card__type {
-  background: #e2e8f0;
-  color: #334155;
-}
-
-.user-announcement-card__pinned {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
 .user-announcement-card h3 {
   margin: 0;
   font-size: 1.15rem;
@@ -1839,6 +1830,130 @@
   flex-wrap: wrap;
   color: #64748b;
   font-size: 0.9rem;
+}
+
+
+/* ============================================
+   11.5 NOVEDAD TIPO INFORMACIÓN - AZUL
+   ============================================ */
+
+.user-announcement-card--info {
+  border-left: 5px solid #2563eb;
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+}
+
+.user-announcement-card--info .user-announcement-card__media {
+  background: linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%);
+}
+
+.user-announcement-card--info .user-announcement-card__placeholder {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1d4ed8;
+}
+
+.user-announcement-card--info .user-announcement-card__type {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+
+/* ============================================
+   11.6 NOVEDAD TIPO AVISO - CREMA / NARANJA
+   ============================================ */
+
+.user-announcement-card--warning {
+  border-left: 5px solid #d97706;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+}
+
+.user-announcement-card--warning .user-announcement-card__media {
+  background: linear-gradient(135deg, #ffedd5 0%, #fff7ed 100%);
+}
+
+.user-announcement-card--warning .user-announcement-card__placeholder {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  color: #c2410c;
+}
+
+.user-announcement-card--warning .user-announcement-card__type {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+
+/* ============================================
+   11.7 NOVEDAD TIPO URGENTE - ROJO
+   ============================================ */
+
+.user-announcement-card--urgent {
+  border-left: 5px solid #dc2626;
+  background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+}
+
+.user-announcement-card--urgent .user-announcement-card__media {
+  background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+}
+
+.user-announcement-card--urgent .user-announcement-card__placeholder {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #b91c1c;
+}
+
+.user-announcement-card--urgent .user-announcement-card__type {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.user-announcement-card--urgent .user-announcement-card__pinned {
+  background: #fecaca;
+  color: #7f1d1d;
+}
+
+
+/* ============================================
+   11.8 NOVEDAD ESPECIAL: REUNIONES - MORADO
+   ============================================ */
+
+.user-announcement-card--meeting {
+  border-left: 5px solid #7c3aed;
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+}
+
+.user-announcement-card__media--meeting {
+  background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%);
+}
+
+.user-announcement-card__placeholder--meeting {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #6d28d9;
+}
+
+.user-announcement-card__type--meeting {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.user-announcement-card__pinned--meeting {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+.user-meeting-info-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #f5f3ff;
+  color: #4c1d95;
+  border: 1px solid #ddd6fe;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.user-meeting-info-box svg {
+  flex-shrink: 0;
 }
 
 
@@ -2271,52 +2386,4 @@
     width: 165px;
     height: 165px;
   }
-}
-
-/* ============================================
-   NOVEDAD ESPECIAL: REUNIONES
-   Igual estilo suave que Información/Aviso
-   ============================================ */
-
-.user-announcement-card--meeting {
-  border-left: 5px solid #7c3aed;
-  background: #ffffff;
-}
-
-.user-announcement-card__media--meeting {
-  background: #f1f5f9;
-}
-
-.user-announcement-card__placeholder--meeting {
-  background: #f1f5f9;
-  color: #475569;
-}
-
-.user-announcement-card__type--meeting {
-  background: #e2e8f0;
-  color: #334155;
-}
-
-.user-announcement-card__pinned--meeting {
-  background: #e2e8f0;
-  color: #334155;
-}
-
-.user-meeting-info-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  width: fit-content;
-  padding: 10px 12px;
-  border-radius: 14px;
-  background: #f8fafc;
-  color: #334155;
-  border: 1px solid #e2e8f0;
-  font-size: 0.92rem;
-  font-weight: 700;
-}
-
-.user-meeting-info-box svg {
-  flex-shrink: 0;
-  color: #475569;
 }
