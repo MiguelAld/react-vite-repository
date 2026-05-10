@@ -1343,19 +1343,24 @@
   color: #1e293b;
 }
 
+/* HEADER */
 .user-app-header {
-  height: 88px;
-  min-height: 88px;
+  height: 112px;
+  min-height: 112px;
   flex-shrink: 0;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 26px;
+
+  padding: 0 28px;
   border-bottom: 1px solid #e8eef5;
+
   background-size: cover;
-  background-position: center;
+  background-position: center 45%;
   background-repeat: no-repeat;
+
   position: sticky;
   top: 0;
   z-index: 500;
@@ -1368,6 +1373,7 @@
   inset: 0;
   background: rgba(255, 255, 255, 0.76);
   backdrop-filter: blur(2px);
+  pointer-events: none;
 }
 
 .user-app-header > * {
@@ -1378,28 +1384,33 @@
 .user-app-header__left {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   min-width: 0;
 }
 
+/* BOTÓN HOME */
 .user-app-home-btn {
-  width: 54px;
-  height: 54px;
-  min-width: 54px;
+  width: 62px;
+  height: 62px;
+  min-width: 62px;
+
   border: 1px solid #cdd9ea;
-  border-radius: 17px;
-  background: rgba(255, 255, 255, 0.95);
+  border-radius: 19px;
+  background: rgba(255, 255, 255, 0.96);
   color: #0f172a;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10);
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .user-app-home-btn svg {
-  width: 27px;
-  height: 27px;
+  width: 31px;
+  height: 31px;
   stroke-width: 2.2;
 }
 
@@ -1410,34 +1421,31 @@
   box-shadow: 0 12px 24px rgba(29, 78, 216, 0.14);
 }
 
+/* LOGO + TÍTULO */
 .user-app-brand {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
   min-width: 0;
 }
 
-.user-app-brand span {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: #172033;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
 .user-app-brand__logo {
-  width: 75px;
-  height: 75px;
-  min-width: 64px;
-  border-radius: 19px;
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+
+  border-radius: 22px;
   overflow: hidden;
   background: #ffffff;
   border: 1px solid #d7e2ef;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 3px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.10);
+  flex-shrink: 0;
 }
 
 .user-app-brand__logo img {
@@ -1447,10 +1455,26 @@
   display: block;
 }
 
+.user-app-brand span {
+  display: flex;
+  align-items: center;
+
+  font-size: 1.78rem;
+  line-height: 1.1;
+  font-weight: 800;
+  color: #172033;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* PERFIL USER */
 .user-profile-menu {
   position: relative;
   margin-left: auto;
   flex-shrink: 0;
+  z-index: 800;
 }
 
 .user-profile-menu__trigger {
@@ -1494,15 +1518,20 @@
 
 .user-profile-menu__dropdown {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 12px);
   right: 0;
-  width: 260px;
+
+  width: 270px;
+  max-width: calc(100vw - 32px);
+
   background: #ffffff;
-  border-radius: 18px;
   border: 1px solid #e5edf6;
-  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.12);
+  border-radius: 18px;
+
   padding: 14px;
-  z-index: 70;
+  z-index: 9999;
+
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18);
 }
 
 .user-profile-menu__info {
@@ -1514,6 +1543,7 @@
 .user-profile-menu__info p {
   margin: 0 0 6px;
   font-size: 0.92rem;
+  color: #334155;
 }
 
 .user-profile-menu__item {
@@ -1525,6 +1555,7 @@
   border-radius: 12px;
   cursor: pointer;
   font-weight: 700;
+  color: #334155;
 }
 
 .user-profile-menu__item:hover {
@@ -1535,9 +1566,14 @@
   color: #b91c1c;
 }
 
+.user-profile-menu__item--danger:hover {
+  background: #fee2e2;
+}
+
+/* CONTENIDO USER */
 .user-dashboard-v2__content {
   flex: 1;
-  height: calc(100% - 88px);
+  height: calc(100% - 112px);
   overflow-y: auto;
   padding: 24px 24px 125px;
 }
@@ -1547,20 +1583,24 @@
   margin: 0 auto;
 }
 
+/* NAV INFERIOR USER */
 .user-bottom-nav {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: 24px !important;
-  transform: translateX(-50%) !important;
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+
   z-index: 200;
-  width: fit-content !important;
-  max-width: calc(100% - 40px) !important;
-  height: auto !important;
-  margin: 0 !important;
-  display: flex !important;
+  width: fit-content;
+  max-width: calc(100% - 40px);
+  height: auto;
+  margin: 0;
+
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
+
   padding: 12px 16px;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid #dbe6f3;
@@ -1641,14 +1681,31 @@
 
 .user-home-v2__center {
   flex: 1;
-  min-height: calc(100% - 88px);
+  min-height: calc(100% - 112px);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
 }
 
+.user-home-v2__center--banner {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.user-home-v2__center--banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(244, 247, 251, 0.18);
+  pointer-events: none;
+}
+
 .user-home-v2__buttons {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1657,16 +1714,18 @@
 }
 
 .user-circle-access {
-  border: none;
-  border-radius: 999px;
-  background: #ffffff;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.10);
   border: 1px solid #e5edf6;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.10);
+  backdrop-filter: blur(8px);
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 12px;
+
   cursor: pointer;
   transition: transform 0.18s ease, box-shadow 0.18s ease;
   color: #0f172a;
@@ -1847,18 +1906,53 @@
   }
 
   .user-app-header {
-    height: 82px;
-    min-height: 82px;
-    padding: 0 16px;
+    height: 96px;
+    min-height: 96px;
+    padding: 0 18px;
+  }
+
+  .user-app-header__left {
+    gap: 14px;
+  }
+
+  .user-app-home-btn {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    border-radius: 17px;
+  }
+
+  .user-app-home-btn svg {
+    width: 27px;
+    height: 27px;
+  }
+
+  .user-app-brand {
+    gap: 14px;
+  }
+
+  .user-app-brand__logo {
+    width: 66px;
+    height: 66px;
+    min-width: 66px;
+    border-radius: 18px;
+  }
+
+  .user-app-brand span {
+    font-size: 1.45rem;
   }
 
   .user-dashboard-v2__content {
-    height: calc(100% - 82px);
+    height: calc(100% - 96px);
     padding: 18px 18px 115px;
   }
 
+  .user-home-v2__center {
+    min-height: calc(100% - 96px);
+  }
+
   .user-bottom-nav {
-    bottom: 18px !important;
+    bottom: 18px;
     gap: 10px;
     padding: 10px 12px;
   }
@@ -1944,32 +2038,55 @@
   }
 
   .user-app-header {
-    height: 76px;
-    min-height: 76px;
+    height: 82px;
+    min-height: 82px;
     padding: 0 12px;
   }
 
-  .user-app-brand span {
-    font-size: 1.15rem;
+  .user-app-header__left {
+    gap: 10px;
   }
 
-  .user-app-brand__logo,
+  .user-app-brand {
+    gap: 10px;
+  }
+
+  .user-app-brand span {
+    font-size: 1.08rem;
+  }
+
+  .user-app-brand__logo {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 15px;
+  }
+
   .user-app-home-btn {
-    width: 46px;
-    height: 46px;
-    min-width: 46px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
     border-radius: 14px;
   }
 
+  .user-app-home-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
   .user-dashboard-v2__content {
-    height: calc(100% - 76px);
+    height: calc(100% - 82px);
     padding: 14px 14px 105px;
   }
 
+  .user-home-v2__center {
+    min-height: calc(100% - 82px);
+  }
+
   .user-bottom-nav {
-    bottom: 12px !important;
-    width: calc(100% - 24px) !important;
-    max-width: none !important;
+    bottom: 12px;
+    width: calc(100% - 24px);
+    max-width: none;
     justify-content: space-between;
     border-radius: 20px;
   }
@@ -1995,110 +2112,4 @@
     width: 170px;
     height: 170px;
   }
-}
-
-/* ============================================
-   FIX DROPDOWN PERFIL USUARIO
-   ============================================ */
-
-/* Permite que el desplegable salga por debajo del header */
-.user-app-header {
-  overflow: visible !important;
-  z-index: 500 !important;
-}
-
-/* La capa del header no debe bloquear clicks */
-.user-app-header::before {
-  pointer-events: none !important;
-}
-
-/* Asegura que el menú de perfil queda por encima */
-.user-profile-menu {
-  position: relative !important;
-  z-index: 800 !important;
-}
-
-/* Dropdown visible y por encima del contenido */
-.user-profile-menu__dropdown {
-  position: absolute !important;
-  top: calc(100% + 12px) !important;
-  right: 0 !important;
-
-  width: 270px !important;
-  max-width: calc(100vw - 32px);
-
-  background: #ffffff !important;
-  border: 1px solid #e5edf6 !important;
-  border-radius: 18px !important;
-
-  padding: 14px !important;
-  z-index: 9999 !important;
-
-  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18) !important;
-}
-
-/* Contenido interno del desplegable */
-.user-profile-menu__info {
-  border-bottom: 1px solid #eef2f7;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
-}
-
-.user-profile-menu__info p {
-  margin: 0 0 6px;
-  font-size: 0.92rem;
-  color: #334155;
-}
-
-.user-profile-menu__item {
-  width: 100%;
-  border: none;
-  background: transparent;
-  padding: 10px 12px;
-  text-align: left;
-  border-radius: 12px;
-  cursor: pointer;
-  font-weight: 700;
-  color: #334155;
-}
-
-.user-profile-menu__item:hover {
-  background: #f8fbff;
-}
-
-.user-profile-menu__item--danger {
-  color: #b91c1c !important;
-}
-
-.user-profile-menu__item--danger:hover {
-  background: #fee2e2;
-}
-
-/* ============================================
-   HOME USER CON BANNER DE FONDO
-   ============================================ */
-
-.user-home-v2__center--banner {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  position: relative;
-}
-
-.user-home-v2__center--banner::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(244, 247, 251, 0.18);
-  pointer-events: none;
-}
-
-.user-home-v2__buttons {
-  position: relative;
-  z-index: 2;
-}
-
-.user-circle-access {
-  background: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(8px);
 }
