@@ -2429,3 +2429,271 @@
     height: 165px;
   }
 }
+
+/* ============================================
+   HEADER USER: LOGO IZQUIERDA + TÍTULO CENTRADO
+   ============================================ */
+
+.user-app-header {
+  position: sticky;
+  top: 0;
+  height: 112px;
+  min-height: 112px;
+  padding: 0 28px;
+  overflow: visible;
+}
+
+/* Izquierda: home + logo */
+.user-app-header__left {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  z-index: 5;
+}
+
+/* Botón home izquierda */
+.user-app-home-btn {
+  position: relative;
+  z-index: 5;
+
+  width: 62px;
+  height: 62px;
+  min-width: 62px;
+
+  border-radius: 19px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* El contenedor deja el logo a la izquierda */
+.user-app-brand {
+  position: static;
+  transform: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  gap: 0;
+  min-width: 0;
+  z-index: 5;
+}
+
+/* Logo izquierda */
+.user-app-brand__logo {
+  width: 80px;
+  height: 80px;
+  min-width: 80px;
+
+  border-radius: 22px;
+  background: #ffffff;
+  border: 1px solid #d7e2ef;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 3px;
+  overflow: hidden;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.user-app-brand__logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* Título centrado en todo el banner */
+.user-app-brand span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  
+  max-width: calc(100% - 360px);
+
+  font-size: 1.85rem;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: #172033;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Perfil derecha */
+.user-profile-menu {
+  position: relative;
+  margin-left: auto;
+  z-index: 800;
+}
+
+/* TABLET */
+@media (max-width: 900px) {
+  .user-app-header {
+    height: 96px;
+    min-height: 96px;
+    padding: 0 18px;
+  }
+
+  .user-app-home-btn {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+  }
+
+  .user-app-brand__logo {
+    width: 66px;
+    height: 66px;
+    min-width: 66px;
+    border-radius: 18px;
+  }
+
+  .user-app-brand span {
+    font-size: 1.35rem;
+    max-width: calc(100% - 260px);
+  }
+}
+
+/* MÓVIL */
+@media (max-width: 560px) {
+  .user-app-header {
+    height: 82px;
+    min-height: 82px;
+    padding: 0 12px;
+  }
+
+  .user-app-header__left {
+    gap: 10px;
+  }
+
+  .user-app-home-btn {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-radius: 14px;
+  }
+
+  .user-app-brand__logo {
+    width: 52px;
+    height: 52px;
+    min-width: 52px;
+    border-radius: 15px;
+  }
+
+  .user-app-brand span {
+    font-size: 1rem;
+    max-width: 140px;
+  }
+}
+
+
+/* ============================================
+   PERFIL USER MÁS GRANDE
+   ============================================ */
+
+.user-profile-menu__trigger {
+  min-width: 165px;
+  height: 68px;
+
+  padding: 12px 18px;
+  border-radius: 22px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+}
+
+.user-profile-menu__avatar {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+
+  border-radius: 999px;
+  background: #eef5ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #1d4ed8;
+}
+
+.user-profile-menu__avatar svg {
+  width: 26px;
+  height: 26px;
+}
+
+.user-profile-menu__text strong {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.user-profile-menu__text span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+/* Flecha del desplegable, si es un svg dentro del trigger */
+.user-profile-menu__trigger > svg {
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+}
+
+/* Ajuste en tablet */
+@media (max-width: 900px) {
+  .user-profile-menu__trigger {
+    min-width: auto;
+    height: 58px;
+    padding: 10px 12px;
+    border-radius: 18px;
+  }
+
+  .user-profile-menu__avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+
+  .user-profile-menu__avatar svg {
+    width: 23px;
+    height: 23px;
+  }
+}
+
+/* Ajuste en móvil */
+@media (max-width: 560px) {
+  .user-profile-menu__trigger {
+    height: 50px;
+    padding: 8px 10px;
+    border-radius: 16px;
+  }
+
+  .user-profile-menu__avatar {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .user-profile-menu__avatar svg {
+    width: 21px;
+    height: 21px;
+  }
+}
