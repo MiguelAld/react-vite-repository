@@ -214,39 +214,55 @@ router.patch("/:id/order", async (req, res) => {
   }
 });
 
+
 /* ============================================
    ADMIN: ELIMINAR ZONA
-   OJO: si la zona tiene incidencias asociadas,
-   puede fallar por la relación de base de datos.
    ============================================ */
 router.delete("/:id", async (req, res) => {
+  const transaction = await sequelize.transaction();
+
   try {
     const { id } = req.params;
 
-    const zone = await Zone.findByPk(id);
+    const zone = await Zone.findByPk(id, { transaction });
 
     if (!zone) {
+      await transaction.rollback();
       return res.status(404).json({ error: "Zona no encontrada" });
     }
 
-    await zone.destroy();
+    await zone.destroy({ transaction });
 
     const remainingZones = await Zone.findAll({
       order: [
         ["order", "ASC"],
         ["id", "ASC"],
       ],
+      transaction,
     });
 
     for (let index = 0; index < remainingZones.length; index++) {
       remainingZones[index].order = index + 1;
-      await remainingZones[index].save();
+      await remainingZones[index].save({ transaction });
     }
+
+    await transaction.commit();
+
+    const zones = await Zone.findAll({
+      attributes: ["id", "name", "is_active", "order", "created_at"],
+      order: [
+        ["order", "ASC"],
+        ["id", "ASC"],
+      ],
+    });
 
     res.json({
       message: "Zona eliminada correctamente",
+      zones,
     });
   } catch (error) {
+    await transaction.rollback();
+
     console.error(error);
 
     res.status(500).json({
@@ -255,5 +271,3 @@ router.delete("/:id", async (req, res) => {
     });
   }
 });
-
-export default router;  

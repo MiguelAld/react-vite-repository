@@ -506,14 +506,14 @@ export async function deleteDocument(id) {
 }
 
 export async function deleteZone(zoneId) {
-  const response = await fetch(`http://localhost:4000/api/zones/${zoneId}`, {
+  const res = await fetch(`${API_URL}/zones/${zoneId}`, {
     method: "DELETE",
   });
 
-  const data = await response.json();
+  const data = await res.json().catch(() => ({}));
 
-  if (!response.ok) {
-    throw new Error(data.error || "Error eliminando zona");
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando zona");
   }
 
   return data;

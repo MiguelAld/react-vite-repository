@@ -42,7 +42,7 @@ import {
 export default function AdminDashboard() {
   const { user } = useAuth();
 
-  const [section, setSection] = useState("inicio");
+  const [section, setSection] = useState("COMUNICADOS");
 
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -454,7 +454,14 @@ export default function AdminDashboard() {
       });
 
       setZones((prev) =>
-        [...prev, newZone].sort((a, b) => a.name.localeCompare(b.name))
+        [...prev, newZone].sort((a, b) => {
+          const orderA = Number(a.order || 0);
+          const orderB = Number(b.order || 0);
+
+          if (orderA !== orderB) return orderA - orderB;
+
+          return Number(a.id) - Number(b.id);
+        })
       );
 
       setZoneName("");
@@ -481,22 +488,28 @@ export default function AdminDashboard() {
     }
   };
 
-const handleDeleteZone = async (zoneId, zoneName) => {
-  const ok = window.confirm(
-    `¿Seguro que quieres eliminar la zona "${zoneName}"? Esta acción no se puede deshacer.`
-  );
+  const handleDeleteZone = async (zoneId, zoneName) => {
+    const ok = window.confirm(
+      `¿Seguro que quieres eliminar la zona "${zoneName}"? Esta acción no se puede deshacer.`
+    );
 
-  if (!ok) return;
+    if (!ok) return;
 
-  try {
-    await deleteZone(zoneId);
+    try {
+      const response = await deleteZone(zoneId);
 
-    setZones((prev) => prev.filter((zone) => zone.id !== zoneId));
-  } catch (err) {
-    console.error(err);
-    alert(err.message || "Error eliminando zona");
-  }
-};
+      if (response.zones) {
+        setZones(response.zones);
+        return;
+      }
+
+      const updatedZones = await getAllZones();
+      setZones(updatedZones);
+    } catch (err) {
+      console.error(err);
+      alert(err.message || "Error eliminando zona");
+    }
+  };
 
   const handleMoveZone = async (zoneId, direction) => {
     try {
