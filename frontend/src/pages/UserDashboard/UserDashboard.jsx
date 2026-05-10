@@ -197,7 +197,7 @@ export default function UserDashboard() {
   };
 
   const renderTopHeader = () => (
-    <header className="user-app-header" style={{ backgroundImage: `url(${headerBg})` }}>
+    <header className="user-app-header">
       <div className="user-app-header__left">
         {activeSection !== "inicio" && (
           <button
