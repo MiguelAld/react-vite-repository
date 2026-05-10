@@ -197,26 +197,28 @@ export default function UserDashboard() {
   };
 
   const renderTopHeader = () => (
-    <header className="user-app-header">
-      <div className="user-app-header__left">
-        {activeSection !== "inicio" && (
-          <button
-            className={`user-app-home-btn ${activeSection === "inicio" ? "user-app-home-btn--hidden" : ""}`}
-            onClick={() => setActiveSection("inicio")}
-            aria-label="Volver al inicio"
-          >
-            <Home size={30} />
-          </button>
-        )}
+  <header className="user-app-header">
+    <div className="user-app-header__left">
+      {activeSection !== "inicio" && (
+        <button
+          className="user-app-home-btn"
+          onClick={() => setActiveSection("inicio")}
+          aria-label="Volver al inicio"
+        >
+          <Home size={30} />
+        </button>
+      )}
+    </div>
 
-        <div className="user-app-brand">
-          <div className="user-app-brand__logo user-app-brand__logo--image">
-            <img src={logoComunidad} alt="Logo comunidad" />
-          </div>
-          <span>JARDINES DE LAS RAMBLAS</span>
-        </div>
+    <div className="user-app-brand">
+      <div className="user-app-brand__logo-block">
+        <img src={logoComunidad} alt="Logo comunidad" />
       </div>
 
+      <span>JARDINES DE LAS RAMBLAS</span>
+    </div>
+
+    <div className="user-app-header__right">
       <div className="user-profile-menu">
         <button
           className="user-profile-menu__trigger"
@@ -269,8 +271,9 @@ export default function UserDashboard() {
           </div>
         )}
       </div>
-    </header>
-  );
+    </div>
+  </header>
+);
 
   const getFileUrl = (path) => {
     if (!path) return "";
