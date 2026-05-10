@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FileText,
+import {FileText,
   Wrench,
   Bell,
   UserCircle2,
   ChevronDown,
   X,
-  House,
+  Home,
 } from "lucide-react";
+
 import {
   getMeetings,
   getZones,
@@ -19,6 +19,7 @@ import {
   getNovededCount,
   getDocuments,
 } from "../../services/api";
+
 import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
 import headerBg from "../../assets/header-bg.png";
@@ -106,20 +107,20 @@ export default function UserDashboard() {
   }, [activeSection, user?.id]);
 
   useEffect(() => {
-  if (activeSection === "documentos") {
-    setLoadingDocuments(true);
-    setDocumentsError("");
+    if (activeSection === "documentos") {
+      setLoadingDocuments(true);
+      setDocumentsError("");
 
-    getDocuments()
-      .then(setDocuments)
-      .catch((err) => {
-        console.error(err);
-        setDocumentsError(err.message || "Error cargando documentos");
-      })
-      .finally(() => {
-        setLoadingDocuments(false);
-      });
-  }
+      getDocuments()
+        .then(setDocuments)
+        .catch((err) => {
+          console.error(err);
+          setDocumentsError(err.message || "Error cargando documentos");
+        })
+        .finally(() => {
+          setLoadingDocuments(false);
+        });
+    }
   }, [activeSection]);
 
   const userName = user?.name || "USER";
@@ -184,7 +185,9 @@ export default function UserDashboard() {
 
   const formatDateTime = (dateString) => {
     if (!dateString) return "—";
+
     const date = new Date(dateString);
+
     return (
       date.toLocaleDateString() +
       " " +
@@ -194,6 +197,24 @@ export default function UserDashboard() {
 
   const getIncidentZoneLabel = (incident) => {
     return incident.zone?.name || incident.custom_zone || "—";
+  };
+
+  const getFileUrl = (path) => {
+    if (!path) return "";
+    if (path.startsWith("http")) return path;
+    return `http://localhost:4000${path}`;
+  };
+
+  const getAnnouncementTypeLabel = (type) => {
+    if (type === "urgente") return "Urgente";
+    if (type === "aviso") return "Aviso";
+    return "Información";
+  };
+
+  const getAnnouncementTypeClass = (type) => {
+    if (type === "urgente") return "user-announcement-card--urgent";
+    if (type === "aviso") return "user-announcement-card--warning";
+    return "user-announcement-card--info";
   };
 
   const renderTopHeader = () => (
@@ -209,14 +230,14 @@ export default function UserDashboard() {
         >
           <Home size={30} />
         </button>
+      </div>
 
-        <div className="user-app-brand">
-          <div className="user-app-brand__logo-block">
-            <img src={logoComunidad} alt="Logo comunidad" />
-          </div>
-
-          <span>JARDINES DE LAS RAMBLAS</span>
+      <div className="user-app-brand">
+        <div className="user-app-brand__logo-block">
+          <img src={logoComunidad} alt="Logo comunidad" />
         </div>
+
+        <span>JARDINES DE LAS RAMBLAS</span>
       </div>
 
       <div className="user-app-header__right">
@@ -279,73 +300,58 @@ export default function UserDashboard() {
     </header>
   );
 
-  const getFileUrl = (path) => {
-    if (!path) return "";
-    if (path.startsWith("http")) return path;
-    return `http://localhost:4000${path}`;
-  };
-
-  const getAnnouncementTypeLabel = (type) => {
-    if (type === "urgente") return "Urgente";
-    if (type === "aviso") return "Aviso";
-    return "Información";
-  };
-
-  const getAnnouncementTypeClass = (type) => {
-    if (type === "urgente") return "user-announcement-card--urgent";
-    if (type === "aviso") return "user-announcement-card--warning";
-    return "user-announcement-card--info";
-  };
-
   const renderInicio = () => (
-  <section className="user-home-v2">
-    {renderTopHeader()}
+    <section className="user-home-v2">
+      {renderTopHeader()}
 
-    <div
-      className="user-home-v2__center user-home-v2__center--banner"
-      style={{
-        backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.62), rgba(244, 247, 251, 0.86)), url(${headerBg})`,
-      }}
-    >
-      <div className="user-home-v2__buttons">
-        <button
-          className="user-circle-access user-circle-access--large"
-          onClick={() => setActiveSection("incidencias")}
-        >
-          <div className="user-circle-access__icon">
-            <Wrench size={30} />
-          </div>
-          <span>Incidencias</span>
-        </button>
+      <div
+        className="user-home-v2__center user-home-v2__center--banner"
+        style={{
+          backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.62), rgba(244, 247, 251, 0.86)), url(${headerBg})`,
+        }}
+      >
+        <div className="user-home-v2__buttons">
+          <button
+            className="user-circle-access user-circle-access--large"
+            onClick={() => setActiveSection("incidencias")}
+            type="button"
+          >
+            <div className="user-circle-access__icon">
+              <Wrench size={30} />
+            </div>
+            <span>Incidencias</span>
+          </button>
 
-        <button
-          className="user-circle-access user-circle-access--small"
-          onClick={() => setActiveSection("novedades")}
-        >
-          <div className="user-circle-access__icon user-circle-access__icon--bell">
-            <Bell size={30} />
-            {unreadCount > 0 && (
-              <span className="user-circle-access__badge">{unreadCount}</span>
-            )}
-          </div>
-          <span>Novedades</span>
-        </button>
+          <button
+            className="user-circle-access user-circle-access--small"
+            onClick={() => setActiveSection("novedades")}
+            type="button"
+          >
+            <div className="user-circle-access__icon user-circle-access__icon--bell">
+              <Bell size={30} />
+              {unreadCount > 0 && (
+                <span className="user-circle-access__badge">{unreadCount}</span>
+              )}
+            </div>
+            <span>Novedades</span>
+          </button>
 
-        <button
-          className="user-circle-access user-circle-access--large"
-          onClick={() => setActiveSection("documentos")}
-        >
-          <div className="user-circle-access__icon">
-            <FileText size={30} />
-          </div>
-          <span>Documentos</span>
-        </button>
+          <button
+            className="user-circle-access user-circle-access--large"
+            onClick={() => setActiveSection("documentos")}
+            type="button"
+          >
+            <div className="user-circle-access__icon">
+              <FileText size={30} />
+            </div>
+            <span>Documentos</span>
+          </button>
+        </div>
       </div>
-    </div>
 
-    <div className="user-home-v2__bottom" />
-  </section>
-);
+      <div className="user-home-v2__bottom" />
+    </section>
+  );
 
   const renderIncidencias = () => (
     <section className="dashboard-panel user-section-panel">
@@ -361,12 +367,14 @@ export default function UserDashboard() {
         <button
           className="btn btn-primary"
           onClick={() => setShowCreateIncidentModal(true)}
+          type="button"
         >
           Nueva incidencia
         </button>
       </div>
 
       {loadingIncidents && <p>Cargando incidencias...</p>}
+
       {incidentError && <div className="alert alert-danger">{incidentError}</div>}
 
       {!loadingIncidents && !incidentError && (
@@ -400,7 +408,11 @@ export default function UserDashboard() {
                   <div className="incident-card__meta">
                     <p>
                       <strong>Enviado por:</strong>{" "}
-                    {incident.creator ? [incident.creator.name, incident.creator.apellidos] .filter(Boolean) .join(" "): "—"}
+                      {incident.creator
+                        ? [incident.creator.name, incident.creator.apellidos]
+                            .filter(Boolean)
+                            .join(" ")
+                        : "—"}
                     </p>
                     <p>
                       <strong>Fecha y hora:</strong>{" "}
@@ -414,7 +426,10 @@ export default function UserDashboard() {
 
                   {incident.image_url && (
                     <div className="incident-card__image">
-                      <img src={getFileUrl(incident.image_url)} alt="Imagen de la incidencia" />
+                      <img
+                        src={getFileUrl(incident.image_url)}
+                        alt="Imagen de la incidencia"
+                      />
                     </div>
                   )}
                 </article>
@@ -440,6 +455,7 @@ export default function UserDashboard() {
               <button
                 className="btn btn-outline-secondary"
                 onClick={() => setShowCreateIncidentModal(false)}
+                type="button"
               >
                 <X size={16} />
               </button>
@@ -492,13 +508,16 @@ export default function UserDashboard() {
                     required
                   />
                 </div>
+
                 <div className="col-md-12">
                   <label className="form-label">Imagen opcional</label>
                   <input
                     type="file"
                     className="form-control"
                     accept="image/*"
-                    onChange={(e) => setIncidentImageFile(e.target.files?.[0] || null)}
+                    onChange={(e) =>
+                      setIncidentImageFile(e.target.files?.[0] || null)
+                    }
                   />
                   <small className="text-muted">
                     Puedes añadir una foto para mostrar mejor el problema.
@@ -539,6 +558,7 @@ export default function UserDashboard() {
               <button
                 className="btn btn-outline-secondary"
                 onClick={() => setSelectedIncident(null)}
+                type="button"
               >
                 <X size={16} />
               </button>
@@ -562,7 +582,7 @@ export default function UserDashboard() {
                         : "text-bg-success"
                     }`}
                   >
-                    {selectedIncident.status === "EN PROCESO"
+                    {selectedIncident.status === "EN_PROCESO"
                       ? "EN PROCESO"
                       : selectedIncident.status}
                   </span>
@@ -578,9 +598,7 @@ export default function UserDashboard() {
                 <label>Fecha</label>
                 <p>
                   {selectedIncident.created_at
-                    ? new Date(
-                        selectedIncident.created_at
-                      ).toLocaleDateString()
+                    ? new Date(selectedIncident.created_at).toLocaleDateString()
                     : "—"}
                 </p>
               </div>
@@ -589,12 +607,13 @@ export default function UserDashboard() {
                 <label>Hora</label>
                 <p>
                   {selectedIncident.created_at
-                    ? new Date(
-                        selectedIncident.created_at
-                      ).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })
+                    ? new Date(selectedIncident.created_at).toLocaleTimeString(
+                        [],
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }
+                      )
                     : "—"}
                 </p>
               </div>
@@ -680,94 +699,94 @@ export default function UserDashboard() {
   );
 
   const renderNovedades = () => (
-  <section className="dashboard-panel user-section-panel">
-    <div className="dashboard-header-row">
-      <div>
-        <h1 className="dashboard-title">Novedades</h1>
-        <p className="dashboard-subtitle">
-          Avisos y comunicaciones importantes de la comunidad.
-        </p>
-      </div>
-    </div>
-
-    {loadingAnnouncements && <p>Cargando novedades...</p>}
-
-    {announcementError && (
-      <div className="alert alert-danger">{announcementError}</div>
-    )}
-
-    {!loadingAnnouncements && !announcementError && (
-      <>
-        {announcements.length === 0 ? (
-          <p className="dashboard-empty">
-            No hay novedades publicadas todavía.
+    <section className="dashboard-panel user-section-panel">
+      <div className="dashboard-header-row">
+        <div>
+          <h1 className="dashboard-title">Novedades</h1>
+          <p className="dashboard-subtitle">
+            Avisos y comunicaciones importantes de la comunidad.
           </p>
-        ) : (
-          <div className="user-announcements-list">
-            {announcements.map((announcement) => (
-              <article
-                key={announcement.id}
-                className={`user-announcement-card ${getAnnouncementTypeClass(
-                  announcement.type
-                )}`}
-              >
-                <div className="user-announcement-card__media">
-                  {announcement.image_url ? (
-                    <img
-                      src={getFileUrl(announcement.image_url)}
-                      alt={announcement.title}
-                    />
-                  ) : (
-                    <div className="user-announcement-card__placeholder">
-                      <Bell size={32} />
-                    </div>
-                  )}
-                </div>
+        </div>
+      </div>
 
-                <div className="user-announcement-card__content">
-                  <div className="user-announcement-card__top">
-                    <span className="user-announcement-card__type">
-                      {getAnnouncementTypeLabel(announcement.type)}
-                    </span>
+      {loadingAnnouncements && <p>Cargando novedades...</p>}
 
-                    {announcement.type === "urgente" && (
-                      <span className="user-announcement-card__pinned">
-                        Fijado
-                      </span>
+      {announcementError && (
+        <div className="alert alert-danger">{announcementError}</div>
+      )}
+
+      {!loadingAnnouncements && !announcementError && (
+        <>
+          {announcements.length === 0 ? (
+            <p className="dashboard-empty">
+              No hay novedades publicadas todavía.
+            </p>
+          ) : (
+            <div className="user-announcements-list">
+              {announcements.map((announcement) => (
+                <article
+                  key={announcement.id}
+                  className={`user-announcement-card ${getAnnouncementTypeClass(
+                    announcement.type
+                  )}`}
+                >
+                  <div className="user-announcement-card__media">
+                    {announcement.image_url ? (
+                      <img
+                        src={getFileUrl(announcement.image_url)}
+                        alt={announcement.title}
+                      />
+                    ) : (
+                      <div className="user-announcement-card__placeholder">
+                        <Bell size={32} />
+                      </div>
                     )}
                   </div>
 
-                  <h3>{announcement.title}</h3>
+                  <div className="user-announcement-card__content">
+                    <div className="user-announcement-card__top">
+                      <span className="user-announcement-card__type">
+                        {getAnnouncementTypeLabel(announcement.type)}
+                      </span>
 
-                  <p className="user-announcement-card__description">
-                    {announcement.description}
-                  </p>
+                      {announcement.type === "urgente" && (
+                        <span className="user-announcement-card__pinned">
+                          Fijado
+                        </span>
+                      )}
+                    </div>
 
-                  <div className="user-announcement-card__meta">
-                    <span>
-                      {announcement.creator?.name || "Administración"}
-                    </span>
-                    <span>
-                      {announcement.created_at
-                        ? new Date(announcement.created_at).toLocaleDateString(
-                            "es-ES",
-                            {
-                              day: "2-digit",
-                              month: "long",
-                              year: "numeric",
-                            }
-                          )
-                        : "Fecha no disponible"}
-                    </span>
+                    <h3>{announcement.title}</h3>
+
+                    <p className="user-announcement-card__description">
+                      {announcement.description}
+                    </p>
+
+                    <div className="user-announcement-card__meta">
+                      <span>
+                        {announcement.creator?.name || "Administración"}
+                      </span>
+                      <span>
+                        {announcement.created_at
+                          ? new Date(announcement.created_at).toLocaleDateString(
+                              "es-ES",
+                              {
+                                day: "2-digit",
+                                month: "long",
+                                year: "numeric",
+                              }
+                            )
+                          : "Fecha no disponible"}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-      </>
-    )}
-  </section>
+                </article>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </section>
   );
 
   const renderBottomNav = () => (
@@ -777,6 +796,7 @@ export default function UserDashboard() {
           activeSection === "incidencias" ? "active" : ""
         }`}
         onClick={() => setActiveSection("incidencias")}
+        type="button"
       >
         <Wrench size={20} />
         <span>Incidencias</span>
@@ -787,6 +807,7 @@ export default function UserDashboard() {
           activeSection === "novedades" ? "active" : ""
         }`}
         onClick={() => setActiveSection("novedades")}
+        type="button"
       >
         <div className="user-bottom-nav__icon-wrap">
           <Bell size={20} />
@@ -802,6 +823,7 @@ export default function UserDashboard() {
           activeSection === "documentos" ? "active" : ""
         }`}
         onClick={() => setActiveSection("documentos")}
+        type="button"
       >
         <FileText size={20} />
         <span>Documentos</span>
