@@ -213,7 +213,7 @@ export default function UserDashboard() {
           <div className="user-app-brand__logo user-app-brand__logo--image">
             <img src={logoComunidad} alt="Logo comunidad" />
           </div>
-          <span>Jardines de las ramblas</span>
+          <span>JARDINES DE LAS RAMBLAS</span>
         </div>
       </div>
 
