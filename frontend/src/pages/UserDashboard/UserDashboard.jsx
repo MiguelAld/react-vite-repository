@@ -739,7 +739,7 @@ export default function UserDashboard() {
 
                     <p>
                       Publicado por{" "}
-                      <strong>{doc.uploader?.name || "Administración"}</strong>
+                      <strong>{getCreatorName(doc.uploader)}</strong>
                     </p>
 
                     <span>
