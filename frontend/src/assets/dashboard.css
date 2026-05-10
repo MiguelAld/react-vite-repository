@@ -2474,3 +2474,219 @@
     top: 82px;
   }
 }
+/* ============================================
+   FIX DEFINITIVO MODAL CREAR INCIDENCIA
+   Centrado, sin scroll horizontal y sin salirse
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  overflow-x: hidden;
+}
+
+/* Evita scroll horizontal en la pantalla de usuario */
+.user-dashboard-v2,
+.user-dashboard-v2__content,
+.user-home-v2,
+.dashboard-panel {
+  overflow-x: hidden;
+}
+
+/* Fondo oscuro del modal */
+.admin-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+
+  width: 100vw !important;
+  height: 100vh !important;
+
+  padding: 24px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  background: rgba(15, 23, 42, 0.55) !important;
+  backdrop-filter: blur(6px);
+
+  overflow: hidden !important;
+  z-index: 999999 !important;
+}
+
+/* Tarjeta base del modal */
+.admin-modal-card {
+  position: relative !important;
+
+  width: min(820px, calc(100vw - 48px)) !important;
+  max-width: calc(100vw - 48px) !important;
+  max-height: calc(100vh - 48px) !important;
+
+  margin: 0 auto !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+
+  background: #ffffff !important;
+  border-radius: 24px !important;
+  padding: 26px !important;
+
+  border: 1px solid #e8eef5 !important;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.28) !important;
+}
+
+/* Modal específico de crear incidencia */
+.incident-create-modal {
+  width: min(860px, calc(100vw - 48px)) !important;
+  max-width: calc(100vw - 48px) !important;
+  max-height: calc(100vh - 48px) !important;
+
+  display: flex !important;
+  flex-direction: column !important;
+
+  padding: 28px !important;
+  overflow: hidden !important;
+}
+
+/* Cabecera del modal */
+.incident-create-modal > .dashboard-header-row:first-child {
+  position: static !important;
+
+  flex-shrink: 0;
+  margin: 0 0 18px !important;
+  padding: 0 0 16px !important;
+
+  border-bottom: 1px solid #e8eef5;
+  background: #ffffff !important;
+}
+
+/* El formulario ocupa el espacio disponible */
+.incident-create-modal form {
+  flex: 1;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+/* Solo scrollea el contenido interno si hiciera falta */
+.incident-create-modal form .row.g-3 {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 8px;
+  row-gap: 18px;
+}
+
+/* Inputs más profesionales */
+.incident-create-modal .form-label {
+  font-weight: 900;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.incident-create-modal .form-control,
+.incident-create-modal .form-select {
+  width: 100%;
+  min-height: 50px;
+
+  border-radius: 14px;
+  border: 1px solid #d8e2ef;
+
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.incident-create-modal .form-control:focus,
+.incident-create-modal .form-select:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
+}
+
+/* Descripción grande, pero sin romper la pantalla */
+.incident-create-modal textarea.form-control {
+  min-height: 165px;
+  max-height: 190px;
+  resize: vertical;
+}
+
+/* Archivo */
+.incident-create-modal input[type="file"] {
+  padding: 10px 12px;
+}
+
+/* Botones abajo siempre visibles */
+.incident-create-modal .mt-4.d-flex {
+  flex-shrink: 0;
+
+  margin-top: 18px !important;
+  padding-top: 18px;
+
+  border-top: 1px solid #e8eef5;
+  background: #ffffff;
+}
+
+.incident-create-modal .btn {
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 800;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+/* Scroll interno bonito */
+.incident-create-modal form .row.g-3::-webkit-scrollbar,
+.admin-modal-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.incident-create-modal form .row.g-3::-webkit-scrollbar-thumb,
+.admin-modal-card::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.incident-create-modal form .row.g-3::-webkit-scrollbar-track,
+.admin-modal-card::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+/* Responsive */
+@media (max-width: 700px) {
+  .admin-modal-backdrop {
+    padding: 12px !important;
+  }
+
+  .admin-modal-card,
+  .incident-create-modal {
+    width: calc(100vw - 24px) !important;
+    max-width: calc(100vw - 24px) !important;
+    max-height: calc(100vh - 24px) !important;
+    padding: 20px !important;
+    border-radius: 20px !important;
+  }
+
+  .incident-create-modal textarea.form-control {
+    min-height: 135px;
+    max-height: 160px;
+  }
+
+  .incident-create-modal .mt-4.d-flex {
+    flex-direction: column;
+  }
+
+  .incident-create-modal .mt-4.d-flex .btn {
+    width: 100%;
+  }
+}
