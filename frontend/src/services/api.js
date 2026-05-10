@@ -50,65 +50,65 @@ export async function apiLogin(dni, password) {
 }
 
 /* MEETINGS */
-  export async function getMeetings() {
-    const res = await fetch(`${API_URL}/meetings`);
+export async function getMeetings() {
+  const res = await fetch(`${API_URL}/meetings`);
 
-    const data = await res.json().catch(() => ({}));
+  const data = await res.json().catch(() => ({}));
 
-    if (!res.ok) {
-      throw new Error(data?.error || "Error cargando reuniones");
-    }
-
-    return data;
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando reuniones");
   }
 
-  export async function createMeeting(meetingData) {
-    const res = await fetch(`${API_URL}/meetings`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(meetingData),
-    });
+  return data;
+}
 
-    const data = await res.json().catch(() => ({}));
+export async function createMeeting(meetingData) {
+  const res = await fetch(`${API_URL}/meetings`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(meetingData),
+  });
 
-    if (!res.ok) {
-      throw new Error(data?.error || "Error creando reunión");
-    }
+  const data = await res.json().catch(() => ({}));
 
-    return data;
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando reunión");
   }
 
-  export async function updateMeeting(id, meetingData) {
-    const res = await fetch(`${API_URL}/meetings/${id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(meetingData),
-    });
+  return data;
+}
 
-    const data = await res.json().catch(() => ({}));
+export async function updateMeeting(id, meetingData) {
+  const res = await fetch(`${API_URL}/meetings/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(meetingData),
+  });
 
-    if (!res.ok) {
-      throw new Error(data?.error || "Error actualizando reunión");
-    }
+  const data = await res.json().catch(() => ({}));
 
-    return data;
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando reunión");
   }
 
-  export async function deleteMeeting(id, created_by) {
-    const res = await fetch(`${API_URL}/meetings/${id}`, {
-      method: "DELETE",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ created_by }),
-    });
+  return data;
+}
 
-    const data = await res.json().catch(() => ({}));
+export async function deleteMeeting(id, created_by) {
+  const res = await fetch(`${API_URL}/meetings/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ created_by }),
+  });
 
-    if (!res.ok) {
-      throw new Error(data?.error || "Error eliminando reunión");
-    }
+  const data = await res.json().catch(() => ({}));
 
-    return data;
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando reunión");
   }
+
+  return data;
+}
 
 /* USERS */
 export async function getUsers() {
@@ -340,6 +340,20 @@ export async function updateZoneOrder(id, direction) {
   return data;
 }
 
+export async function deleteZone(zoneId) {
+  const res = await fetch(`${API_URL}/zones/${zoneId}`, {
+    method: "DELETE",
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error eliminando zona");
+  }
+
+  return data;
+}
+
 /* ANNOUNCEMENTS */
 export async function getAnnouncements(userId) {
   const url = userId
@@ -347,6 +361,7 @@ export async function getAnnouncements(userId) {
     : `${API_URL}/announcements`;
 
   const res = await fetch(url);
+
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
@@ -463,7 +478,6 @@ export async function markAllNovededAsRead(userId) {
 }
 
 /* DOCUMENTS */
-
 export async function getDocuments() {
   const res = await fetch(`${API_URL}/documents`);
 
@@ -500,20 +514,6 @@ export async function deleteDocument(id) {
 
   if (!res.ok) {
     throw new Error(data?.error || "Error eliminando documento");
-  }
-
-  return data;
-}
-
-export async function deleteZone(zoneId) {
-  const res = await fetch(`${API_URL}/zones/${zoneId}`, {
-    method: "DELETE",
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    throw new Error(data?.error || "Error eliminando zona");
   }
 
   return data;

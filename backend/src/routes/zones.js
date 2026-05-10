@@ -54,7 +54,9 @@ router.post("/", async (req, res) => {
     const { name } = req.body;
 
     if (!name || !name.trim()) {
-      return res.status(400).json({ error: "El nombre de la zona es obligatorio" });
+      return res.status(400).json({
+        error: "El nombre de la zona es obligatorio",
+      });
     }
 
     const cleanName = name.trim();
@@ -64,11 +66,16 @@ router.post("/", async (req, res) => {
     });
 
     if (existing) {
-      return res.status(400).json({ error: "Ya existe una zona con ese nombre" });
+      return res.status(400).json({
+        error: "Ya existe una zona con ese nombre",
+      });
     }
 
     const maxOrderZone = await Zone.findOne({
-      order: [["order", "DESC"]],
+      order: [
+        ["order", "DESC"],
+        ["id", "DESC"],
+      ],
     });
 
     const nextOrder = maxOrderZone ? Number(maxOrderZone.order) + 1 : 1;
@@ -187,6 +194,7 @@ router.patch("/:id/order", async (req, res) => {
     }
 
     const currentOrder = zone.order;
+
     zone.order = targetZone.order;
     targetZone.order = currentOrder;
 
@@ -209,14 +217,16 @@ router.patch("/:id/order", async (req, res) => {
     });
   } catch (error) {
     await transaction.rollback();
+
     console.error(error);
     res.status(500).json({ error: "Error actualizando orden" });
   }
 });
 
-
 /* ============================================
    ADMIN: ELIMINAR ZONA
+   Si tiene incidencias asociadas, puede fallar.
+   En ese caso, mejor desactivarla.
    ============================================ */
 router.delete("/:id", async (req, res) => {
   const transaction = await sequelize.transaction();
@@ -271,3 +281,5 @@ router.delete("/:id", async (req, res) => {
     });
   }
 });
+
+export default router;
