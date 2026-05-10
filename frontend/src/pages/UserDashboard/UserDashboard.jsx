@@ -883,7 +883,11 @@ export default function UserDashboard() {
 
                         <div className="user-announcement-card__meta">
                           <span>
-                            {announcement.creator?.name || "Administración"}
+                            {announcement.creator
+                              ? [announcement.creator.name, announcement.creator.apellidos]
+                                  .filter(Boolean)
+                                  .join(" ")
+                              : "Administración"}
                           </span>
                           <span>{formatLongDate(announcement.created_at)}</span>
                         </div>

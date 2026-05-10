@@ -55,7 +55,8 @@ router.get("/", async (req, res) => {
         {
           model: User,
           as: "creator",
-          attributes: ["id", "name", "apellidos"],
+          attributes: ["id", "name", "apellidos", "dni", "role"],
+          required: false,
         },
       ],
       order: [
