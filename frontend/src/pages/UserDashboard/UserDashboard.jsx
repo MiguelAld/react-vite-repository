@@ -306,7 +306,7 @@ export default function UserDashboard() {
           onClick={() => setActiveSection("incidencias")}
         >
           <div className="user-circle-access__icon">
-            <Wrench size={34} />
+            <Wrench size={30} />
           </div>
           <span>Incidencias</span>
         </button>
@@ -329,7 +329,7 @@ export default function UserDashboard() {
           onClick={() => setActiveSection("documentos")}
         >
           <div className="user-circle-access__icon">
-            <FileText size={34} />
+            <FileText size={30} />
           </div>
           <span>Documentos</span>
         </button>
