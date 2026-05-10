@@ -739,7 +739,11 @@ export default function UserDashboard() {
 
                     <p>
                       Publicado por{" "}
-                      <strong>{getCreatorName(doc.uploader)}</strong>
+                      <strong>
+                        {doc.uploader
+                          ? [doc.uploader.name, doc.uploader.apellidos].filter(Boolean).join(" ")
+                          : "Administración"}
+                      </strong>
                     </p>
 
                     <span>

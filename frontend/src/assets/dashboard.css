@@ -2389,62 +2389,67 @@
 }
 
 /* ============================================
-   FONDOS CON IMAGEN - INICIO Y SECCIONES USER
+   15. FONDOS CON IMAGEN - INICIO Y SECCIONES USER
    ============================================ */
 
-/*
-  Fondo de las secciones:
-  Incidencias, Documentos y Novedades.
-  La imagen se aplica desde React con inline style usando headerBg.
-*/
+.user-home-v2__center--banner {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.user-home-v2__center--banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(244, 247, 251, 0.04);
+  pointer-events: none;
+}
+
+/* Fondo piscina en secciones internas de usuario */
 .user-dashboard-v2__content--section-bg {
+  position: relative;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: local;
 }
 
-/*
-  Panel blanco encima del fondo.
-  Lo hacemos un poco transparente para que se intuya la piscina,
-  pero sin perder lectura.
-*/
+.user-dashboard-v2__content--section-bg::before {
+  content: "";
+  position: fixed;
+  top: 112px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(244, 247, 251, 0.74);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.user-dashboard-v2__content--section-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
 .user-dashboard-v2__content--section-bg .dashboard-panel {
-  background: rgba(255, 255, 255, 0.93);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(8px);
   border: 1px solid rgba(232, 238, 245, 0.9);
 }
 
-/*
-  Las tarjetas interiores también más limpias encima del fondo.
-*/
 .user-dashboard-v2__content--section-bg .incident-card,
 .user-dashboard-v2__content--section-bg .user-document-card,
 .user-dashboard-v2__content--section-bg .user-announcement-card {
+  background-color: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(6px);
 }
 
-/*
-  Inicio:
-  Mantiene la imagen centrada y bien cubierta.
-*/
-.user-home-v2__center--banner {
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-/*
-  Quitamos un poco el gris extra del ::before del inicio,
-  porque ahora el gris ya lo controlamos desde React con el linear-gradient.
-*/
-.user-home-v2__center--banner::before {
-  background: rgba(244, 247, 251, 0.05);
-}
 
 /* ============================================
-   FIX MODAL CREAR INCIDENCIA USER
-   Evita que al seleccionar "Otro" el formulario salte hacia arriba
+   16. MODAL CREAR INCIDENCIA USER MÁS GRANDE
+   Evita saltos al seleccionar "Otro"
    ============================================ */
 
 .admin-modal-backdrop {
@@ -2453,28 +2458,74 @@
 }
 
 .incident-create-modal {
-  width: min(760px, calc(100vw - 48px));
-  max-height: calc(100vh - 48px);
+  width: min(1080px, calc(100vw - 48px));
+  max-height: calc(100vh - 64px);
   overflow-y: auto;
-  margin: auto;
+  padding: 32px;
 }
 
-.incident-create-modal form {
-  padding-bottom: 4px;
+.incident-create-modal .dashboard-header-row {
+  align-items: flex-start;
+}
+
+.incident-create-modal .form-label {
+  font-weight: 800;
+  color: #334155;
+}
+
+.incident-create-modal .form-control,
+.incident-create-modal .form-select {
+  min-height: 50px;
+  border-radius: 12px;
 }
 
 .incident-create-modal textarea {
+  min-height: 220px;
   resize: vertical;
-  min-height: 140px;
 }
 
-@media (max-height: 720px) {
-  .admin-modal-backdrop {
-    align-items: flex-start;
+.incident-create-modal .row.g-3 {
+  row-gap: 20px;
+}
+
+.incident-create-modal .mt-4.d-flex {
+  position: sticky;
+  bottom: -32px;
+  background: #ffffff;
+  padding-top: 18px;
+  padding-bottom: 4px;
+  border-top: 1px solid #eef2f7;
+}
+
+
+/* ============================================
+   17. RESPONSIVE AJUSTES FINALES
+   ============================================ */
+
+@media (max-width: 900px) {
+  .user-dashboard-v2__content--section-bg::before {
+    top: 96px;
+  }
+}
+
+@media (max-width: 700px) {
+  .incident-create-modal {
+    width: 100%;
+    max-height: calc(100vh - 24px);
+    padding: 22px;
   }
 
-  .incident-create-modal {
-    margin-top: 18px;
-    margin-bottom: 18px;
+  .incident-create-modal textarea {
+    min-height: 170px;
+  }
+
+  .incident-create-modal .mt-4.d-flex {
+    bottom: -22px;
+  }
+}
+
+@media (max-width: 560px) {
+  .user-dashboard-v2__content--section-bg::before {
+    top: 82px;
   }
 }
