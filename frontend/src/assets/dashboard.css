@@ -367,17 +367,16 @@
 
 /* ============================================
    4. USER DASHBOARD - BANNER / HEADER
-   Banner superior: Home, logo, título y perfil
+   Banner superior: botón inicio, logo, título y perfil
    ============================================ */
 
 .user-app-header {
-  /*
-    Ajustes rápidos:
-    --logo-left controla la posición del logo.
-    Más px = logo más a la derecha.
-    Menos px = logo más a la izquierda.
+  /* 
+    Para mover el logo sin que se desplace al aparecer/desaparecer Home:
+    - Menos px = más a la izquierda
+    - Más px = más a la derecha
   */
-  --logo-left: 118px;
+  --logo-left: 125px;
 
   position: sticky;
   top: 0;
@@ -386,7 +385,7 @@
   flex-shrink: 0;
 
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 90px 1fr 220px;
   align-items: center;
 
   padding: 0 28px;
@@ -402,15 +401,15 @@
   content: none;
 }
 
-/* Zona izquierda: botón Home + logo */
+/* Zona izquierda: aquí va solo el botón Home */
 .user-app-header__left {
   grid-column: 1;
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 22px;
-  min-width: 0;
-  z-index: 20;
+  width: 90px;
+  min-width: 90px;
+  z-index: 10;
 }
 
 /* Botón Home */
@@ -446,18 +445,31 @@
   box-shadow: 0 12px 24px rgba(29, 78, 216, 0.14);
 }
 
-/* En inicio el botón no se ve, pero sigue ocupando espacio */
+/* 
+   El botón se oculta en Inicio, pero mantiene su hueco.
+   Así el logo y el título no saltan de posición.
+*/
 .user-app-home-btn--hidden {
   visibility: hidden;
   pointer-events: none;
 }
 
-/* Bloque logo + título */
+/* Bloque central de marca */
 .user-app-brand {
-  display: contents;
+  grid-column: 2;
+  position: static;
+  transform: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+  max-width: 100%;
+  z-index: 5;
 }
 
-/* Logo independiente para que no se mueva */
+/* Logo fijo dentro del banner, independiente del botón Home */
 .user-app-brand__logo-block {
   position: absolute;
   left: var(--logo-left);
@@ -467,6 +479,8 @@
   width: 78px;
   height: 78px;
   min-width: 78px;
+  max-width: 78px;
+  max-height: 78px;
 
   border-radius: 22px;
   background: #ffffff;
@@ -480,19 +494,27 @@
   overflow: hidden;
   box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
 
-  z-index: 15;
+  z-index: 8;
 }
 
+/* Imagen del logo: evita que se amplíe o se deforme */
 .user-app-brand__logo-block img {
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
   display: block;
 }
 
-/* Título centrado en el banner */
+/* Título centrado real en todo el banner */
 .user-app-brand span {
-  grid-column: 2;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  
+  max-width: calc(100% - 460px);
 
   font-size: 1.85rem;
   line-height: 1.05;
@@ -504,19 +526,18 @@
   overflow: hidden;
   text-overflow: ellipsis;
 
-  text-align: center;
-  z-index: 10;
   pointer-events: none;
+  z-index: 6;
 }
 
-/* Zona derecha: perfil */
+/* Zona derecha: perfil del usuario */
 .user-app-header__right {
   grid-column: 3;
   display: flex;
   align-items: center;
   justify-content: flex-end;
   min-width: 0;
-  z-index: 30;
+  z-index: 20;
 }
 
 .user-profile-menu {
@@ -641,6 +662,7 @@
   background: #fee2e2;
 }
 
+
 /* ============================================
    5. USER DASHBOARD - HOME
    Pantalla inicial del usuario con 3 accesos
@@ -695,10 +717,10 @@
   width: 180px;
   height: 180px;
 
-  border: 1px solid rgba(169, 207, 250, 0.95);
+  border: 1px solid rgba(219, 230, 243, 0.95);
   border-radius: 999px;
 
-  background: rgba(170, 224, 255, 0.92);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
 
   box-shadow: 0 18px 40px rgba(15, 23, 42, 0.11);
