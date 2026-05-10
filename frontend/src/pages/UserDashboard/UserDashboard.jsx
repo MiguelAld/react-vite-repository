@@ -196,86 +196,78 @@ export default function UserDashboard() {
     return incident.zone?.name || incident.custom_zone || "—";
   };
 
-
   const renderTopHeader = () => (
     <header className="user-app-header">
       <div className="user-app-header__left">
-        <button
-          className={`user-app-home-btn ${
-            activeSection === "inicio" ? "user-app-home-btn--hidden" : ""
-          }`}
-          onClick={() => setActiveSection("inicio")}
-          aria-label="Volver al inicio"
-          type="button"
-        >
-          <Home size={30} />
-        </button>
-      </div>
-
-      <div className="user-app-brand">
-        <div className="user-app-brand__logo-block">
-          <img src={logoComunidad} alt="Logo comunidad" />
-        </div>
-
-        <span>JARDINES DE LAS RAMBLAS</span>
-      </div>
-
-      <div className="user-app-header__right">
-        <div className="user-profile-menu">
+        {activeSection !== "inicio" && (
           <button
-            className="user-profile-menu__trigger"
-            onClick={() => setProfileMenuOpen((prev) => !prev)}
-            type="button"
+            className={`user-app-home-btn ${activeSection === "inicio" ? "user-app-home-btn--hidden" : ""}`}
+            onClick={() => setActiveSection("inicio")}
+            aria-label="Volver al inicio"
           >
-            <div className="user-profile-menu__avatar">
-              <UserCircle2 size={24} />
-            </div>
-
-            <div className="user-profile-menu__text">
-              <strong>{userName}</strong>
-              <span>{userHouse}</span>
-            </div>
-
-            <ChevronDown size={18} />
+            <Home size={30} />
           </button>
+        )}
 
-          {profileMenuOpen && (
-            <div className="user-profile-menu__dropdown">
-              <div className="user-profile-menu__info">
-                <p>
-                  <strong>Nombre:</strong> {userName}
-                </p>
-                <p>
-                  <strong>DNI:</strong> {userDni}
-                </p>
-                <p>
-                  <strong>Vivienda:</strong> {userHouse}
-                </p>
-              </div>
-
-              {activeSection !== "inicio" && (
-                <button
-                  className="user-profile-menu__item"
-                  type="button"
-                  onClick={() => {
-                    setActiveSection("inicio");
-                    setProfileMenuOpen(false);
-                  }}
-                >
-                  Ver inicio
-                </button>
-              )}
-
-              <button
-                className="user-profile-menu__item user-profile-menu__item--danger"
-                type="button"
-                onClick={handleLogout}
-              >
-                Cerrar sesión
-              </button>
-            </div>
-          )}
+        <div className="user-app-brand">
+          <div className="user-app-brand__logo user-app-brand__logo--image">
+            <img src={logoComunidad} alt="Logo comunidad" />
+          </div>
+          <span>JARDINES DE LAS RAMBLAS</span>
         </div>
+      </div>
+
+      <div className="user-profile-menu">
+        <button
+          className="user-profile-menu__trigger"
+          onClick={() => setProfileMenuOpen((prev) => !prev)}
+        >
+          <div className="user-profile-menu__avatar">
+            <UserCircle2 size={24} />
+          </div>
+
+          <div className="user-profile-menu__text">
+            <strong>{userName}</strong>
+            <span>{userHouse}</span>
+          </div>
+
+          <ChevronDown size={18} />
+        </button>
+
+        {profileMenuOpen && (
+          <div className="user-profile-menu__dropdown">
+            <div className="user-profile-menu__info">
+              <p>
+                <strong>Nombre:</strong> {userName}
+              </p>
+              <p>
+                <strong>DNI:</strong> {userDni}
+              </p>
+              <p>
+                <strong>Vivienda:</strong> {userHouse}
+              </p>
+            </div>
+
+            {activeSection !== "inicio" && (
+              <button
+                className="user-profile-menu__item"
+                onClick={() => {
+                  setActiveSection("inicio");
+                  setProfileMenuOpen(false);
+                }}
+              >
+                Ver inicio
+              </button>
+            )}
+
+            <button
+              className="user-profile-menu__item user-profile-menu__item--danger"
+              onClick={handleLogout}
+            >
+              Cerrar sesión
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );
