@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {FileText,
+import {
+  FileText,
   Wrench,
   Bell,
   UserCircle2,
   ChevronDown,
   X,
   Home,
+  CalendarDays,
 } from "lucide-react";
 
 import {
@@ -32,16 +34,22 @@ export default function UserDashboard() {
   const [incidents, setIncidents] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
   const [documents, setDocuments] = useState([]);
+
   const [loadingDocuments, setLoadingDocuments] = useState(false);
   const [documentsError, setDocumentsError] = useState("");
+
   const [unreadCount, setUnreadCount] = useState(0);
+
   const [loadingIncidents, setLoadingIncidents] = useState(false);
   const [loadingAnnouncements, setLoadingAnnouncements] = useState(false);
+
   const [incidentError, setIncidentError] = useState("");
   const [announcementError, setAnnouncementError] = useState("");
+
   const [showCreateIncidentModal, setShowCreateIncidentModal] = useState(false);
   const [incidentImageFile, setIncidentImageFile] = useState(null);
   const [selectedIncident, setSelectedIncident] = useState(null);
+
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -86,9 +94,10 @@ export default function UserDashboard() {
       setLoadingAnnouncements(true);
       setAnnouncementError("");
 
-      getAnnouncements(user?.id)
-        .then((data) => {
-          setAnnouncements(data);
+      Promise.all([getAnnouncements(user?.id), getMeetings()])
+        .then(([announcementsData, meetingsData]) => {
+          setAnnouncements(announcementsData || []);
+          setMeetings(meetingsData || []);
 
           if (user?.id) {
             markAllNovededAsRead(user.id)
@@ -98,7 +107,7 @@ export default function UserDashboard() {
         })
         .catch((err) => {
           console.error(err);
-          setAnnouncementError(err.message || "Error cargando anuncios");
+          setAnnouncementError(err.message || "Error cargando novedades");
         })
         .finally(() => {
           setLoadingAnnouncements(false);
@@ -189,10 +198,35 @@ export default function UserDashboard() {
     const date = new Date(dateString);
 
     return (
-      date.toLocaleDateString() +
+      date.toLocaleDateString("es-ES") +
       " " +
-      date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+      date.toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+      })
     );
+  };
+
+  const formatLongDate = (dateString) => {
+    if (!dateString) return "Fecha no disponible";
+
+    return new Date(dateString).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  const formatMeetingDate = (dateString) => {
+    if (!dateString) return "Fecha no disponible";
+
+    return new Date(dateString).toLocaleString("es-ES", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const getIncidentZoneLabel = (incident) => {
@@ -215,6 +249,34 @@ export default function UserDashboard() {
     if (type === "urgente") return "user-announcement-card--urgent";
     if (type === "aviso") return "user-announcement-card--warning";
     return "user-announcement-card--info";
+  };
+
+  const getCreatorName = (creator) => {
+    if (!creator) return "Administración";
+
+    return [creator.name, creator.apellidos].filter(Boolean).join(" ") || "Administración";
+  };
+
+  const getNovedadesItems = () => {
+    const announcementItems = announcements.map((announcement) => ({
+      kind: "announcement",
+      id: `announcement-${announcement.id}`,
+      dateValue: announcement.created_at || "",
+      data: announcement,
+    }));
+
+    const meetingItems = meetings.map((meeting) => ({
+      kind: "meeting",
+      id: `meeting-${meeting.id}`,
+      dateValue: meeting.created_at || meeting.meeting_date || "",
+      data: meeting,
+    }));
+
+    return [...announcementItems, ...meetingItems].sort((a, b) => {
+      const dateA = new Date(a.dateValue || 0).getTime();
+      const dateB = new Date(b.dateValue || 0).getTime();
+      return dateB - dateA;
+    });
   };
 
   const renderTopHeader = () => (
@@ -698,96 +760,144 @@ export default function UserDashboard() {
     </section>
   );
 
-  const renderNovedades = () => (
-    <section className="dashboard-panel user-section-panel">
-      <div className="dashboard-header-row">
-        <div>
-          <h1 className="dashboard-title">Novedades</h1>
-          <p className="dashboard-subtitle">
-            Avisos y comunicaciones importantes de la comunidad.
-          </p>
-        </div>
-      </div>
+  const renderNovedades = () => {
+    const novedadesItems = getNovedadesItems();
 
-      {loadingAnnouncements && <p>Cargando novedades...</p>}
-
-      {announcementError && (
-        <div className="alert alert-danger">{announcementError}</div>
-      )}
-
-      {!loadingAnnouncements && !announcementError && (
-        <>
-          {announcements.length === 0 ? (
-            <p className="dashboard-empty">
-              No hay novedades publicadas todavía.
+    return (
+      <section className="dashboard-panel user-section-panel">
+        <div className="dashboard-header-row">
+          <div>
+            <h1 className="dashboard-title">Novedades</h1>
+            <p className="dashboard-subtitle">
+              Avisos, comunicaciones importantes y reuniones de la comunidad.
             </p>
-          ) : (
-            <div className="user-announcements-list">
-              {announcements.map((announcement) => (
-                <article
-                  key={announcement.id}
-                  className={`user-announcement-card ${getAnnouncementTypeClass(
-                    announcement.type
-                  )}`}
-                >
-                  <div className="user-announcement-card__media">
-                    {announcement.image_url ? (
-                      <img
-                        src={getFileUrl(announcement.image_url)}
-                        alt={announcement.title}
-                      />
-                    ) : (
-                      <div className="user-announcement-card__placeholder">
-                        <Bell size={32} />
+          </div>
+        </div>
+
+        {loadingAnnouncements && <p>Cargando novedades...</p>}
+
+        {announcementError && (
+          <div className="alert alert-danger">{announcementError}</div>
+        )}
+
+        {!loadingAnnouncements && !announcementError && (
+          <>
+            {novedadesItems.length === 0 ? (
+              <p className="dashboard-empty">
+                No hay novedades publicadas todavía.
+              </p>
+            ) : (
+              <div className="user-announcements-list">
+                {novedadesItems.map((item) => {
+                  if (item.kind === "meeting") {
+                    const meeting = item.data;
+
+                    return (
+                      <article
+                        key={item.id}
+                        className="user-announcement-card user-announcement-card--meeting"
+                      >
+                        <div className="user-announcement-card__media user-announcement-card__media--meeting">
+                          <div className="user-announcement-card__placeholder user-announcement-card__placeholder--meeting">
+                            <CalendarDays size={38} />
+                          </div>
+                        </div>
+
+                        <div className="user-announcement-card__content">
+                          <div className="user-announcement-card__top">
+                            <span className="user-announcement-card__type user-announcement-card__type--meeting">
+                              Reunión
+                            </span>
+
+                            <span className="user-announcement-card__pinned user-announcement-card__pinned--meeting">
+                              Convocatoria
+                            </span>
+                          </div>
+
+                          <h3>{meeting.title}</h3>
+
+                          <p className="user-announcement-card__description">
+                            {meeting.description ||
+                              "Se ha convocado una nueva reunión de la comunidad."}
+                          </p>
+
+                          <div className="user-meeting-info-box">
+                            <CalendarDays size={18} />
+                            <span>
+                              <strong>Fecha y hora:</strong>{" "}
+                              {formatMeetingDate(meeting.meeting_date)}
+                            </span>
+                          </div>
+
+                          <div className="user-announcement-card__meta">
+                            <span>{getCreatorName(meeting.creator)}</span>
+                            <span>
+                              Publicado: {formatLongDate(meeting.created_at)}
+                            </span>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  }
+
+                  const announcement = item.data;
+
+                  return (
+                    <article
+                      key={item.id}
+                      className={`user-announcement-card ${getAnnouncementTypeClass(
+                        announcement.type
+                      )}`}
+                    >
+                      <div className="user-announcement-card__media">
+                        {announcement.image_url ? (
+                          <img
+                            src={getFileUrl(announcement.image_url)}
+                            alt={announcement.title}
+                          />
+                        ) : (
+                          <div className="user-announcement-card__placeholder">
+                            <Bell size={32} />
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  <div className="user-announcement-card__content">
-                    <div className="user-announcement-card__top">
-                      <span className="user-announcement-card__type">
-                        {getAnnouncementTypeLabel(announcement.type)}
-                      </span>
+                      <div className="user-announcement-card__content">
+                        <div className="user-announcement-card__top">
+                          <span className="user-announcement-card__type">
+                            {getAnnouncementTypeLabel(announcement.type)}
+                          </span>
 
-                      {announcement.type === "urgente" && (
-                        <span className="user-announcement-card__pinned">
-                          Fijado
-                        </span>
-                      )}
-                    </div>
+                          {announcement.type === "urgente" && (
+                            <span className="user-announcement-card__pinned">
+                              Fijado
+                            </span>
+                          )}
+                        </div>
 
-                    <h3>{announcement.title}</h3>
+                        <h3>{announcement.title}</h3>
 
-                    <p className="user-announcement-card__description">
-                      {announcement.description}
-                    </p>
+                        <p className="user-announcement-card__description">
+                          {announcement.description}
+                        </p>
 
-                    <div className="user-announcement-card__meta">
-                      <span>
-                        {announcement.creator?.name || "Administración"}
-                      </span>
-                      <span>
-                        {announcement.created_at
-                          ? new Date(announcement.created_at).toLocaleDateString(
-                              "es-ES",
-                              {
-                                day: "2-digit",
-                                month: "long",
-                                year: "numeric",
-                              }
-                            )
-                          : "Fecha no disponible"}
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </>
-      )}
-    </section>
-  );
+                        <div className="user-announcement-card__meta">
+                          <span>
+                            {announcement.creator?.name || "Administración"}
+                          </span>
+                          <span>{formatLongDate(announcement.created_at)}</span>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            )}
+          </>
+        )}
+      </section>
+    );
+  };
 
   const renderBottomNav = () => (
     <nav className="user-bottom-nav">

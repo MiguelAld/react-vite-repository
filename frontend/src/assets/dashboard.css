@@ -2272,3 +2272,50 @@
     height: 165px;
   }
 }
+
+/* ============================================
+   NOVEDAD ESPECIAL: REUNIONES
+   Tarjeta diferente cuando el admin crea una reunión
+   ============================================ */
+
+.user-announcement-card--meeting {
+  border-left: 5px solid #7c3aed;
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+}
+
+.user-announcement-card__media--meeting {
+  background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%);
+}
+
+.user-announcement-card__placeholder--meeting {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #6d28d9;
+}
+
+.user-announcement-card__type--meeting {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.user-announcement-card__pinned--meeting {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+.user-meeting-info-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #f5f3ff;
+  color: #4c1d95;
+  border: 1px solid #ddd6fe;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.user-meeting-info-box svg {
+  flex-shrink: 0;
+}
