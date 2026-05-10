@@ -1,5 +1,6 @@
 import Background from "../../components/Background/Background";
 import LoginForm from "../../components/LoginForm/LoginForm";
+import logoComunidad from "../../assets/logo-comunidad.png";
 import "./Login.css";
 
 export default function Login() {
@@ -7,26 +8,27 @@ export default function Login() {
     <div className="login-page">
       <Background />
 
-      <div className="container login-shell">
-        <div className="login-card card shadow-sm">
-          <div className="card-body p-4">
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <div className="badge bg-light text-dark border">🏡</div>
-              <div>
-                <h1 className="h5 mb-0">Portal de la Comunidad</h1>
-                <small className="text-secondary">
-                  Reuniones · Incidencias · Documentos
-                </small>
-              </div>
+      <div className="login-overlay" />
+
+      <div className="login-shell">
+        <div className="login-card">
+          <div className="login-brand">
+            <div className="login-brand__logo">
+              <img src={logoComunidad} alt="Logo comunidad" />
             </div>
 
-            <h2 className="h4 mb-1">Iniciar sesión</h2>
-            <p className="text-secondary mb-3">
-              Accede con tu DNI para entrar o activar tu cuenta.
-            </p>
-
-            <LoginForm />
+            <div className="login-brand__text">
+              <span>Portal de la Comunidad</span>
+              <small>Reuniones · Incidencias · Documentos</small>
+            </div>
           </div>
+
+          <div className="login-card__header">
+            <h1>Jardines de las Ramblas</h1>
+            <p>Accede con tu DNI para entrar o activar tu cuenta.</p>
+          </div>
+
+          <LoginForm />
         </div>
       </div>
     </div>
