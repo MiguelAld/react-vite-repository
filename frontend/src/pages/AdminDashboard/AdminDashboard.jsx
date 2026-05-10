@@ -16,6 +16,7 @@ import {
   createZone,
   updateZoneActive,
   updateZoneOrder,
+  deleteZone,
   getMeetings,
   getDocuments,
   uploadDocument,
@@ -480,9 +481,31 @@ export default function AdminDashboard() {
     }
   };
 
+const handleDeleteZone = async (zoneId, zoneName) => {
+  const ok = window.confirm(
+    `¿Seguro que quieres eliminar la zona "${zoneName}"? Esta acción no se puede deshacer.`
+  );
+
+  if (!ok) return;
+
+  try {
+    await deleteZone(zoneId);
+
+    setZones((prev) => prev.filter((zone) => zone.id !== zoneId));
+  } catch (err) {
+    console.error(err);
+    alert(err.message || "Error eliminando zona");
+  }
+};
+
   const handleMoveZone = async (zoneId, direction) => {
     try {
-      await updateZoneOrder(zoneId, direction);
+      const response = await updateZoneOrder(zoneId, direction);
+
+      if (response.zones) {
+        setZones(response.zones);
+        return;
+      }
 
       getAllZones().then(setZones).catch(console.error);
     } catch (err) {
@@ -1262,8 +1285,7 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Zonas Públicas</h1>
                   <p className="dashboard-subtitle">
-                    Crea, ordena, activa o desactiva las zonas que verán los
-                    usuarios al crear incidencias.
+                    Crea, ordena, activa, desactiva o elimina las zonas que verán los usuarios al crear incidencias.
                   </p>
                 </div>
               </div>
@@ -1308,9 +1330,7 @@ export default function AdminDashboard() {
                             {zone.is_active ? (
                               <span className="badge bg-success">ACTIVA</span>
                             ) : (
-                              <span className="badge bg-secondary">
-                                INACTIVA
-                              </span>
+                              <span className="badge bg-secondary">INACTIVA</span>
                             )}
                           </div>
 
@@ -1338,15 +1358,20 @@ export default function AdminDashboard() {
                             <button
                               type="button"
                               className={`btn btn-sm ${
-                                zone.is_active
-                                  ? "btn-outline-danger"
-                                  : "btn-outline-success"
+                                zone.is_active ? "btn-outline-danger" : "btn-outline-success"
                               }`}
-                              onClick={() =>
-                                handleToggleZoneActive(zone.id, zone.is_active)
-                              }
+                              onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
                             >
                               {zone.is_active ? "Desactivar" : "Activar"}
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => handleDeleteZone(zone.id, zone.name)}
+                              title="Eliminar zona"
+                            >
+                              <Trash2 size={16} />
                             </button>
                           </div>
                         </div>

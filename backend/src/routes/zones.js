@@ -4,13 +4,18 @@ import { sequelize, Op } from "../config/sequelize.js";
 
 const router = express.Router();
 
-/* usuario: solo zonas activas */
+/* ============================================
+   USUARIO: SOLO ZONAS ACTIVAS
+   ============================================ */
 router.get("/", async (req, res) => {
   try {
     const zones = await Zone.findAll({
       where: { is_active: true },
       attributes: ["id", "name"],
-      order: [["order", "ASC"]],
+      order: [
+        ["order", "ASC"],
+        ["id", "ASC"],
+      ],
     });
 
     res.json(zones);
@@ -20,12 +25,17 @@ router.get("/", async (req, res) => {
   }
 });
 
-/* admin: todas las zonas */
+/* ============================================
+   ADMIN: TODAS LAS ZONAS
+   ============================================ */
 router.get("/all", async (req, res) => {
   try {
     const zones = await Zone.findAll({
       attributes: ["id", "name", "is_active", "order", "created_at"],
-      order: [["order", "ASC"]],
+      order: [
+        ["order", "ASC"],
+        ["id", "ASC"],
+      ],
     });
 
     res.json(zones);
@@ -35,27 +45,39 @@ router.get("/all", async (req, res) => {
   }
 });
 
-/* admin: crear zona */
+/* ============================================
+   ADMIN: CREAR ZONA
+   La nueva zona se coloca al final
+   ============================================ */
 router.post("/", async (req, res) => {
   try {
-    const { name, created_by } = req.body;
+    const { name } = req.body;
 
     if (!name || !name.trim()) {
       return res.status(400).json({ error: "El nombre de la zona es obligatorio" });
     }
 
+    const cleanName = name.trim();
+
     const existing = await Zone.findOne({
-      where: { name: name.trim() },
+      where: { name: cleanName },
     });
 
     if (existing) {
       return res.status(400).json({ error: "Ya existe una zona con ese nombre" });
     }
 
+    const maxOrderZone = await Zone.findOne({
+      order: [["order", "DESC"]],
+    });
+
+    const nextOrder = maxOrderZone ? Number(maxOrderZone.order) + 1 : 1;
+
     const zone = await Zone.create({
-      name: name.trim(),
+      name: cleanName,
       created_by: null,
       is_active: true,
+      order: nextOrder,
     });
 
     res.status(201).json(zone);
@@ -65,7 +87,9 @@ router.post("/", async (req, res) => {
   }
 });
 
-/* admin: activar/desactivar zona */
+/* ============================================
+   ADMIN: ACTIVAR / DESACTIVAR ZONA
+   ============================================ */
 router.patch("/:id/active", async (req, res) => {
   try {
     const { id } = req.params;
@@ -90,15 +114,114 @@ router.patch("/:id/active", async (req, res) => {
   }
 });
 
-/* admin: cambiar orden de zona */
+/* ============================================
+   ADMIN: CAMBIAR ORDEN
+   Mueve SOLO una posición arriba o abajo
+   ============================================ */
 router.patch("/:id/order", async (req, res) => {
+  const transaction = await sequelize.transaction();
+
   try {
     const { id } = req.params;
-    const { direction } = req.body; // "up" o "down"
+    const { direction } = req.body;
 
     if (!["up", "down"].includes(direction)) {
+      await transaction.rollback();
       return res.status(400).json({ error: "Dirección inválida" });
     }
+
+    const zone = await Zone.findByPk(id, { transaction });
+
+    if (!zone) {
+      await transaction.rollback();
+      return res.status(404).json({ error: "Zona no encontrada" });
+    }
+
+    let targetZone = null;
+
+    if (direction === "up") {
+      targetZone = await Zone.findOne({
+        where: {
+          order: {
+            [Op.lt]: zone.order,
+          },
+        },
+        order: [
+          ["order", "DESC"],
+          ["id", "DESC"],
+        ],
+        transaction,
+      });
+    }
+
+    if (direction === "down") {
+      targetZone = await Zone.findOne({
+        where: {
+          order: {
+            [Op.gt]: zone.order,
+          },
+        },
+        order: [
+          ["order", "ASC"],
+          ["id", "ASC"],
+        ],
+        transaction,
+      });
+    }
+
+    if (!targetZone) {
+      await transaction.commit();
+
+      const zones = await Zone.findAll({
+        attributes: ["id", "name", "is_active", "order", "created_at"],
+        order: [
+          ["order", "ASC"],
+          ["id", "ASC"],
+        ],
+      });
+
+      return res.json({
+        message: "La zona ya está en el límite",
+        zones,
+      });
+    }
+
+    const currentOrder = zone.order;
+    zone.order = targetZone.order;
+    targetZone.order = currentOrder;
+
+    await zone.save({ transaction });
+    await targetZone.save({ transaction });
+
+    await transaction.commit();
+
+    const zones = await Zone.findAll({
+      attributes: ["id", "name", "is_active", "order", "created_at"],
+      order: [
+        ["order", "ASC"],
+        ["id", "ASC"],
+      ],
+    });
+
+    res.json({
+      message: "Orden actualizado",
+      zones,
+    });
+  } catch (error) {
+    await transaction.rollback();
+    console.error(error);
+    res.status(500).json({ error: "Error actualizando orden" });
+  }
+});
+
+/* ============================================
+   ADMIN: ELIMINAR ZONA
+   OJO: si la zona tiene incidencias asociadas,
+   puede fallar por la relación de base de datos.
+   ============================================ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
     const zone = await Zone.findByPk(id);
 
@@ -106,46 +229,31 @@ router.patch("/:id/order", async (req, res) => {
       return res.status(404).json({ error: "Zona no encontrada" });
     }
 
-    if (direction === "up") {
-      // Buscar la zona anterior (order menor más cercano)
-      const prevZone = await Zone.findOne({
-        where: { order: { [Op.lt]: zone.order } },
-        order: [["order", "DESC"]],
-      });
+    await zone.destroy();
 
-      if (prevZone) {
-        const tempOrder = zone.order;
-        zone.order = prevZone.order;
-        prevZone.order = tempOrder;
-        await zone.save();
-        await prevZone.save();
-      }
-    } else {
-      // Buscar la zona siguiente (order mayor más cercano)
-      const nextZone = await Zone.findOne({
-        where: { order: { [Op.gt]: zone.order } },
-        order: [["order", "ASC"]],
-      });
+    const remainingZones = await Zone.findAll({
+      order: [
+        ["order", "ASC"],
+        ["id", "ASC"],
+      ],
+    });
 
-      if (nextZone) {
-        const tempOrder = zone.order;
-        zone.order = nextZone.order;
-        nextZone.order = tempOrder;
-        await zone.save();
-        await nextZone.save();
-      }
+    for (let index = 0; index < remainingZones.length; index++) {
+      remainingZones[index].order = index + 1;
+      await remainingZones[index].save();
     }
 
-    const updatedZone = await Zone.findByPk(id);
-
     res.json({
-      message: "Orden actualizado",
-      zone: updatedZone,
+      message: "Zona eliminada correctamente",
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error actualizando orden" });
+
+    res.status(500).json({
+      error:
+        "No se pudo eliminar la zona. Si ya tiene incidencias asociadas, es mejor desactivarla en vez de borrarla.",
+    });
   }
 });
 
-export default router;
+export default router;  

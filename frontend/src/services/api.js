@@ -504,3 +504,17 @@ export async function deleteDocument(id) {
 
   return data;
 }
+
+export async function deleteZone(zoneId) {
+  const response = await fetch(`http://localhost:4000/api/zones/${zoneId}`, {
+    method: "DELETE",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.error || "Error eliminando zona");
+  }
+
+  return data;
+}

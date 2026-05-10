@@ -77,7 +77,7 @@ export default function SidebarAdmin({
           <div className="sidebar-user__info">
             <strong>{userName}</strong>
             <span>DNI: {userDni}</span>
-            <span>Propiedad: {userHouse}</span>
+            <span>Vivienda: {userHouse}</span>
           </div>
         </div>
 
