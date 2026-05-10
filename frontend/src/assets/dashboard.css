@@ -2275,31 +2275,31 @@
 
 /* ============================================
    NOVEDAD ESPECIAL: REUNIONES
-   Tarjeta diferente cuando el admin crea una reunión
+   Igual estilo suave que Información/Aviso
    ============================================ */
 
 .user-announcement-card--meeting {
   border-left: 5px solid #7c3aed;
-  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+  background: #ffffff;
 }
 
 .user-announcement-card__media--meeting {
-  background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%);
+  background: #f1f5f9;
 }
 
 .user-announcement-card__placeholder--meeting {
-  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
-  color: #6d28d9;
+  background: #f1f5f9;
+  color: #475569;
 }
 
 .user-announcement-card__type--meeting {
-  background: #ede9fe;
-  color: #5b21b6;
+  background: #e2e8f0;
+  color: #334155;
 }
 
 .user-announcement-card__pinned--meeting {
-  background: #f3e8ff;
-  color: #6b21a8;
+  background: #e2e8f0;
+  color: #334155;
 }
 
 .user-meeting-info-box {
@@ -2309,13 +2309,14 @@
   width: fit-content;
   padding: 10px 12px;
   border-radius: 14px;
-  background: #f5f3ff;
-  color: #4c1d95;
-  border: 1px solid #ddd6fe;
+  background: #f8fafc;
+  color: #334155;
+  border: 1px solid #e2e8f0;
   font-size: 0.92rem;
   font-weight: 700;
 }
 
 .user-meeting-info-box svg {
   flex-shrink: 0;
+  color: #475569;
 }
