@@ -474,6 +474,12 @@
   display: block;
 }
 
+/* El botón Home siempre ocupa espacio, pero en Inicio no se ve */
+.user-app-home-btn--hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* Título centrado real en el banner */
 .user-app-brand span {
   position: absolute;

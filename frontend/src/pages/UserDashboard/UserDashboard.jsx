@@ -201,11 +201,11 @@ export default function UserDashboard() {
       <div className="user-app-header__left">
         {activeSection !== "inicio" && (
           <button
-            className="user-app-home-btn"
+            className={`user-app-home-btn ${activeSection === "inicio" ? "user-app-home-btn--hidden" : ""}`}
             onClick={() => setActiveSection("inicio")}
-            title="Volver a inicio"
+            aria-label="Volver al inicio"
           >
-            <House size={20} />
+            <Home size={30} />
           </button>
         )}
 
