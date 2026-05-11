@@ -2826,21 +2826,21 @@ body,
    AJUSTE FINAL LOGOS ADMIN Y USUARIO
    ============================================ */
 
-/* ADMIN SIDEBAR: logo más pequeño */
+/* ADMIN SIDEBAR: logo pequeño, sin recuadro y un poco más arriba */
 .sidebar-user__brand {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 0 0 22px;
+  margin: -6px 0 22px;
   padding: 0;
   background: transparent;
   border: none;
 }
 
 .sidebar-user__brand-logo-wrap {
-  width: 24px;
-  height: 24px;
-  min-width: 24px;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
 
   padding: 0;
   border: none;
@@ -2855,8 +2855,8 @@ body,
 }
 
 .sidebar-user__brand-logo {
-  width: 60px;
-  height: 60px;
+  width: 34px;
+  height: 34px;
   object-fit: contain;
   display: block;
 }
@@ -2864,10 +2864,17 @@ body,
 .sidebar-user__logo {
   margin: 0;
   line-height: 1.1;
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
-/* DASHBOARD USUARIO: logo más grande y un poco a la derecha */
+/* DASHBOARD USUARIO: logo sin recuadro, más grande y movido un poco a la derecha */
 .user-app-header {
   --logo-left: 132px;
 }
@@ -2895,7 +2902,7 @@ body,
 }
 
 
-/* Responsive: mantiene el logo del usuario proporcionado */
+/* RESPONSIVE LOGO USUARIO */
 @media (max-width: 900px) {
   .user-app-header {
     --logo-left: 96px;
@@ -2929,7 +2936,7 @@ body,
   }
 
   .user-app-brand__logo-block img {
-    width: 120px;
-    height: 100px;
+    width: 42px;
+    height: 42px;
   }
 }
