@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import logoComunidad from "../../assets/logo-comunidad.png";
 
 export default function SidebarAdmin({
   activeSection,
@@ -28,7 +29,17 @@ export default function SidebarAdmin({
   return (
     <aside className="sidebar-user">
       <div className="sidebar-user__top">
-        <h2 className="sidebar-user__logo">Jardines de las Ramblas</h2>
+        <div className="sidebar-user__brand">
+          <img
+            src={logoComunidad}
+            alt="Logo Jardines de las Ramblas"
+            className="sidebar-user__brand-logo"
+          />
+
+          <h2 className="sidebar-user__logo">
+            Jardines de las Ramblas
+          </h2>
+        </div>
 
         <nav className="sidebar-user__nav">
           <button

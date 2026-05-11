@@ -5,7 +5,7 @@
 
 .dashboard-shell {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 290px 1fr;
   height: 100%;
   min-height: 100%;
   max-height: 100%;
@@ -2147,10 +2147,40 @@
     padding: 12px 16px;
   }
 
-  .sidebar-user__logo {
-    margin-bottom: 12px;
-    font-size: 1.05rem;
-  }
+  .sidebar-user__brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 10px 8px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
+  border: 1px solid #e2ecf8;
+}
+
+.sidebar-user__brand-logo {
+  width: 54px;
+  height: 54px;
+  min-width: 54px;
+  border-radius: 16px;
+  object-fit: cover;
+  background: #ffffff;
+  border: 1px solid #dbe6f3;
+  padding: 3px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.sidebar-user__logo {
+  font-size: 1.03rem;
+  line-height: 1.1;
+  font-weight: 900;
+  color: #0f172a;
+  margin: 0;
+  letter-spacing: -0.45px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
   .sidebar-user__nav {
     flex-direction: row;
