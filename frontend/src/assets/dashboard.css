@@ -2855,8 +2855,8 @@ body,
 }
 
 .sidebar-user__brand-logo {
-  width: 32px;
-  height: 32px;
+  width: 48px;
+  height: 48px;
   object-fit: contain;
   display: block;
 }
@@ -2929,7 +2929,7 @@ body,
   }
 
   .user-app-brand__logo-block img {
-    width: 58px;
-    height: 58px;
+    width: 64px;
+    height: 64px;
   }
 }
