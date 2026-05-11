@@ -62,8 +62,7 @@ export default function Login() {
 
               <p>
                 Un espacio centralizado para consultar comunicados, enviar
-                incidencias y acceder a la documentación de la
-                comunidad.
+                incidencias y acceder a la documentación de la comunidad.
               </p>
             </div>
 
