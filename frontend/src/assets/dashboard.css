@@ -2875,7 +2875,7 @@ body,
 
 /* DASHBOARD USUARIO: más grande, sin recuadro, un poco a la derecha */
 .user-app-header {
-  --logo-left: 132px;
+  --logo-left: 164px;
 }
 
 .user-app-brand__logo-block {
@@ -2903,7 +2903,7 @@ body,
 /* Responsive */
 @media (max-width: 900px) {
   .user-app-header {
-    --logo-left: 98px;
+    --logo-left: 105px;
   }
 
   .user-app-brand__logo-block,
@@ -2918,7 +2918,7 @@ body,
 
 @media (max-width: 560px) {
   .user-app-header {
-    --logo-left: 70px;
+    --logo-left: 76px;
   }
 
   .user-app-brand__logo-block,
