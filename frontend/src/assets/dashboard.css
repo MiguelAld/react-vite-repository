@@ -2826,7 +2826,7 @@ body,
    AJUSTE FINAL LOGOS ADMIN Y USUARIO
    ============================================ */
 
-/* ADMIN SIDEBAR: logo pequeño, sin recuadro y un poco más arriba */
+/* ADMIN SIDEBAR: pequeño, sin recuadro, ligeramente subido */
 .sidebar-user__brand {
   display: flex;
   align-items: center;
@@ -2838,16 +2838,14 @@ body,
 }
 
 .sidebar-user__brand-logo-wrap {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
   padding: 0;
   border: none;
   border-radius: 0;
   background: transparent;
   box-shadow: none;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2855,8 +2853,8 @@ body,
 }
 
 .sidebar-user__brand-logo {
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
   display: block;
 }
@@ -2874,18 +2872,17 @@ body,
 }
 
 
-/* DASHBOARD USUARIO: logo sin recuadro, más grande y movido un poco a la derecha */
+/* DASHBOARD USUARIO: más grande, sin recuadro, un poco a la derecha */
 .user-app-header {
   --logo-left: 132px;
 }
 
 .user-app-brand__logo-block {
-  width: 58px;
-  height: 58px;
-  min-width: 58px;
-  max-width: 58px;
-  max-height: 58px;
-
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  max-width: 64px;
+  max-height: 64px;
   padding: 0;
   border: none;
   border-radius: 0;
@@ -2895,48 +2892,40 @@ body,
 }
 
 .user-app-brand__logo-block img {
-  width: 58px;
-  height: 58px;
+  width: 64px;
+  height: 64px;
   object-fit: contain;
   display: block;
 }
 
 
-/* RESPONSIVE LOGO USUARIO */
+/* Responsive */
 @media (max-width: 900px) {
   .user-app-header {
-    --logo-left: 96px;
+    --logo-left: 98px;
   }
 
-  .user-app-brand__logo-block {
-    width: 50px;
-    height: 50px;
-    min-width: 50px;
-    max-width: 50px;
-    max-height: 50px;
-  }
-
+  .user-app-brand__logo-block,
   .user-app-brand__logo-block img {
-    width: 50px;
-    height: 50px;
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    max-width: 54px;
+    max-height: 54px;
   }
 }
 
 @media (max-width: 560px) {
   .user-app-header {
-    --logo-left: 68px;
+    --logo-left: 70px;
   }
 
-  .user-app-brand__logo-block {
-    width: 42px;
-    height: 42px;
-    min-width: 42px;
-    max-width: 42px;
-    max-height: 42px;
-  }
-
+  .user-app-brand__logo-block,
   .user-app-brand__logo-block img {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    max-height: 44px;
   }
 }
