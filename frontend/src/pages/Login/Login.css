@@ -118,9 +118,9 @@
 }
 
 .login-brand__logo {
-  width: 68px;
+  width: 82px;
   height: 68px;
-  min-width: 68px;
+  min-width: 82px;
 
   object-fit: contain;
   display: block;
@@ -446,9 +446,9 @@
   }
 
   .login-brand__logo {
-    width: 58px;
-    height: 58px;
-    min-width: 58px;
+    width: 76px;
+    height: 76px;
+    min-width: 76px;
   }
 
   .login-brand__text strong {
