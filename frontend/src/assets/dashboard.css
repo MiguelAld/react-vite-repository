@@ -2757,3 +2757,67 @@ body,
   object-fit: contain;
   display: block;
 }
+
+/* LOGO SIDEBAR ADMIN - pequeño y sin recuadro */
+.sidebar-user__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.sidebar-user__brand-logo-wrap {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.sidebar-user__brand-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.sidebar-user__logo {
+  margin: 0;
+  line-height: 1.1;
+}
+
+
+/* LOGO HEADER USUARIO - sin recuadro y más limpio */
+.user-app-brand__logo-block {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  max-width: 46px;
+  max-height: 46px;
+
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.user-app-brand__logo-block img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
