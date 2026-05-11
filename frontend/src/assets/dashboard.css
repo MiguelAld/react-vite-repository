@@ -2821,3 +2821,115 @@ body,
   object-fit: contain;
   display: block;
 }
+
+/* ============================================
+   AJUSTE FINAL LOGOS ADMIN Y USUARIO
+   ============================================ */
+
+/* ADMIN SIDEBAR: logo más pequeño */
+.sidebar-user__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.sidebar-user__brand-logo-wrap {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.sidebar-user__brand-logo {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  display: block;
+}
+
+.sidebar-user__logo {
+  margin: 0;
+  line-height: 1.1;
+}
+
+
+/* DASHBOARD USUARIO: logo más grande y un poco a la derecha */
+.user-app-header {
+  --logo-left: 132px;
+}
+
+.user-app-brand__logo-block {
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
+  max-width: 58px;
+  max-height: 58px;
+
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+}
+
+.user-app-brand__logo-block img {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  display: block;
+}
+
+
+/* Responsive: mantiene el logo del usuario proporcionado */
+@media (max-width: 900px) {
+  .user-app-header {
+    --logo-left: 96px;
+  }
+
+  .user-app-brand__logo-block {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    max-width: 50px;
+    max-height: 50px;
+  }
+
+  .user-app-brand__logo-block img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 560px) {
+  .user-app-header {
+    --logo-left: 68px;
+  }
+
+  .user-app-brand__logo-block {
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    max-width: 42px;
+    max-height: 42px;
+  }
+
+  .user-app-brand__logo-block img {
+    width: 42px;
+    height: 42px;
+  }
+}
