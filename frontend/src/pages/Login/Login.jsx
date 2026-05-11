@@ -74,13 +74,14 @@ export default function Login() {
               </div>
 
               <div>
-                <strong>Rápido</strong>
-                <span>Gestión sencilla</span>
+                <strong>3</strong>
+                <span>Áreas principales</span>
               </div>
 
               <div>
-                <strong>Claro</strong>
-                <span>Todo ordenado</span>
+                <strong>100%</strong>
+                <span>Comunidad</span>
+                <span>conectada</span>
               </div>
             </div>
           </div>
