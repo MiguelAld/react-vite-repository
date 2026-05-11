@@ -20,11 +20,6 @@ export default function Login() {
                 alt="Logo Jardines de las Ramblas"
                 className="login-brand__logo"
               />
-
-              <div className="login-brand__text">
-                <strong>Jardines de las Ramblas</strong>
-                <span>Portal de la comunidad</span>
-              </div>
             </div>
 
             <div className="login-card__header">
