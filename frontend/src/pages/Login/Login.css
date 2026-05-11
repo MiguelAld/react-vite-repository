@@ -475,3 +475,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+.login-title {
+  margin: 0;
+  font-size: 2.2rem;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.8px;
+  color: #0f172a;
+  text-align: center;
+}
+
+.login-title span {
+  display: block;
+}

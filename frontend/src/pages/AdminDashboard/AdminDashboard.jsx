@@ -1566,7 +1566,7 @@ export default function AdminDashboard() {
                           <th>Apellidos</th>
                           <th>Teléfono</th>
                           <th>Portal</th>
-                          <th>Propiedad</th>
+                          <th>Vivienda</th>
                           <th>Rol</th>
                           <th>Acción</th>
                         </tr>
@@ -1740,7 +1740,7 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="col-md-6">
-                          <label className="form-label">Propiedad</label>
+                          <label className="form-label">Vivienda</label>
                           <select
                             className="form-select"
                             name="vivienda"
@@ -1750,7 +1750,7 @@ export default function AdminDashboard() {
                           >
                             <option value="">
                               {userForm.portal
-                                ? "Selecciona propiedad"
+                                ? "Selecciona vivienda"
                                 : "Primero selecciona portal"}
                             </option>
 

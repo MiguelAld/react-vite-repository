@@ -1,7 +1,7 @@
 import Background from "../../components/Background/Background";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import logoComunidad from "../../assets/logo-comunidad.png";
-import bannerComunidad from "../../assets/banner-comunidad.jpg";
+import bannerComunidad from "../../assets/banner-comunidad.png";
 import "./Login.css";
 
 export default function Login() {
@@ -55,11 +55,14 @@ export default function Login() {
             <div className="login-visual-content">
               <span className="login-visual-tag">Comunidad digital</span>
 
-              <h2>Jardines de las Ramblas</h2>
+              <h2 className="login-title">
+                <span>Jardines de</span>
+                <span>Las Ramblas</span>
+              </h2>
 
               <p>
                 Un espacio centralizado para consultar comunicados, enviar
-                incidencias y acceder a la documentación importante de la
+                incidencias y acceder a la documentación de la
                 comunidad.
               </p>
             </div>
