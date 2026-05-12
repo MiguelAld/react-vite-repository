@@ -1,7 +1,18 @@
 /* ============================================
    1. BASE GENERAL DE DASHBOARD
-   Estructura común para admin y usuario
    ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  overflow-x: hidden;
+}
 
 .dashboard-shell {
   display: grid;
@@ -34,6 +45,7 @@
   padding: 20px;
   box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
   border: 1px solid #e8eef5;
+  overflow-x: hidden;
 }
 
 .dashboard-title {
@@ -187,12 +199,49 @@
   flex-shrink: 0;
 }
 
+.sidebar-user__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -6px 0 22px;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+.sidebar-user__brand-logo-wrap {
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.sidebar-user__brand-logo {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  display: block;
+}
+
 .sidebar-user__logo {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #1e293b;
-  margin: 0 0 20px;
-  letter-spacing: -0.5px;
+  margin: 0;
+  line-height: 1.1;
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .sidebar-user__nav {
@@ -354,6 +403,7 @@
   flex: 1;
   height: calc(100% - 112px);
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 24px 24px 125px;
 }
 
@@ -368,7 +418,7 @@
    ============================================ */
 
 .user-app-header {
-  --logo-left: 125px;
+  --logo-left: 164px;
   position: sticky;
   top: 0;
   height: 112px;
@@ -379,7 +429,12 @@
   align-items: center;
   padding: 0 28px;
   border-bottom: 1px solid #dbeafe;
-  background: linear-gradient(135deg, #eaf2ff 0%, #f8fbff 55%, #e0f2fe 100%);
+  background: linear-gradient(
+    135deg,
+    #eaf2ff 0%,
+    #f8fbff 55%,
+    #e0f2fe 100%
+  );
   z-index: 500;
   overflow: visible;
 }
@@ -410,7 +465,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.10);
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.1);
   transition: all 0.2s ease;
   cursor: pointer;
 }
@@ -450,28 +505,23 @@
   left: var(--logo-left);
   top: 50%;
   transform: translateY(-50%);
-  width: 78px;
-  height: 78px;
-  min-width: 78px;
-  max-width: 78px;
-  max-height: 78px;
-  border-radius: 22px;
-  background: #ffffff;
-  border: 1px solid #d7e2ef;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-  overflow: hidden;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+  width: 90px;
+  height: 90px;
+  min-width: 90px;
+  max-width: 90px;
+  max-height: 90px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
   z-index: 8;
 }
 
 .user-app-brand__logo-block img {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
   display: block;
 }
@@ -520,7 +570,7 @@
   gap: 14px;
   background: #ffffff;
   border: 1px solid #dbe4f0;
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.10);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
   cursor: pointer;
 }
 
@@ -1176,7 +1226,9 @@
   padding: 8px 0;
 }
 
-.calendar-meetings__calendar .react-calendar__month-view__weekdays__weekday abbr {
+.calendar-meetings__calendar
+  .react-calendar__month-view__weekdays__weekday
+  abbr {
   text-decoration: none;
 }
 
@@ -1893,7 +1945,7 @@
 
 
 /* ============================================
-   14. MODALES
+   14. MODALES GENERALES
    ============================================ */
 
 .admin-modal-backdrop,
@@ -1902,40 +1954,43 @@
   inset: 0;
   width: 100vw;
   height: 100vh;
-  padding: 22px;
+  padding: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.52);
+  background: rgba(15, 23, 42, 0.55);
   backdrop-filter: blur(6px);
   overflow: hidden;
-  z-index: 99999;
+  z-index: 999999;
 }
 
 .admin-modal-card,
 .calendar-meetings__form {
-  width: min(760px, calc(100vw - 44px));
-  max-height: calc(100vh - 44px);
+  position: relative;
+  width: min(820px, calc(100vw - 48px));
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+  margin: 0 auto;
   overflow-y: auto;
   overflow-x: hidden;
   background: #ffffff;
-  border-radius: 22px;
-  padding: 24px;
-  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+  border-radius: 24px;
+  padding: 26px;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.28);
   border: 1px solid #e8eef5;
 }
 
 .admin-modal-card--xl {
-  width: min(980px, calc(100vw - 44px));
+  width: min(980px, calc(100vw - 48px));
 }
 
 .incident-detail-modal {
-  width: min(820px, calc(100vw - 44px));
+  width: min(820px, calc(100vw - 48px));
 }
 
 .admin-modal-card > .dashboard-header-row:first-child {
   position: sticky;
-  top: -24px;
+  top: -26px;
   z-index: 5;
   background: #ffffff;
   padding-top: 4px;
@@ -1947,26 +2002,26 @@
 
 /* ============================================
    15. MODAL CREAR INCIDENCIA USER
-   Cabe entero dentro de Chrome sin mover la pantalla
+   Centrado, limpio y adaptado
    ============================================ */
 
 .incident-create-modal {
-  width: min(940px, calc(100vw - 44px));
-  max-height: calc(100vh - 44px);
-  padding: 26px 32px;
+  width: min(900px, calc(100vw - 48px));
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
+  padding: 28px;
   overflow: hidden;
 }
 
 .incident-create-modal > .dashboard-header-row:first-child {
-  flex-shrink: 0;
   position: static;
-  top: auto;
+  flex-shrink: 0;
+  margin: 0 0 18px;
   padding: 0 0 16px;
-  margin-bottom: 18px;
-  background: #ffffff;
   border-bottom: 1px solid #e8eef5;
+  background: #ffffff;
 }
 
 .incident-create-modal form {
@@ -1982,7 +2037,7 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 6px;
+  padding-right: 8px;
   row-gap: 18px;
 }
 
@@ -1994,6 +2049,7 @@
 
 .incident-create-modal .form-control,
 .incident-create-modal .form-select {
+  width: 100%;
   min-height: 50px;
   border-radius: 14px;
   border: 1px solid #d8e2ef;
@@ -2008,8 +2064,8 @@
 }
 
 .incident-create-modal textarea.form-control {
-  min-height: 170px;
-  max-height: 220px;
+  min-height: 165px;
+  max-height: 190px;
   resize: vertical;
 }
 
@@ -2019,7 +2075,7 @@
 
 .incident-create-modal .mt-4.d-flex {
   flex-shrink: 0;
-  margin-top: 20px !important;
+  margin-top: 18px !important;
   padding-top: 18px;
   border-top: 1px solid #e8eef5;
   background: #ffffff;
@@ -2147,41 +2203,6 @@
     padding: 12px 16px;
   }
 
-  .sidebar-user__brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 24px;
-  padding: 10px 8px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
-  border: 1px solid #e2ecf8;
-}
-
-.sidebar-user__brand-logo {
-  width: 54px;
-  height: 54px;
-  min-width: 54px;
-  border-radius: 16px;
-  object-fit: cover;
-  background: #ffffff;
-  border: 1px solid #dbe6f3;
-  padding: 3px;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
-}
-
-.sidebar-user__logo {
-  font-size: 1.03rem;
-  line-height: 1.1;
-  font-weight: 900;
-  color: #0f172a;
-  margin: 0;
-  letter-spacing: -0.45px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
   .sidebar-user__nav {
     flex-direction: row;
     flex-wrap: wrap;
@@ -2210,7 +2231,7 @@
   }
 
   .user-app-header {
-    --logo-left: 92px;
+    --logo-left: 105px;
     height: 96px;
     min-height: 96px;
     padding: 0 18px;
@@ -2234,13 +2255,13 @@
     height: 27px;
   }
 
-  .user-app-brand__logo-block {
-    width: 64px;
-    height: 64px;
-    min-width: 64px;
-    max-width: 64px;
-    max-height: 64px;
-    border-radius: 18px;
+  .user-app-brand__logo-block,
+  .user-app-brand__logo-block img {
+    width: 90px;
+    height: 90px;
+    min-width: 90px;
+    max-width: 90px;
+    max-height: 90px;
   }
 
   .user-app-brand span {
@@ -2323,7 +2344,7 @@
 
   .incident-create-modal textarea.form-control {
     min-height: 150px;
-    max-height: 190px;
+    max-height: 185px;
   }
 
   .user-dashboard-v2__content--section-bg::before {
@@ -2360,6 +2381,32 @@
   .calendar-meetings__form {
     padding: 20px;
   }
+
+  .admin-modal-backdrop {
+    padding: 12px;
+  }
+
+  .admin-modal-card,
+  .incident-create-modal {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .incident-create-modal textarea.form-control {
+    min-height: 135px;
+    max-height: 160px;
+  }
+
+  .incident-create-modal .mt-4.d-flex {
+    flex-direction: column;
+  }
+
+  .incident-create-modal .mt-4.d-flex .btn {
+    width: 100%;
+  }
 }
 
 @media (max-width: 560px) {
@@ -2373,7 +2420,7 @@
   }
 
   .user-app-header {
-    --logo-left: 66px;
+    --logo-left: 76px;
     height: 82px;
     min-height: 82px;
     padding: 0 12px;
@@ -2397,14 +2444,13 @@
     height: 24px;
   }
 
-  .user-app-brand__logo-block {
-    width: 48px;
-    height: 48px;
-    min-width: 48px;
-    max-width: 48px;
-    max-height: 48px;
-    border-radius: 14px;
-    padding: 3px;
+  .user-app-brand__logo-block,
+  .user-app-brand__logo-block img {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    max-height: 44px;
   }
 
   .user-app-brand span {
@@ -2489,444 +2535,10 @@
 
   .incident-create-modal textarea.form-control {
     min-height: 130px;
-    max-height: 160px;
-  }
-
-  .incident-create-modal .mt-4.d-flex {
-    flex-direction: column;
-  }
-
-  .incident-create-modal .mt-4.d-flex .btn {
-    width: 100%;
+    max-height: 155px;
   }
 
   .user-dashboard-v2__content--section-bg::before {
     top: 82px;
-  }
-}
-/* ============================================
-   FIX DEFINITIVO MODAL CREAR INCIDENCIA
-   Centrado, sin scroll horizontal y sin salirse
-   ============================================ */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-  overflow-x: hidden;
-}
-
-/* Evita scroll horizontal en la pantalla de usuario */
-.user-dashboard-v2,
-.user-dashboard-v2__content,
-.user-home-v2,
-.dashboard-panel {
-  overflow-x: hidden;
-}
-
-/* Fondo oscuro del modal */
-.admin-modal-backdrop {
-  position: fixed !important;
-  inset: 0 !important;
-
-  width: 100vw !important;
-  height: 100vh !important;
-
-  padding: 24px !important;
-
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-
-  background: rgba(15, 23, 42, 0.55) !important;
-  backdrop-filter: blur(6px);
-
-  overflow: hidden !important;
-  z-index: 999999 !important;
-}
-
-/* Tarjeta base del modal */
-.admin-modal-card {
-  position: relative !important;
-
-  width: min(820px, calc(100vw - 48px)) !important;
-  max-width: calc(100vw - 48px) !important;
-  max-height: calc(100vh - 48px) !important;
-
-  margin: 0 auto !important;
-
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-
-  background: #ffffff !important;
-  border-radius: 24px !important;
-  padding: 26px !important;
-
-  border: 1px solid #e8eef5 !important;
-  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.28) !important;
-}
-
-/* Modal específico de crear incidencia */
-.incident-create-modal {
-  width: min(860px, calc(100vw - 48px)) !important;
-  max-width: calc(100vw - 48px) !important;
-  max-height: calc(100vh - 48px) !important;
-
-  display: flex !important;
-  flex-direction: column !important;
-
-  padding: 28px !important;
-  overflow: hidden !important;
-}
-
-/* Cabecera del modal */
-.incident-create-modal > .dashboard-header-row:first-child {
-  position: static !important;
-
-  flex-shrink: 0;
-  margin: 0 0 18px !important;
-  padding: 0 0 16px !important;
-
-  border-bottom: 1px solid #e8eef5;
-  background: #ffffff !important;
-}
-
-/* El formulario ocupa el espacio disponible */
-.incident-create-modal form {
-  flex: 1;
-  min-height: 0;
-
-  display: flex;
-  flex-direction: column;
-
-  overflow: hidden;
-}
-
-/* Solo scrollea el contenido interno si hiciera falta */
-.incident-create-modal form .row.g-3 {
-  flex: 1;
-  min-height: 0;
-
-  overflow-y: auto;
-  overflow-x: hidden;
-
-  padding-right: 8px;
-  row-gap: 18px;
-}
-
-/* Inputs más profesionales */
-.incident-create-modal .form-label {
-  font-weight: 900;
-  color: #334155;
-  margin-bottom: 8px;
-}
-
-.incident-create-modal .form-control,
-.incident-create-modal .form-select {
-  width: 100%;
-  min-height: 50px;
-
-  border-radius: 14px;
-  border: 1px solid #d8e2ef;
-
-  background: #ffffff;
-  color: #0f172a;
-}
-
-.incident-create-modal .form-control:focus,
-.incident-create-modal .form-select:focus {
-  border-color: #93c5fd;
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
-}
-
-/* Descripción grande, pero sin romper la pantalla */
-.incident-create-modal textarea.form-control {
-  min-height: 165px;
-  max-height: 190px;
-  resize: vertical;
-}
-
-/* Archivo */
-.incident-create-modal input[type="file"] {
-  padding: 10px 12px;
-}
-
-/* Botones abajo siempre visibles */
-.incident-create-modal .mt-4.d-flex {
-  flex-shrink: 0;
-
-  margin-top: 18px !important;
-  padding-top: 18px;
-
-  border-top: 1px solid #e8eef5;
-  background: #ffffff;
-}
-
-.incident-create-modal .btn {
-  min-height: 44px;
-  border-radius: 12px;
-  font-weight: 800;
-  padding-left: 18px;
-  padding-right: 18px;
-}
-
-/* Scroll interno bonito */
-.incident-create-modal form .row.g-3::-webkit-scrollbar,
-.admin-modal-card::-webkit-scrollbar {
-  width: 8px;
-}
-
-.incident-create-modal form .row.g-3::-webkit-scrollbar-thumb,
-.admin-modal-card::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 999px;
-}
-
-.incident-create-modal form .row.g-3::-webkit-scrollbar-track,
-.admin-modal-card::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-/* Responsive */
-@media (max-width: 700px) {
-  .admin-modal-backdrop {
-    padding: 12px !important;
-  }
-
-  .admin-modal-card,
-  .incident-create-modal {
-    width: calc(100vw - 24px) !important;
-    max-width: calc(100vw - 24px) !important;
-    max-height: calc(100vh - 24px) !important;
-    padding: 20px !important;
-    border-radius: 20px !important;
-  }
-
-  .incident-create-modal textarea.form-control {
-    min-height: 135px;
-    max-height: 160px;
-  }
-
-  .incident-create-modal .mt-4.d-flex {
-    flex-direction: column;
-  }
-
-  .incident-create-modal .mt-4.d-flex .btn {
-    width: 100%;
-  }
-}
-
-.sidebar-user__brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 0 0 24px;
-  padding: 10px 8px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, #f8fbff 0%, #eef6ff 100%);
-  border: 1px solid #e2ecf8;
-}
-
-.sidebar-user__brand-logo-wrap {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-
-  border-radius: 14px;
-  background: #ffffff;
-  border: 1px solid #dbe6f3;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 4px;
-  overflow: hidden;
-
-  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.12);
-}
-
-.sidebar-user__brand-logo {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-/* LOGO SIDEBAR ADMIN - pequeño y sin recuadro */
-.sidebar-user__brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0 0 22px;
-  padding: 0;
-  background: transparent;
-  border: none;
-}
-
-.sidebar-user__brand-logo-wrap {
-  width: 30px;
-  height: 30px;
-  min-width: 30px;
-
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-}
-
-.sidebar-user__brand-logo {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-.sidebar-user__logo {
-  margin: 0;
-  line-height: 1.1;
-}
-
-
-/* LOGO HEADER USUARIO - sin recuadro y más limpio */
-.user-app-brand__logo-block {
-  width: 46px;
-  height: 46px;
-  min-width: 46px;
-  max-width: 46px;
-  max-height: 46px;
-
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  overflow: visible;
-}
-
-.user-app-brand__logo-block img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-
-/* ============================================
-   AJUSTE FINAL LOGOS ADMIN Y USUARIO
-   ============================================ */
-
-/* ADMIN SIDEBAR: pequeño, sin recuadro, ligeramente subido */
-.sidebar-user__brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: -6px 0 22px;
-  padding: 0;
-  background: transparent;
-  border: none;
-}
-
-.sidebar-user__brand-logo-wrap {
-  width: 34px;
-  height: 34px;
-  min-width: 34px;
-  min-height: 34px;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: visible;
-}
-
-.sidebar-user__brand-logo {
-  width: 52px;
-  height: 52px;
-  object-fit: contain;
-  display: block;
-}
-
-.sidebar-user__logo {
-  margin: 0;
-  line-height: 1.1;
-  font-size: 1.02rem;
-  font-weight: 900;
-  color: #0f172a;
-  letter-spacing: -0.4px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-
-/* DASHBOARD USUARIO: más grande, sin recuadro, un poco a la derecha */
-.user-app-header {
-  --logo-left: 164px;
-}
-
-.user-app-brand__logo-block {
-  width: 90px;
-  height: 90px;
-  min-width: 90px;
-  max-width: 90px;
-  max-height: 90px;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-  overflow: visible;
-}
-
-.user-app-brand__logo-block img {
-  width: 90px;
-  height: 90px;
-  object-fit: contain;
-  display: block;
-}
-
-
-/* Responsive */
-@media (max-width: 900px) {
-  .user-app-header {
-    --logo-left: 105px;
-  }
-
-  .user-app-brand__logo-block,
-  .user-app-brand__logo-block img {
-    width: 90px;
-    height: 90px;
-    min-width: 90px;
-    max-width: 90px;
-    max-height: 90px;
-  }
-}
-
-@media (max-width: 560px) {
-  .user-app-header {
-    --logo-left: 76px;
-  }
-
-  .user-app-brand__logo-block,
-  .user-app-brand__logo-block img {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    max-width: 44px;
-    max-height: 44px;
   }
 }
