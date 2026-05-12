@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import {
@@ -110,14 +111,13 @@ export default function CalendarReservations({ mode = "user" }) {
   const formatReservationDate = (dateString) => {
     if (!dateString) return "—";
 
-    return new Date(`${String(dateString).slice(0, 10)}T00:00:00`).toLocaleDateString(
-      "es-ES",
-      {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-      }
-    );
+    return new Date(
+      `${String(dateString).slice(0, 10)}T00:00:00`
+    ).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
   };
 
   const getPersonName = (person) => {
@@ -229,240 +229,41 @@ export default function CalendarReservations({ mode = "user" }) {
     );
   }).length;
 
-  return (
-    <div className="reservations-system">
-      {isAdminMode && (
-        <div className="reservations-admin-summary">
-          <div className="reservations-admin-summary__item">
-            <strong>{pendingCount}</strong>
-            <span>Pendientes</span>
-          </div>
+  const reservationFormModal = showForm
+    ? createPortal(
+        <div className="admin-modal-backdrop">
+          <div className="admin-modal-card reservation-form-modal">
+            <div className="dashboard-header-row">
+              <div>
+                <h2
+                  className="dashboard-title"
+                  style={{ fontSize: "1.5rem" }}
+                >
+                  {isAdminMode
+                    ? "Crear reserva manual"
+                    : "Solicitar reserva del salón social"}
+                </h2>
 
-          <div className="reservations-admin-summary__item">
-            <strong>{approvedCount}</strong>
-            <span>Aprobadas</span>
-          </div>
-
-          <div className="reservations-admin-summary__item">
-            <strong>{currentMonthCount}</strong>
-            <span>Este mes</span>
-          </div>
-        </div>
-      )}
-
-      <div className="reservations-calendar-layout">
-        <article className="reservations-calendar-card">
-          <div className="reservations-calendar-card__header">
-            <div>
-              <h3>Calendario del salón social</h3>
-              <p>
-                Los días pendientes o aprobados aparecen marcados
-                automáticamente.
-              </p>
-            </div>
-          </div>
-
-          <Calendar
-            value={selectedDate}
-            onChange={handleDateSelect}
-            onClickDay={handleDateSelect}
-            tileClassName={({ date, view }) => {
-              if (view !== "month") return null;
-
-              const dayReservations = getActiveReservationsForDate(date);
-
-              if (
-                dayReservations.some(
-                  (reservation) => reservation.status === "APROBADA"
-                )
-              ) {
-                return "reservation-calendar-day reservation-calendar-day--approved";
-              }
-
-              if (
-                dayReservations.some(
-                  (reservation) => reservation.status === "PENDIENTE"
-                )
-              ) {
-                return "reservation-calendar-day reservation-calendar-day--pending";
-              }
-
-              return null;
-            }}
-            tileContent={({ date, view }) => {
-              if (view !== "month") return null;
-
-              const count = getActiveReservationsForDate(date).length;
-
-              return count > 0 ? (
-                <span className="reservation-calendar-badge">{count}</span>
-              ) : null;
-            }}
-          />
-        </article>
-
-        <article className="reservations-detail-card">
-          <div className="reservations-detail-card__header">
-            <div className="reservations-detail-card__icon">
-              <CalendarCheck size={28} />
-            </div>
-
-            <div>
-              <h3>{formatLongDate(selectedDate)}</h3>
-              <p>Disponibilidad y reservas para este día.</p>
-            </div>
-          </div>
-
-          {error && <div className="alert alert-danger">{error}</div>}
-
-          {loading && <p className="text-muted">Cargando...</p>}
-
-          {!loading && selectedDateReservations.length === 0 && (
-            <div className="reservations-empty-day">
-              <strong>Día disponible</strong>
-              <p>No hay solicitudes ni reservas registradas.</p>
-            </div>
-          )}
-
-          {!loading && selectedDateReservations.length > 0 && (
-            <div className="reservations-day-list">
-              {selectedDateReservations.map((reservation) => (
-                <div key={reservation.id} className="reservation-day-item">
-                  <div className="reservation-day-item__top">
-                    <strong>{reservation.purpose}</strong>
-
-                    <span
-                      className={`reservation-status ${getStatusClass(
-                        reservation.status
-                      )}`}
-                    >
-                      {reservation.status}
-                    </span>
-                  </div>
-
-                  <p>
-                    <strong>Fecha:</strong>{" "}
-                    {formatReservationDate(reservation.reservation_date)}
-                  </p>
-
-                  {reservation.notes && (
-                    <p>
-                      <strong>Notas:</strong> {reservation.notes}
-                    </p>
-                  )}
-
-                  {isAdminMode && (
-                    <>
-                      <p>
-                        <strong>Solicitante:</strong>{" "}
-                        {getPersonName(reservation.requester)}
-                      </p>
-
-                      <p>
-                        <strong>Vivienda:</strong>{" "}
-                        {getProperty(reservation.requester)}
-                      </p>
-                    </>
-                  )}
-
-                  {isAdminMode && reservation.status === "PENDIENTE" && (
-                    <div className="reservation-admin-actions">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-success"
-                        onClick={() =>
-                          handleReservationStatus(reservation.id, "APROBADA")
-                        }
-                      >
-                        <CheckCircle2 size={16} />
-                        Aprobar
-                      </button>
-
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() =>
-                          handleReservationStatus(reservation.id, "RECHAZADA")
-                        }
-                      >
-                        <XCircle size={16} />
-                        Rechazar
-                      </button>
-                    </div>
-                  )}
-
-                  {isAdminMode && reservation.status === "APROBADA" && (
-                    <div className="reservation-admin-actions">
-                      <button
-                        type="button"
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() =>
-                          handleReservationStatus(reservation.id, "CANCELADA")
-                        }
-                      >
-                        <Ban size={16} />
-                        Cancelar reserva
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-
-          <button
-            type="button"
-            className="btn btn-primary reservations-main-action"
-            onClick={handleOpenForm}
-            disabled={hasBlockedReservation || isPastSelectedDate}
-          >
-            <Plus size={16} />
-            {isAdminMode ? "Crear reserva manual" : "Solicitar reserva"}
-          </button>
-
-          {hasBlockedReservation && (
-            <small className="text-muted">
-              Este día ya tiene una reserva pendiente o aprobada.
-            </small>
-          )}
-
-          {isPastSelectedDate && (
-            <small className="text-muted">
-              No se pueden crear reservas para fechas pasadas.
-            </small>
-          )}
-        </article>
-      </div>
-
-      {showForm && (
-        <div className="calendar-meetings__form-overlay">
-          <div className="calendar-meetings__form reservation-form-modal">
-            <div className="d-flex justify-content-between align-items-center mb-3">
-              <h4>
-                {isAdminMode
-                  ? "Crear reserva manual"
-                  : "Solicitar reserva del salón social"}
-              </h4>
+                <p className="dashboard-subtitle mb-0">
+                  Día seleccionado:{" "}
+                  <strong>
+                    {selectedDate.toLocaleDateString("es-ES", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
+                  </strong>
+                </p>
+              </div>
 
               <button
                 type="button"
-                className="btn btn-close"
+                className="btn btn-outline-secondary"
                 onClick={handleCloseForm}
               >
-                <X size={20} />
+                <X size={16} />
               </button>
             </div>
-
-            <p className="text-muted mb-3">
-              Día seleccionado:{" "}
-              <strong>
-                {selectedDate.toLocaleDateString("es-ES", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                })}
-              </strong>
-            </p>
 
             <form onSubmit={handleSubmitReservation}>
               <div className="mb-3">
@@ -486,7 +287,7 @@ export default function CalendarReservations({ mode = "user" }) {
                 <label className="form-label">Notas opcionales</label>
                 <textarea
                   className="form-control"
-                  rows="4"
+                  rows="5"
                   value={formData.notes}
                   onChange={(e) =>
                     setFormData((prev) => ({
@@ -498,7 +299,15 @@ export default function CalendarReservations({ mode = "user" }) {
                 />
               </div>
 
-              <div className="d-flex gap-2 mt-4">
+              <div className="mt-4 d-flex gap-2 justify-content-end">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={handleCloseForm}
+                >
+                  Cancelar
+                </button>
+
                 <button
                   type="submit"
                   className="btn btn-primary"
@@ -510,19 +319,222 @@ export default function CalendarReservations({ mode = "user" }) {
                     ? "Crear reserva"
                     : "Enviar solicitud"}
                 </button>
-
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={handleCloseForm}
-                >
-                  Cancelar
-                </button>
               </div>
             </form>
           </div>
+        </div>,
+        document.body
+      )
+    : null;
+
+  return (
+    <>
+      <div className="reservations-system">
+        {isAdminMode && (
+          <div className="reservations-admin-summary">
+            <div className="reservations-admin-summary__item">
+              <strong>{pendingCount}</strong>
+              <span>Pendientes</span>
+            </div>
+
+            <div className="reservations-admin-summary__item">
+              <strong>{approvedCount}</strong>
+              <span>Aprobadas</span>
+            </div>
+
+            <div className="reservations-admin-summary__item">
+              <strong>{currentMonthCount}</strong>
+              <span>Este mes</span>
+            </div>
+          </div>
+        )}
+
+        <div className="reservations-calendar-layout">
+          <article className="reservations-calendar-card">
+            <div className="reservations-calendar-card__header">
+              <div>
+                <h3>Calendario del salón social</h3>
+                <p>
+                  Los días pendientes o aprobados aparecen marcados
+                  automáticamente.
+                </p>
+              </div>
+            </div>
+
+            <Calendar
+              value={selectedDate}
+              onChange={handleDateSelect}
+              onClickDay={handleDateSelect}
+              tileClassName={({ date, view }) => {
+                if (view !== "month") return null;
+
+                const dayReservations = getActiveReservationsForDate(date);
+
+                if (
+                  dayReservations.some(
+                    (reservation) => reservation.status === "APROBADA"
+                  )
+                ) {
+                  return "reservation-calendar-day reservation-calendar-day--approved";
+                }
+
+                if (
+                  dayReservations.some(
+                    (reservation) => reservation.status === "PENDIENTE"
+                  )
+                ) {
+                  return "reservation-calendar-day reservation-calendar-day--pending";
+                }
+
+                return null;
+              }}
+              tileContent={({ date, view }) => {
+                if (view !== "month") return null;
+
+                const count = getActiveReservationsForDate(date).length;
+
+                return count > 0 ? (
+                  <span className="reservation-calendar-badge">{count}</span>
+                ) : null;
+              }}
+            />
+          </article>
+
+          <article className="reservations-detail-card">
+            <div className="reservations-detail-card__header">
+              <div className="reservations-detail-card__icon">
+                <CalendarCheck size={28} />
+              </div>
+
+              <div>
+                <h3>{formatLongDate(selectedDate)}</h3>
+                <p>Disponibilidad y reservas para este día.</p>
+              </div>
+            </div>
+
+            {error && <div className="alert alert-danger">{error}</div>}
+
+            {loading && <p className="text-muted">Cargando...</p>}
+
+            {!loading && selectedDateReservations.length === 0 && (
+              <div className="reservations-empty-day">
+                <strong>Día disponible</strong>
+                <p>No hay solicitudes ni reservas registradas.</p>
+              </div>
+            )}
+
+            {!loading && selectedDateReservations.length > 0 && (
+              <div className="reservations-day-list">
+                {selectedDateReservations.map((reservation) => (
+                  <div key={reservation.id} className="reservation-day-item">
+                    <div className="reservation-day-item__top">
+                      <strong>{reservation.purpose}</strong>
+
+                      <span
+                        className={`reservation-status ${getStatusClass(
+                          reservation.status
+                        )}`}
+                      >
+                        {reservation.status}
+                      </span>
+                    </div>
+
+                    <p>
+                      <strong>Fecha:</strong>{" "}
+                      {formatReservationDate(reservation.reservation_date)}
+                    </p>
+
+                    {reservation.notes && (
+                      <p>
+                        <strong>Notas:</strong> {reservation.notes}
+                      </p>
+                    )}
+
+                    {isAdminMode && (
+                      <>
+                        <p>
+                          <strong>Solicitante:</strong>{" "}
+                          {getPersonName(reservation.requester)}
+                        </p>
+
+                        <p>
+                          <strong>Vivienda:</strong>{" "}
+                          {getProperty(reservation.requester)}
+                        </p>
+                      </>
+                    )}
+
+                    {isAdminMode && reservation.status === "PENDIENTE" && (
+                      <div className="reservation-admin-actions">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-success"
+                          onClick={() =>
+                            handleReservationStatus(reservation.id, "APROBADA")
+                          }
+                        >
+                          <CheckCircle2 size={16} />
+                          Aprobar
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() =>
+                            handleReservationStatus(reservation.id, "RECHAZADA")
+                          }
+                        >
+                          <XCircle size={16} />
+                          Rechazar
+                        </button>
+                      </div>
+                    )}
+
+                    {isAdminMode && reservation.status === "APROBADA" && (
+                      <div className="reservation-admin-actions">
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() =>
+                            handleReservationStatus(reservation.id, "CANCELADA")
+                          }
+                        >
+                          <Ban size={16} />
+                          Cancelar reserva
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <button
+              type="button"
+              className="btn btn-primary reservations-main-action"
+              onClick={handleOpenForm}
+              disabled={hasBlockedReservation || isPastSelectedDate}
+            >
+              <Plus size={16} />
+              {isAdminMode ? "Crear reserva manual" : "Solicitar reserva"}
+            </button>
+
+            {hasBlockedReservation && (
+              <small className="text-muted">
+                Este día ya tiene una reserva pendiente o aprobada.
+              </small>
+            )}
+
+            {isPastSelectedDate && (
+              <small className="text-muted">
+                No se pueden crear reservas para fechas pasadas.
+              </small>
+            )}
+          </article>
         </div>
-      )}
-    </div>
+      </div>
+
+      {reservationFormModal}
+    </>
   );
 }
