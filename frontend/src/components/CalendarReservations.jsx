@@ -84,6 +84,7 @@ export default function CalendarReservations({ mode = "user" }) {
   };
 
   const selectedDateReservations = getReservationsForDate(selectedDate);
+
   const selectedDateActiveReservations =
     getActiveReservationsForDate(selectedDate);
 
@@ -122,11 +123,13 @@ export default function CalendarReservations({ mode = "user" }) {
 
   const getPersonName = (person) => {
     if (!person) return "—";
+
     return [person.name, person.apellidos].filter(Boolean).join(" ") || "—";
   };
 
   const getProperty = (person) => {
     if (!person) return "—";
+
     return [person.portal, person.vivienda].filter(Boolean).join(" ") || "—";
   };
 
@@ -268,6 +271,7 @@ export default function CalendarReservations({ mode = "user" }) {
             <form onSubmit={handleSubmitReservation}>
               <div className="mb-3">
                 <label className="form-label">Motivo de la reserva</label>
+
                 <input
                   type="text"
                   className="form-control"
@@ -285,6 +289,7 @@ export default function CalendarReservations({ mode = "user" }) {
 
               <div className="mb-3">
                 <label className="form-label">Notas opcionales</label>
+
                 <textarea
                   className="form-control"
                   rows="5"
@@ -354,10 +359,33 @@ export default function CalendarReservations({ mode = "user" }) {
             <div className="reservations-calendar-card__header">
               <div>
                 <h3>Calendario del salón social</h3>
+
                 <p>
                   Los días pendientes o aprobados aparecen marcados
                   automáticamente.
                 </p>
+
+                <div className="reservation-calendar-legend">
+                  <span className="reservation-calendar-legend__item">
+                    <i className="reservation-calendar-legend__dot reservation-calendar-legend__dot--today" />
+                    Día actual
+                  </span>
+
+                  <span className="reservation-calendar-legend__item">
+                    <i className="reservation-calendar-legend__dot reservation-calendar-legend__dot--selected" />
+                    Día seleccionado
+                  </span>
+
+                  <span className="reservation-calendar-legend__item">
+                    <i className="reservation-calendar-legend__dot reservation-calendar-legend__dot--pending" />
+                    Pendiente
+                  </span>
+
+                  <span className="reservation-calendar-legend__item">
+                    <i className="reservation-calendar-legend__dot reservation-calendar-legend__dot--approved" />
+                    Ocupado
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -481,7 +509,10 @@ export default function CalendarReservations({ mode = "user" }) {
                           type="button"
                           className="btn btn-sm btn-outline-danger"
                           onClick={() =>
-                            handleReservationStatus(reservation.id, "RECHAZADA")
+                            handleReservationStatus(
+                              reservation.id,
+                              "RECHAZADA"
+                            )
                           }
                         >
                           <XCircle size={16} />
@@ -496,7 +527,10 @@ export default function CalendarReservations({ mode = "user" }) {
                           type="button"
                           className="btn btn-sm btn-outline-danger"
                           onClick={() =>
-                            handleReservationStatus(reservation.id, "CANCELADA")
+                            handleReservationStatus(
+                              reservation.id,
+                              "CANCELADA"
+                            )
                           }
                         >
                           <Ban size={16} />

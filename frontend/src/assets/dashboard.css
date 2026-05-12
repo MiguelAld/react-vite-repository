@@ -3496,3 +3496,53 @@ body,
   border-color: rgba(168, 85, 247, 0.24);
   box-shadow: 0 8px 24px rgba(168, 85, 247, 0.12);
 }
+
+/* =========================================================
+   LEYENDA CALENDARIO RESERVAS
+========================================================= */
+
+.reservation-calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 12px;
+}
+
+.reservation-calendar-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.reservation-calendar-legend__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  display: inline-block;
+  flex-shrink: 0;
+  border: 2px solid transparent;
+}
+
+/* Día actual */
+.reservation-calendar-legend__dot--today {
+  background: #d2e5fd;
+}
+
+/* Día seleccionado */
+.reservation-calendar-legend__dot--selected {
+  background: #d8b4fe;
+  border-color: #a855f7;
+}
+
+/* Reserva pendiente */
+.reservation-calendar-legend__dot--pending {
+  background: #fef3c7;
+}
+
+/* Reserva aprobada / día ocupado */
+.reservation-calendar-legend__dot--approved {
+  background: #b4ffce;
+}
