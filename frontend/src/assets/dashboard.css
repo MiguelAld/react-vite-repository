@@ -2534,3 +2534,316 @@ body,
     top: 82px;
   }
 }
+
+/* ============================================
+   FIX FINAL MODAL INCIDENCIA FUERA DEL PANEL
+   ============================================ */
+
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+
+  padding: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(7px);
+
+  overflow: hidden;
+  z-index: 999999;
+}
+
+.incident-create-modal {
+  width: min(920px, calc(100vw - 56px));
+  max-width: calc(100vw - 56px);
+  max-height: calc(100vh - 56px);
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 30px 32px;
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 28px;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.3);
+}
+
+.incident-create-modal__header {
+  flex-shrink: 0;
+  margin: 0 0 20px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid #e8eef5;
+  background: #ffffff;
+}
+
+.incident-create-modal__close {
+  flex-shrink: 0;
+}
+
+.incident-create-form {
+  flex: 1;
+  min-height: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+.incident-create-form__body {
+  flex: 1;
+  min-height: 0;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 8px;
+}
+
+.incident-create-form__body .row.g-3 {
+  row-gap: 20px;
+}
+
+.incident-create-modal .form-label {
+  font-weight: 900;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.incident-create-modal .form-control,
+.incident-create-modal .form-select {
+  width: 100%;
+  min-height: 52px;
+
+  border-radius: 14px;
+  border: 1px solid #d8e2ef;
+
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.incident-create-modal .form-control:focus,
+.incident-create-modal .form-select:focus {
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.14);
+}
+
+.incident-create-modal textarea.form-control {
+  min-height: 190px;
+  max-height: 240px;
+  resize: vertical;
+}
+
+.incident-create-modal input[type="file"] {
+  padding: 10px 12px;
+}
+
+.incident-create-form__actions {
+  flex-shrink: 0;
+
+  margin-top: 22px;
+  padding-top: 18px;
+
+  border-top: 1px solid #e8eef5;
+  background: #ffffff;
+}
+
+.incident-create-modal .btn {
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 800;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.incident-create-form__body::-webkit-scrollbar,
+.admin-modal-card::-webkit-scrollbar {
+  width: 8px;
+}
+
+.incident-create-form__body::-webkit-scrollbar-thumb,
+.admin-modal-card::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+
+.incident-create-form__body::-webkit-scrollbar-track,
+.admin-modal-card::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+
+/* ============================================
+   NUEVA SECCIÓN RESERVAS
+   ============================================ */
+
+.user-circle-access:nth-child(4) .user-circle-access__icon,
+.user-circle-access__icon--booking {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.user-home-v2__buttons--four {
+  max-width: 920px;
+}
+
+.reservations-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 20px;
+  margin-top: 18px;
+}
+
+.reservations-card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #e8eef5;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.reservations-card--highlight {
+  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+  border-left: 5px solid #7c3aed;
+}
+
+.reservations-card__icon {
+  width: 68px;
+  height: 68px;
+  margin-bottom: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.reservations-card h3 {
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.reservations-card p {
+  margin: 0 0 18px;
+  color: #475569;
+  line-height: 1.65;
+}
+
+.reservations-list {
+  margin: 0;
+  padding-left: 18px;
+  color: #475569;
+  line-height: 1.8;
+  font-weight: 600;
+}
+
+
+/* ============================================
+   BOTTOM NAV CON 4 OPCIONES
+   ============================================ */
+
+.user-bottom-nav--four .user-bottom-nav__item {
+  min-width: 112px;
+}
+
+
+/* ============================================
+   RESPONSIVE MODAL Y RESERVAS
+   ============================================ */
+
+@media (max-width: 980px) {
+  .reservations-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-modal-backdrop {
+    padding: 18px;
+  }
+
+  .incident-create-modal {
+    width: calc(100vw - 36px);
+    max-width: calc(100vw - 36px);
+    max-height: calc(100vh - 36px);
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .incident-create-modal textarea.form-control {
+    min-height: 165px;
+    max-height: 210px;
+  }
+
+  .user-bottom-nav--four .user-bottom-nav__item {
+    min-width: 92px;
+    font-size: 0.76rem;
+  }
+}
+
+@media (max-width: 700px) {
+  .admin-modal-backdrop {
+    padding: 12px;
+  }
+
+  .incident-create-modal {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .incident-create-modal textarea.form-control {
+    min-height: 140px;
+    max-height: 175px;
+  }
+
+  .incident-create-form__actions {
+    flex-direction: column;
+  }
+
+  .incident-create-form__actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .user-bottom-nav--four {
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .user-bottom-nav--four .user-bottom-nav__item {
+    min-width: 0;
+    flex: 1;
+    font-size: 0.66rem;
+    height: 54px;
+  }
+
+  .user-bottom-nav--four .user-bottom-nav__item svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .reservations-card {
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .reservations-card h3 {
+    font-size: 1.08rem;
+  }
+}
