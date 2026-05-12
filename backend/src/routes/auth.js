@@ -5,7 +5,24 @@ import { User } from "../models/User.js";
 
 const router = express.Router();
 
-/* 1) Comprobar DNI */
+/* ============================================
+   FORMATEAR USUARIO PARA ENVIAR AL FRONTEND
+   Siempre devuelve nombre, apellidos, portal y vivienda
+   ============================================ */
+const buildAuthUser = (user) => ({
+  id: user.id,
+  dni: user.dni,
+  name: user.name,
+  apellidos: user.apellidos,
+  role: user.role,
+  portal: user.portal,
+  vivienda: user.vivienda,
+  is_active: user.is_active,
+});
+
+/* ============================================
+   1) COMPROBAR DNI
+   ============================================ */
 router.post("/check-dni", async (req, res) => {
   try {
     const { dni } = req.body;
@@ -22,21 +39,15 @@ router.post("/check-dni", async (req, res) => {
 
     if (!user.is_active) {
       return res.status(403).json({
-        error: "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
+        error:
+          "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
       });
     }
 
     return res.json({
       exists: true,
       hasPassword: !!user.password_hash,
-      user: {
-        id: user.id,
-        dni: user.dni,
-        name: user.name,
-        role: user.role,
-        vivienda: user.vivienda,
-        is_active: user.is_active,
-      },
+      user: buildAuthUser(user),
     });
   } catch (error) {
     console.error(error);
@@ -44,7 +55,9 @@ router.post("/check-dni", async (req, res) => {
   }
 });
 
-/* 2) Crear contraseña la primera vez */
+/* ============================================
+   2) CREAR CONTRASEÑA LA PRIMERA VEZ
+   ============================================ */
 router.post("/set-password", async (req, res) => {
   try {
     const { dni, password } = req.body;
@@ -61,12 +74,15 @@ router.post("/set-password", async (req, res) => {
 
     if (!user.is_active) {
       return res.status(403).json({
-        error: "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
+        error:
+          "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
       });
     }
 
     if (user.password_hash) {
-      return res.status(400).json({ error: "Este usuario ya tiene contraseña" });
+      return res
+        .status(400)
+        .json({ error: "Este usuario ya tiene contraseña" });
     }
 
     const hash = await bcrypt.hash(password, 10);
@@ -74,14 +90,18 @@ router.post("/set-password", async (req, res) => {
     user.password_hash = hash;
     await user.save();
 
-    return res.json({ message: "Contraseña creada correctamente" });
+    return res.json({
+      message: "Contraseña creada correctamente",
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Error creando contraseña" });
   }
 });
 
-/* 3) Login normal */
+/* ============================================
+   3) LOGIN NORMAL
+   ============================================ */
 router.post("/login", async (req, res) => {
   try {
     const { dni, password } = req.body;
@@ -98,7 +118,8 @@ router.post("/login", async (req, res) => {
 
     if (!user.is_active) {
       return res.status(403).json({
-        error: "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
+        error:
+          "Este usuario está inhabilitado. Consulta con la administración de la comunidad.",
       });
     }
 
@@ -118,20 +139,13 @@ router.post("/login", async (req, res) => {
       { expiresIn: "2h" }
     );
 
-    res.json({
+    return res.json({
       token,
-      user: {
-        id: user.id,
-        dni: user.dni,
-        name: user.name,
-        role: user.role,
-        vivienda: user.vivienda,
-        is_active: user.is_active,
-      },
+      user: buildAuthUser(user),
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error de login" });
+    return res.status(500).json({ error: "Error de login" });
   }
 });
 
