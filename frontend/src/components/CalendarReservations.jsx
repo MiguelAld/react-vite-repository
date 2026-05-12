@@ -555,7 +555,7 @@ export default function CalendarReservations({ mode = "user" }) {
 
             {hasBlockedReservation && (
               <small className="text-muted">
-                Este día ya tiene una reserva pendiente o aprobada.
+                Este día ya tiene una reserva.
               </small>
             )}
 
