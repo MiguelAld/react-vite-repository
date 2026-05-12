@@ -27,6 +27,7 @@ import { useAuth } from "../../context/AuthContext";
 import "../../assets/dashboard.css";
 import headerBg from "../../assets/header-bg.png";
 import logoComunidad from "../../assets/logo-comunidad.png";
+import CalendarReservations from "../../components/CalendarReservations";
 
 export default function UserDashboard() {
   const [activeSection, setActiveSection] = useState("inicio");
@@ -561,43 +562,7 @@ export default function UserDashboard() {
         </div>
       </div>
 
-      <div className="reservations-layout">
-        <article className="reservations-card reservations-card--highlight">
-          <div className="reservations-card__icon">
-            <CalendarCheck size={36} />
-          </div>
-
-          <h3>Salón social</h3>
-
-          <p>
-            Los vecinos podrán reservar este espacio para cumpleaños, reuniones
-            familiares u otros encuentros autorizados por la comunidad.
-          </p>
-
-          <button className="btn btn-primary reservations-action-btn" type="button">
-            Próximamente: solicitar reserva
-          </button>
-
-          <div className="reservations-status-box">
-            <strong>Próxima mejora</strong>
-            <p>
-              Aquí se abrirá un calendario interactivo para elegir una fecha libre
-              y enviar la solicitud directamente al administrador.
-            </p>
-          </div>
-        </article>
-
-        <article className="reservations-card">
-          <h3>Funcionamiento previsto</h3>
-
-          <ul className="reservations-list">
-            <li>Consulta los días disponibles.</li>
-            <li>Selecciona una fecha libre del calendario.</li>
-            <li>Envía la solicitud de reserva.</li>
-            <li>Los días reservados quedan visibles para toda la comunidad.</li>
-          </ul>
-        </article>
-      </div>
+      <CalendarReservations mode="user" />
     </section>
   );
 

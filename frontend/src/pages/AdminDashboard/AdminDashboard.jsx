@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import SidebarAdmin from "../../components/layout/SidebarAdmin";
 import CalendarMeetings from "../../components/CalendarMeetings";
+import CalendarReservations from "../../components/CalendarReservations";
 import { useAuth } from "../../context/AuthContext";
 
 import {
@@ -37,8 +38,6 @@ import {
   Megaphone,
   Image as ImageIcon,
   Edit3,
-  CalendarCheck,
-  CalendarDays,
 } from "lucide-react";
 
 export default function AdminDashboard() {
@@ -1443,83 +1442,13 @@ export default function AdminDashboard() {
                     Reservas del salón social
                   </h1>
                   <p className="dashboard-subtitle">
-                    Gestiona las solicitudes de reserva y controla qué días
-                    están ocupados o pendientes de aprobación.
+                    Gestiona las solicitudes de reserva, aprueba o rechaza
+                    peticiones y controla qué días están ocupados.
                   </p>
-                </div>
-
-                <button className="btn btn-primary" type="button">
-                  Crear reserva manual
-                </button>
-              </div>
-
-              <div className="reservations-admin-summary">
-                <div className="reservations-admin-summary__item">
-                  <strong>0</strong>
-                  <span>Pendientes</span>
-                </div>
-
-                <div className="reservations-admin-summary__item">
-                  <strong>0</strong>
-                  <span>Aprobadas</span>
-                </div>
-
-                <div className="reservations-admin-summary__item">
-                  <strong>0</strong>
-                  <span>Este mes</span>
                 </div>
               </div>
 
-              <div className="reservations-admin-layout">
-                <article className="reservations-admin-card reservations-admin-card--calendar">
-                  <h3>Calendario de disponibilidad</h3>
-                  <p>
-                    Este bloque queda preparado para incorporar el calendario
-                    real con los días disponibles, pendientes y reservados.
-                  </p>
-
-                  <div className="reservations-admin-calendar-placeholder">
-                    <CalendarDays size={42} />
-                    <strong>Calendario de reservas</strong>
-                    <p>
-                      Aquí se mostrarán los días ocupados del salón social y las
-                      reservas solicitadas por los vecinos.
-                    </p>
-                  </div>
-                </article>
-
-                <article className="reservations-admin-card">
-                  <h3>Solicitudes recientes</h3>
-                  <p>
-                    Cuando haya reservas creadas, aparecerán aquí para
-                    aprobarlas, rechazarlas o revisarlas.
-                  </p>
-
-                  <div className="reservations-admin-list">
-                    <div className="reservations-admin-item">
-                      <div className="reservations-admin-item__info">
-                        <strong>Ejemplo: 24 de mayo</strong>
-                        <span>Miguel Aldama Toledo · P1 2B</span>
-                      </div>
-
-                      <span className="reservations-admin-item__badge reservations-admin-item__badge--pending">
-                        Pendiente
-                      </span>
-                    </div>
-
-                    <div className="reservations-admin-item">
-                      <div className="reservations-admin-item__info">
-                        <strong>Ejemplo: 31 de mayo</strong>
-                        <span>Laura Martín Pérez · P2 1C</span>
-                      </div>
-
-                      <span className="reservations-admin-item__badge reservations-admin-item__badge--approved">
-                        Aprobada
-                      </span>
-                    </div>
-                  </div>
-                </article>
-              </div>
+              <CalendarReservations mode="admin" />
             </section>
           )}
 

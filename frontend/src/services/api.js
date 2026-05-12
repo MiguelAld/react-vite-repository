@@ -518,3 +518,64 @@ export async function deleteDocument(id) {
 
   return data;
 }
+
+/* RESERVATIONS */
+export async function getReservations() {
+  const res = await fetch(`${API_URL}/reservations`);
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error cargando reservas");
+  }
+
+  return data;
+}
+
+export async function createReservation(reservationData) {
+  const res = await fetch(`${API_URL}/reservations`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(reservationData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando reserva");
+  }
+
+  return data;
+}
+
+export async function createAdminReservation(reservationData) {
+  const res = await fetch(`${API_URL}/reservations/manual`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(reservationData),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error creando reserva manual");
+  }
+
+  return data;
+}
+
+export async function updateReservationStatus(id, status, reviewed_by) {
+  const res = await fetch(`${API_URL}/reservations/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ status, reviewed_by }),
+  });
+
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) {
+    throw new Error(data?.error || "Error actualizando reserva");
+  }
+
+  return data;
+}
