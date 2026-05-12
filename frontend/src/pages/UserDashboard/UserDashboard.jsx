@@ -133,13 +133,25 @@ export default function UserDashboard() {
     }
   }, [activeSection]);
 
-  const userFullName =
-    [user?.name, user?.apellidos].filter(Boolean).join(" ") || "USER";
+  const formatPortal = (portal) => {
+    if (!portal) return "";
+
+    const value = String(portal).trim();
+
+    if (!value) return "";
+
+    return value.toUpperCase().startsWith("P")
+      ? value.toUpperCase()
+      : `P${value}`;
+  };
+
+  const userName =
+    [user?.name, user?.apellidos].filter(Boolean).join(" ") || "Usuario";
 
   const userDni = user?.dni || "Sin DNI";
 
   const userHouse =
-    [user?.planta ? `P${user.planta}` : "", user?.vivienda]
+    [formatPortal(user?.portal), user?.vivienda]
       .filter(Boolean)
       .join(" ") || "Sin vivienda";
 
@@ -326,7 +338,7 @@ export default function UserDashboard() {
             </div>
 
             <div className="user-profile-menu__text">
-              <strong>{userFullName}</strong>
+              <strong>{userName}</strong>
               <span>{userHouse}</span>
             </div>
 
@@ -337,11 +349,13 @@ export default function UserDashboard() {
             <div className="user-profile-menu__dropdown">
               <div className="user-profile-menu__info">
                 <p>
-                  <strong>Nombre:</strong> {userFullName}
+                  <strong>Nombre:</strong> {userName}
                 </p>
+
                 <p>
                   <strong>DNI:</strong> {userDni}
                 </p>
+
                 <p>
                   <strong>Vivienda:</strong> {userHouse}
                 </p>
@@ -495,6 +509,7 @@ export default function UserDashboard() {
                             .join(" ")
                         : "—"}
                     </p>
+
                     <p>
                       <strong>Fecha y hora:</strong>{" "}
                       {formatDateTime(incident.created_at)}
@@ -525,9 +540,13 @@ export default function UserDashboard() {
           <div className="admin-modal-card incident-create-modal">
             <div className="dashboard-header-row">
               <div>
-                <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
+                <h2
+                  className="dashboard-title"
+                  style={{ fontSize: "1.5rem" }}
+                >
                   Crear nueva incidencia
                 </h2>
+
                 <p className="dashboard-subtitle mb-0">
                   Rellena los datos y envía la incidencia a la comunidad.
                 </p>
@@ -546,6 +565,7 @@ export default function UserDashboard() {
               <div className="row g-3">
                 <div className="col-md-12">
                   <label className="form-label">Zona</label>
+
                   <select
                     className="form-select"
                     name="zone_id"
@@ -554,11 +574,13 @@ export default function UserDashboard() {
                     required
                   >
                     <option value="">Selecciona una zona</option>
+
                     {zones.map((zone) => (
                       <option key={zone.id} value={zone.id}>
                         {zone.name}
                       </option>
                     ))}
+
                     <option value="other">Otro</option>
                   </select>
                 </div>
@@ -566,6 +588,7 @@ export default function UserDashboard() {
                 {formData.zone_id === "other" && (
                   <div className="col-md-12">
                     <label className="form-label">Especifica la zona</label>
+
                     <input
                       type="text"
                       className="form-control"
@@ -580,6 +603,7 @@ export default function UserDashboard() {
 
                 <div className="col-md-12">
                   <label className="form-label">Descripción</label>
+
                   <textarea
                     className="form-control"
                     name="description"
@@ -592,6 +616,7 @@ export default function UserDashboard() {
 
                 <div className="col-md-12">
                   <label className="form-label">Imagen opcional</label>
+
                   <input
                     type="file"
                     className="form-control"
@@ -600,6 +625,7 @@ export default function UserDashboard() {
                       setIncidentImageFile(e.target.files?.[0] || null)
                     }
                   />
+
                   <small className="text-muted">
                     Puedes añadir una foto para mostrar mejor el problema.
                   </small>
@@ -614,6 +640,7 @@ export default function UserDashboard() {
                 >
                   Cerrar
                 </button>
+
                 <button type="submit" className="btn btn-success">
                   Enviar incidencia
                 </button>
@@ -628,9 +655,13 @@ export default function UserDashboard() {
           <div className="admin-modal-card incident-detail-modal">
             <div className="dashboard-header-row">
               <div>
-                <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
+                <h2
+                  className="dashboard-title"
+                  style={{ fontSize: "1.5rem" }}
+                >
                   Detalle de incidencia
                 </h2>
+
                 <p className="dashboard-subtitle mb-0">
                   Información completa de la incidencia seleccionada.
                 </p>
@@ -733,6 +764,7 @@ export default function UserDashboard() {
   const renderDocumentos = () => (
     <section className="dashboard-panel user-section-panel">
       <h1 className="dashboard-title">Documentos</h1>
+
       <p className="dashboard-subtitle">
         Consulta los documentos oficiales publicados por la administración.
       </p>
@@ -803,6 +835,7 @@ export default function UserDashboard() {
         <div className="dashboard-header-row">
           <div>
             <h1 className="dashboard-title">Novedades</h1>
+
             <p className="dashboard-subtitle">
               Avisos, comunicaciones importantes y reuniones de la comunidad.
             </p>
@@ -858,6 +891,7 @@ export default function UserDashboard() {
 
                           <div className="user-meeting-info-box">
                             <CalendarDays size={18} />
+
                             <span>
                               <strong>Fecha y hora:</strong>{" "}
                               {formatMeetingDate(meeting.meeting_date)}
@@ -866,6 +900,7 @@ export default function UserDashboard() {
 
                           <div className="user-announcement-card__meta">
                             <span>{getCreatorName(meeting.creator)}</span>
+
                             <span>
                               Publicado: {formatLongDate(meeting.created_at)}
                             </span>
@@ -927,6 +962,7 @@ export default function UserDashboard() {
                                   .join(" ")
                               : "Administración"}
                           </span>
+
                           <span>
                             {formatLongDate(announcement.created_at)}
                           </span>
@@ -965,10 +1001,12 @@ export default function UserDashboard() {
       >
         <div className="user-bottom-nav__icon-wrap">
           <Bell size={20} />
+
           {unreadCount > 0 && (
             <span className="user-bottom-nav__badge">{unreadCount}</span>
           )}
         </div>
+
         <span>Novedades</span>
       </button>
 
