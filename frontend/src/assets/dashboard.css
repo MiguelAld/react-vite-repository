@@ -3546,3 +3546,25 @@ body,
 .reservation-calendar-legend__dot--approved {
   background: #b4ffce;
 }
+
+/* ============================================
+   CALENDARIO RESERVAS - SIN BORDES OSCUROS
+   Solo el día seleccionado lleva borde
+   ============================================ */
+
+.reservation-calendar-day--pending,
+.reservation-calendar-day--approved,
+.reservations-calendar-card .react-calendar__tile--now {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Día seleccionado: único con borde visible */
+.reservations-calendar-card .react-calendar__tile--active,
+.reservations-calendar-card .react-calendar__tile--active:hover,
+.reservations-calendar-card .react-calendar__tile--active:focus {
+  border: 2px solid #7c3aed !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
