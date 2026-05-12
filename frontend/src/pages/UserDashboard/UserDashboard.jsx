@@ -552,7 +552,7 @@ export default function UserDashboard() {
   );
 
   const renderReservas = () => (
-    <section className="dashboard-panel user-section-panel">
+    <section className="dashboard-panel user-section-panel reservations-user-section">
       <div className="dashboard-header-row">
         <div>
           <h1 className="dashboard-title">Reservas</h1>
