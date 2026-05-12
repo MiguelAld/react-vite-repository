@@ -2119,15 +2119,7 @@ body,
 }
 
 .user-dashboard-v2__content--section-bg::before {
-  content: "";
-  position: fixed;
-  top: 112px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(244, 247, 251, 0.74);
-  pointer-events: none;
-  z-index: 0;
+  display: none;
 }
 
 .user-dashboard-v2__content--section-bg > * {

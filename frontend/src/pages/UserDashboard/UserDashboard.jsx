@@ -339,7 +339,6 @@ export default function UserDashboard() {
 
             <div className="user-profile-menu__text">
               <strong>{userName}</strong>
-              <span>{userHouse}</span>
             </div>
 
             <ChevronDown size={18} />
@@ -1034,8 +1033,7 @@ export default function UserDashboard() {
           <main
             className="user-dashboard-v2__content user-dashboard-v2__content--section-bg"
             style={{
-              backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.62), rgba(244, 247, 251, 0.86)), url(${headerBg})`,
-            }}
+              backgroundImage: `linear-gradient(rgba(244, 247, 251, 0.42), rgba(244, 247, 251, 0.70)), url(${headerBg})`,            }}
           >
             {activeSection === "incidencias" && renderIncidencias()}
             {activeSection === "documentos" && renderDocumentos()}
