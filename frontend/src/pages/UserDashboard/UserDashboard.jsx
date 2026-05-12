@@ -564,29 +564,37 @@ export default function UserDashboard() {
       <div className="reservations-layout">
         <article className="reservations-card reservations-card--highlight">
           <div className="reservations-card__icon">
-            <CalendarCheck size={34} />
+            <CalendarCheck size={36} />
           </div>
 
           <h3>Salón social</h3>
 
           <p>
-            Esta sección queda preparada para mostrar un calendario con los días
-            reservados y permitir que los vecinos soliciten una fecha libre.
+            Los vecinos podrán reservar este espacio para cumpleaños, reuniones
+            familiares u otros encuentros autorizados por la comunidad.
           </p>
 
-          <button className="btn btn-primary" type="button">
+          <button className="btn btn-primary reservations-action-btn" type="button">
             Próximamente: solicitar reserva
           </button>
+
+          <div className="reservations-status-box">
+            <strong>Próxima mejora</strong>
+            <p>
+              Aquí se abrirá un calendario interactivo para elegir una fecha libre
+              y enviar la solicitud directamente al administrador.
+            </p>
+          </div>
         </article>
 
         <article className="reservations-card">
-          <h3>Funcionamiento recomendado</h3>
+          <h3>Funcionamiento previsto</h3>
 
           <ul className="reservations-list">
-            <li>Los usuarios seleccionan un día disponible.</li>
-            <li>La reserva queda visible para toda la comunidad.</li>
-            <li>El administrador puede aprobar, editar o cancelar.</li>
-            <li>Los días ocupados aparecen marcados en el calendario.</li>
+            <li>Consulta los días disponibles.</li>
+            <li>Selecciona una fecha libre del calendario.</li>
+            <li>Envía la solicitud de reserva.</li>
+            <li>Los días reservados quedan visibles para toda la comunidad.</li>
           </ul>
         </article>
       </div>

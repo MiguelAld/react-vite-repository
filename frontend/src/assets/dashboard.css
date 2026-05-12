@@ -2682,6 +2682,7 @@ body,
 
 /* ============================================
    NUEVA SECCIÓN RESERVAS
+   USER + ADMIN
    ============================================ */
 
 .user-circle-access:nth-child(4) .user-circle-access__icon,
@@ -2699,49 +2700,54 @@ body,
   max-width: none;
 }
 
+
+/* ============================================
+   RESERVAS - USUARIO
+   ============================================ */
+
 .reservations-layout {
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 22px;
   margin-top: 18px;
 }
 
 .reservations-card {
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid #e8eef5;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  border-radius: 22px;
+  padding: 26px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
 }
 
 .reservations-card--highlight {
-  background: linear-gradient(135deg, #ffffff 0%, #f5f3ff 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #faf7ff 100%);
   border-left: 5px solid #7c3aed;
 }
 
 .reservations-card__icon {
-  width: 68px;
-  height: 68px;
-  margin-bottom: 16px;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 18px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: 18px;
+  border-radius: 20px;
   background: #ede9fe;
   color: #6d28d9;
 }
 
 .reservations-card h3 {
   margin: 0 0 10px;
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 900;
   color: #0f172a;
 }
 
 .reservations-card p {
-  margin: 0 0 18px;
+  margin: 0 0 20px;
   color: #475569;
   line-height: 1.65;
 }
@@ -2750,8 +2756,193 @@ body,
   margin: 0;
   padding-left: 18px;
   color: #475569;
-  line-height: 1.8;
+  line-height: 1.85;
   font-weight: 600;
+}
+
+.reservations-action-btn {
+  min-height: 48px;
+  border-radius: 14px;
+  font-weight: 900;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.reservations-status-box {
+  margin-top: 20px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #f8fbff;
+  border: 1px solid #e8eef5;
+}
+
+.reservations-status-box strong {
+  display: block;
+  color: #0f172a;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.reservations-status-box p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+
+/* ============================================
+   RESERVAS - ADMIN
+   ============================================ */
+
+.reservations-admin-layout {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 22px;
+  margin-top: 20px;
+}
+
+.reservations-admin-card {
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+}
+
+.reservations-admin-card--calendar {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.reservations-admin-card h3 {
+  margin: 0 0 10px;
+  color: #0f172a;
+  font-size: 1.22rem;
+  font-weight: 900;
+}
+
+.reservations-admin-card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.reservations-admin-calendar-placeholder {
+  min-height: 290px;
+  margin-top: 18px;
+  border-radius: 20px;
+  border: 1px dashed #cbd5e1;
+  background: linear-gradient(135deg, #f8fbff 0%, #f5f3ff 100%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+  padding: 24px;
+  gap: 12px;
+}
+
+.reservations-admin-calendar-placeholder svg {
+  color: #7c3aed;
+}
+
+.reservations-admin-calendar-placeholder strong {
+  color: #0f172a;
+  font-weight: 900;
+  font-size: 1.1rem;
+}
+
+.reservations-admin-calendar-placeholder p {
+  max-width: 380px;
+  margin: 0;
+}
+
+.reservations-admin-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.reservations-admin-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid #e8eef5;
+  background: #f8fbff;
+}
+
+.reservations-admin-item__info {
+  min-width: 0;
+}
+
+.reservations-admin-item__info strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #0f172a;
+  font-weight: 900;
+}
+
+.reservations-admin-item__info span {
+  color: #64748b;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.reservations-admin-item__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+  border-radius: 999px;
+
+  font-size: 0.78rem;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.reservations-admin-item__badge--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.reservations-admin-item__badge--approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.reservations-admin-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 22px;
+}
+
+.reservations-admin-summary__item {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border: 1px solid #e8eef5;
+  border-radius: 18px;
+  padding: 18px;
+  text-align: center;
+}
+
+.reservations-admin-summary__item strong {
+  display: block;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.reservations-admin-summary__item span {
+  color: #64748b;
+  font-size: 0.92rem;
+  font-weight: 800;
 }
 
 
@@ -2769,7 +2960,12 @@ body,
    ============================================ */
 
 @media (max-width: 980px) {
-  .reservations-layout {
+  .reservations-layout,
+  .reservations-admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .reservations-admin-summary {
     grid-template-columns: 1fr;
   }
 }
@@ -2823,6 +3019,11 @@ body,
   .incident-create-form__actions .btn {
     width: 100%;
   }
+
+  .reservations-admin-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 560px) {
@@ -2843,12 +3044,14 @@ body,
     height: 18px;
   }
 
-  .reservations-card {
+  .reservations-card,
+  .reservations-admin-card {
     padding: 18px;
     border-radius: 18px;
   }
 
-  .reservations-card h3 {
+  .reservations-card h3,
+  .reservations-admin-card h3 {
     font-size: 1.08rem;
   }
 

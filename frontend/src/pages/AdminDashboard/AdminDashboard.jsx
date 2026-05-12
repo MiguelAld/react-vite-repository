@@ -37,12 +37,14 @@ import {
   Megaphone,
   Image as ImageIcon,
   Edit3,
+  CalendarCheck,
+  CalendarDays,
 } from "lucide-react";
 
 export default function AdminDashboard() {
   const { user } = useAuth();
 
-  const [section, setSection] = useState("COMUNICADOS");
+  const [section, setSection] = useState("comunicados");
 
   const [users, setUsers] = useState([]);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -556,7 +558,9 @@ export default function AdminDashboard() {
   };
 
   const handleDeleteDocument = async (documentId, title) => {
-    const ok = window.confirm(`¿Seguro que quieres borrar el documento "${title}"?`);
+    const ok = window.confirm(
+      `¿Seguro que quieres borrar el documento "${title}"?`
+    );
 
     if (!ok) return;
 
@@ -632,7 +636,10 @@ export default function AdminDashboard() {
       }
 
       if (editingAnnouncement) {
-        const updated = await updateAnnouncement(editingAnnouncement.id, payload);
+        const updated = await updateAnnouncement(
+          editingAnnouncement.id,
+          payload
+        );
 
         setAnnouncements((prev) =>
           prev.map((a) => (a.id === editingAnnouncement.id ? updated : a))
@@ -708,7 +715,8 @@ export default function AdminDashboard() {
                   <p className="summary-number">
                     {incidentsLoading
                       ? "..."
-                      : incidents.filter((i) => i.status === "PENDIENTE").length}
+                      : incidents.filter((i) => i.status === "PENDIENTE")
+                          .length}
                   </p>
                 </div>
 
@@ -724,8 +732,9 @@ export default function AdminDashboard() {
                   <p className="summary-number">
                     {meetingsLoading
                       ? "..."
-                      : meetings.filter((m) => new Date(m.meeting_date) > new Date())
-                          .length}
+                      : meetings.filter(
+                          (m) => new Date(m.meeting_date) > new Date()
+                        ).length}
                   </p>
                 </div>
               </div>
@@ -1003,7 +1012,8 @@ export default function AdminDashboard() {
                             </div>
 
                             <h3>
-                              {announcementForm.title || "Título del comunicado"}
+                              {announcementForm.title ||
+                                "Título del comunicado"}
                             </h3>
                             <p>
                               {announcementForm.description ||
@@ -1032,8 +1042,8 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Gestión de incidencias</h1>
                   <p className="dashboard-subtitle">
-                    Aquí puedes revisar quién envió cada incidencia, consultar su
-                    ficha completa y cambiar su estado.
+                    Aquí puedes revisar quién envió cada incidencia, consultar
+                    su ficha completa y cambiar su estado.
                   </p>
                 </div>
               </div>
@@ -1043,7 +1053,10 @@ export default function AdminDashboard() {
                   <div className="dashboard-card summary-accent-yellow">
                     <h5>Pendientes</h5>
                     <p className="summary-number">
-                      {incidents.filter((i) => i.status === "PENDIENTE").length}
+                      {
+                        incidents.filter((i) => i.status === "PENDIENTE")
+                          .length
+                      }
                     </p>
                   </div>
 
@@ -1298,12 +1311,16 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Zonas Públicas</h1>
                   <p className="dashboard-subtitle">
-                    Crea, ordena, activa, desactiva o elimina las zonas que verán los usuarios al crear incidencias.
+                    Crea, ordena, activa, desactiva o elimina las zonas que
+                    verán los usuarios al crear incidencias.
                   </p>
                 </div>
               </div>
 
-              <form onSubmit={handleCreateZone} className="dashboard-block mb-4">
+              <form
+                onSubmit={handleCreateZone}
+                className="dashboard-block mb-4"
+              >
                 <div className="row g-3 align-items-end">
                   <div className="col-md-9">
                     <label className="form-label">Nueva zona</label>
@@ -1327,7 +1344,9 @@ export default function AdminDashboard() {
 
               {zonesLoading && <p>Cargando zonas...</p>}
 
-              {zonesError && <div className="alert alert-danger">{zonesError}</div>}
+              {zonesError && (
+                <div className="alert alert-danger">{zonesError}</div>
+              )}
 
               {!zonesLoading && !zonesError && (
                 <>
@@ -1343,7 +1362,9 @@ export default function AdminDashboard() {
                             {zone.is_active ? (
                               <span className="badge bg-success">ACTIVA</span>
                             ) : (
-                              <span className="badge bg-secondary">INACTIVA</span>
+                              <span className="badge bg-secondary">
+                                INACTIVA
+                              </span>
                             )}
                           </div>
 
@@ -1371,9 +1392,13 @@ export default function AdminDashboard() {
                             <button
                               type="button"
                               className={`btn btn-sm ${
-                                zone.is_active ? "btn-outline-danger" : "btn-outline-success"
+                                zone.is_active
+                                  ? "btn-outline-danger"
+                                  : "btn-outline-success"
                               }`}
-                              onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
+                              onClick={() =>
+                                handleToggleZoneActive(zone.id, zone.is_active)
+                              }
                             >
                               {zone.is_active ? "Desactivar" : "Activar"}
                             </button>
@@ -1381,7 +1406,9 @@ export default function AdminDashboard() {
                             <button
                               type="button"
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() => handleDeleteZone(zone.id, zone.name)}
+                              onClick={() =>
+                                handleDeleteZone(zone.id, zone.name)
+                              }
                               title="Eliminar zona"
                             >
                               <Trash2 size={16} />
@@ -1408,6 +1435,94 @@ export default function AdminDashboard() {
             </section>
           )}
 
+          {section === "reservas" && (
+            <section className="dashboard-panel">
+              <div className="dashboard-header-row">
+                <div>
+                  <h1 className="dashboard-title">
+                    Reservas del salón social
+                  </h1>
+                  <p className="dashboard-subtitle">
+                    Gestiona las solicitudes de reserva y controla qué días
+                    están ocupados o pendientes de aprobación.
+                  </p>
+                </div>
+
+                <button className="btn btn-primary" type="button">
+                  Crear reserva manual
+                </button>
+              </div>
+
+              <div className="reservations-admin-summary">
+                <div className="reservations-admin-summary__item">
+                  <strong>0</strong>
+                  <span>Pendientes</span>
+                </div>
+
+                <div className="reservations-admin-summary__item">
+                  <strong>0</strong>
+                  <span>Aprobadas</span>
+                </div>
+
+                <div className="reservations-admin-summary__item">
+                  <strong>0</strong>
+                  <span>Este mes</span>
+                </div>
+              </div>
+
+              <div className="reservations-admin-layout">
+                <article className="reservations-admin-card reservations-admin-card--calendar">
+                  <h3>Calendario de disponibilidad</h3>
+                  <p>
+                    Este bloque queda preparado para incorporar el calendario
+                    real con los días disponibles, pendientes y reservados.
+                  </p>
+
+                  <div className="reservations-admin-calendar-placeholder">
+                    <CalendarDays size={42} />
+                    <strong>Calendario de reservas</strong>
+                    <p>
+                      Aquí se mostrarán los días ocupados del salón social y las
+                      reservas solicitadas por los vecinos.
+                    </p>
+                  </div>
+                </article>
+
+                <article className="reservations-admin-card">
+                  <h3>Solicitudes recientes</h3>
+                  <p>
+                    Cuando haya reservas creadas, aparecerán aquí para
+                    aprobarlas, rechazarlas o revisarlas.
+                  </p>
+
+                  <div className="reservations-admin-list">
+                    <div className="reservations-admin-item">
+                      <div className="reservations-admin-item__info">
+                        <strong>Ejemplo: 24 de mayo</strong>
+                        <span>Miguel Aldama Toledo · P1 2B</span>
+                      </div>
+
+                      <span className="reservations-admin-item__badge reservations-admin-item__badge--pending">
+                        Pendiente
+                      </span>
+                    </div>
+
+                    <div className="reservations-admin-item">
+                      <div className="reservations-admin-item__info">
+                        <strong>Ejemplo: 31 de mayo</strong>
+                        <span>Laura Martín Pérez · P2 1C</span>
+                      </div>
+
+                      <span className="reservations-admin-item__badge reservations-admin-item__badge--approved">
+                        Aprobada
+                      </span>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </section>
+          )}
+
           {section === "documentos" && (
             <section className="dashboard-panel">
               <div className="dashboard-header-row">
@@ -1420,7 +1535,10 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              <form onSubmit={handleUploadDocument} className="dashboard-block mb-4">
+              <form
+                onSubmit={handleUploadDocument}
+                className="dashboard-block mb-4"
+              >
                 <div className="row g-3 align-items-end">
                   <div className="col-md-5">
                     <label className="form-label">Título del documento</label>
@@ -1531,8 +1649,8 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Usuarios</h1>
                   <p className="dashboard-subtitle">
-                    Aquí podrás ver, crear, editar y activar o desactivar vecinos
-                    y administradores.
+                    Aquí podrás ver, crear, editar y activar o desactivar
+                    vecinos y administradores.
                   </p>
                 </div>
 
@@ -1543,7 +1661,9 @@ export default function AdminDashboard() {
 
               {usersLoading && <p>Cargando usuarios...</p>}
 
-              {usersError && <div className="alert alert-danger">{usersError}</div>}
+              {usersError && (
+                <div className="alert alert-danger">{usersError}</div>
+              )}
 
               {!usersLoading && !usersError && (
                 <>
@@ -1582,7 +1702,9 @@ export default function AdminDashboard() {
                           getFilteredUsers().map((user) => (
                             <tr
                               key={user.id}
-                              className={!user.is_active ? "user-row-inactive" : ""}
+                              className={
+                                !user.is_active ? "user-row-inactive" : ""
+                              }
                             >
                               <td>{user.dni}</td>
                               <td>{user.name}</td>
@@ -1593,7 +1715,9 @@ export default function AdminDashboard() {
                               <td>
                                 <div className="user-role-state-wrap">
                                   {user.role === "ADMIN" ? (
-                                    <span className="badge bg-dark">ADMIN</span>
+                                    <span className="badge bg-dark">
+                                      ADMIN
+                                    </span>
                                   ) : (
                                     <span className="badge bg-primary">
                                       VECINO
@@ -1621,7 +1745,10 @@ export default function AdminDashboard() {
                                   <button
                                     className="btn btn-sm btn-outline-danger"
                                     onClick={() =>
-                                      handleDeleteUser(user.id, getFullName(user))
+                                      handleDeleteUser(
+                                        user.id,
+                                        getFullName(user)
+                                      )
                                     }
                                     title="Borrar usuario"
                                     type="button"

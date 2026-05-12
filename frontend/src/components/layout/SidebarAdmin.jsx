@@ -6,6 +6,7 @@ import {
   Users,
   MapPinned,
   LogOut,
+  CalendarCheck,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -36,9 +37,7 @@ export default function SidebarAdmin({
             className="sidebar-user__brand-logo"
           />
 
-          <h2 className="sidebar-user__logo">
-            Jardines de las Ramblas
-          </h2>
+          <h2 className="sidebar-user__logo">Jardines de las Ramblas</h2>
         </div>
 
         <nav className="sidebar-user__nav">
@@ -91,6 +90,17 @@ export default function SidebarAdmin({
           <button
             type="button"
             className={`sidebar-user__link ${
+              activeSection === "reservas" ? "active" : ""
+            }`}
+            onClick={() => setActiveSection("reservas")}
+          >
+            <CalendarCheck size={18} />
+            <span>Reservas</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-user__link ${
               activeSection === "documentos" ? "active" : ""
             }`}
             onClick={() => setActiveSection("documentos")}
@@ -114,9 +124,7 @@ export default function SidebarAdmin({
 
       <div className="sidebar-user__bottom">
         <div className="sidebar-user__profile">
-          <div className="sidebar-user__avatar">
-            {userName?.[0] || "A"}
-          </div>
+          <div className="sidebar-user__avatar">{userName?.[0] || "A"}</div>
 
           <div className="sidebar-user__info">
             <strong>{userName}</strong>
