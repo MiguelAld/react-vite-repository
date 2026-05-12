@@ -3332,3 +3332,167 @@ body,
     align-items: flex-start;
   }
 }
+
+/* =========================================================
+   RESERVAS - CALENDARIO
+========================================================= */
+
+.reservations-calendar-card .react-calendar {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+
+.reservations-calendar-card .react-calendar__navigation button {
+  min-width: 44px;
+  background: transparent;
+  color: #18213c;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.reservations-calendar-card .react-calendar__navigation button:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.reservations-calendar-card .react-calendar__month-view__weekdays {
+  text-transform: lowercase;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+.reservations-calendar-card .react-calendar__month-view__weekdays__weekday {
+  padding: 0.6rem 0;
+  text-align: center;
+}
+
+.reservations-calendar-card .react-calendar__tile {
+  position: relative;
+  height: 54px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  background: #ffffff;
+  color: #1f2937;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.reservations-calendar-card .react-calendar__tile:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+/* HOY */
+.reservations-calendar-card .react-calendar__tile--now {
+  background: #dbeafe !important;
+  color: #1e3a8a !important;
+  border: 2px solid #60a5fa !important;
+}
+
+/* DÍA SELECCIONADO */
+.reservations-calendar-card .react-calendar__tile--active,
+.reservations-calendar-card .react-calendar__tile:enabled:focus {
+  background: #d8b4fe !important;
+  color: #5b178a !important;
+  border: 2px solid #a855f7 !important;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.16);
+}
+
+/* Si el día seleccionado además es HOY */
+.reservations-calendar-card .react-calendar__tile--now.react-calendar__tile--active {
+  background: #d8b4fe !important;
+  color: #5b178a !important;
+  border: 2px solid #7c3aed !important;
+}
+
+/* DÍA CON RESERVA PENDIENTE */
+.reservations-calendar-card .reservation-calendar-day--pending {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border: 2px solid #facc15 !important;
+}
+
+/* DÍA CON RESERVA APROBADA */
+.reservations-calendar-card .reservation-calendar-day--approved {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border: 2px solid #4ade80 !important;
+}
+
+/* Si seleccionas un día pendiente o aprobado, manda el morado */
+.reservations-calendar-card .reservation-calendar-day--pending.react-calendar__tile--active,
+.reservations-calendar-card .reservation-calendar-day--approved.react-calendar__tile--active {
+  background: #d8b4fe !important;
+  color: #5b178a !important;
+  border: 2px solid #a855f7 !important;
+}
+
+/* Badge numérico del día */
+.reservation-calendar-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.08);
+  color: #374151;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Si quieres que NO salga el badge en amarillo/verde tan cantoso */
+.reservation-calendar-day--pending .reservation-calendar-badge,
+.reservation-calendar-day--approved .reservation-calendar-badge {
+  background: rgba(255, 255, 255, 0.65);
+  color: inherit;
+}
+
+/* =========================================================
+   INICIO USUARIO - BOTONES PRINCIPALES
+========================================================= */
+
+.user-circle-access {
+  transition: all 0.22s ease;
+  border: 1px solid transparent;
+}
+
+.user-circle-access:hover {
+  transform: translateY(-3px);
+}
+
+/* Incidencias */
+.user-circle-access--incidencias:hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.25);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.12);
+}
+
+/* Novedades */
+.user-circle-access--novedades:hover {
+  background: rgba(99, 102, 241, 0.10);
+  border-color: rgba(99, 102, 241, 0.24);
+  box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12);
+}
+
+/* Documentos */
+.user-circle-access--documentos:hover {
+  background: rgba(59, 130, 246, 0.10);
+  border-color: rgba(59, 130, 246, 0.24);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.12);
+}
+
+/* Reservas */
+.user-circle-access--reservas:hover {
+  background: rgba(168, 85, 247, 0.10);
+  border-color: rgba(168, 85, 247, 0.24);
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.12);
+}

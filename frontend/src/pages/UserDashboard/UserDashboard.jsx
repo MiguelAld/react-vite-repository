@@ -403,7 +403,7 @@ export default function UserDashboard() {
       >
         <div className="user-home-v2__buttons user-home-v2__buttons--four">
           <button
-            className="user-circle-access"
+            className="user-circle-access user-circle-access--incidencias"
             onClick={() => setActiveSection("incidencias")}
             type="button"
           >
@@ -414,7 +414,7 @@ export default function UserDashboard() {
           </button>
 
           <button
-            className="user-circle-access"
+            className="user-circle-access user-circle-access--novedades"
             onClick={() => setActiveSection("novedades")}
             type="button"
           >
@@ -430,7 +430,7 @@ export default function UserDashboard() {
           </button>
 
           <button
-            className="user-circle-access"
+            className="user-circle-access user-circle-access--documentos"
             onClick={() => setActiveSection("documentos")}
             type="button"
           >
@@ -441,7 +441,7 @@ export default function UserDashboard() {
           </button>
 
           <button
-            className="user-circle-access"
+            className="user-circle-access user-circle-access--reservas"
             onClick={() => setActiveSection("reservas")}
             type="button"
           >
