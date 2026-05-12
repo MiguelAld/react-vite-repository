@@ -2691,7 +2691,12 @@ body,
 }
 
 .user-home-v2__buttons--four {
-  max-width: 920px;
+  display: grid;
+  grid-template-columns: repeat(2, 180px);
+  justify-content: center;
+  align-items: center;
+  gap: 34px 42px;
+  max-width: none;
 }
 
 .reservations-layout {
@@ -2845,5 +2850,10 @@ body,
 
   .reservations-card h3 {
     font-size: 1.08rem;
+  }
+
+  .user-home-v2__buttons--four {
+    grid-template-columns: 1fr;
+    gap: 20px;
   }
 }
