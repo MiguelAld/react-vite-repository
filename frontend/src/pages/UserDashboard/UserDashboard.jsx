@@ -24,7 +24,7 @@ import {
 } from "../../services/api";
 
 import { useAuth } from "../../context/AuthContext";
-import "../../assets/dashboard.css";
+import "./UserDashboard.css";
 import headerBg from "../../assets/header-bg.png";
 import logoComunidad from "../../assets/logo-comunidad.png";
 import CalendarReservations from "../../components/CalendarReservations";

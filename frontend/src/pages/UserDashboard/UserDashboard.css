@@ -1,0 +1,1670 @@
+/* ============================================
+   USER DASHBOARD - BASE GENERAL
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  overflow-x: hidden;
+}
+
+.user-dashboard-v2 {
+  position: relative;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #f4f7fb;
+  color: #1e293b;
+}
+
+.user-dashboard-v2__content {
+  flex: 1;
+  height: calc(100% - 112px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px 24px 125px;
+}
+
+.user-section-panel {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.dashboard-panel {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+  border: 1px solid #e8eef5;
+  overflow-x: hidden;
+}
+
+.dashboard-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: #0f172a;
+}
+
+.dashboard-subtitle {
+  color: #64748b;
+  margin: 0 0 18px;
+}
+
+.dashboard-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.dashboard-empty {
+  color: #64748b;
+  margin: 0;
+}
+
+
+/* ============================================
+   USER DASHBOARD - HEADER SUPERIOR
+   ============================================ */
+
+.user-app-header {
+  --logo-left: 164px;
+  position: sticky;
+  top: 0;
+  height: 112px;
+  min-height: 112px;
+  flex-shrink: 0;
+  display: grid;
+  grid-template-columns: 90px 1fr 220px;
+  align-items: center;
+  padding: 0 28px;
+  border-bottom: 1px solid #dbeafe;
+  background: linear-gradient(
+    135deg,
+    #eaf2ff 0%,
+    #f8fbff 55%,
+    #e0f2fe 100%
+  );
+  z-index: 500;
+  overflow: visible;
+}
+
+.user-app-header::before {
+  display: none;
+  content: none;
+}
+
+.user-app-header__left {
+  grid-column: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 90px;
+  min-width: 90px;
+  z-index: 10;
+}
+
+.user-app-home-btn {
+  width: 62px;
+  height: 62px;
+  min-width: 62px;
+  border: 1px solid #cdd9ea;
+  border-radius: 19px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.1);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.user-app-home-btn svg {
+  width: 31px;
+  height: 31px;
+  stroke-width: 2.2;
+}
+
+.user-app-home-btn:hover {
+  transform: translateY(-2px) scale(1.03);
+  background: #ffffff;
+  color: #1d4ed8;
+  box-shadow: 0 12px 24px rgba(29, 78, 216, 0.14);
+}
+
+.user-app-home-btn--hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.user-app-brand {
+  grid-column: 2;
+  position: static;
+  transform: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  max-width: 100%;
+  z-index: 5;
+}
+
+.user-app-brand__logo-block {
+  position: absolute;
+  left: var(--logo-left);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 90px;
+  height: 90px;
+  min-width: 90px;
+  max-width: 90px;
+  max-height: 90px;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  overflow: visible;
+  z-index: 8;
+}
+
+.user-app-brand__logo-block img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  display: block;
+}
+
+.user-app-brand span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: calc(100% - 460px);
+  font-size: 1.85rem;
+  line-height: 1.05;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  color: #172033;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.user-app-header__right {
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+  z-index: 20;
+}
+
+
+/* ============================================
+   USER DASHBOARD - PERFIL SUPERIOR
+   ============================================ */
+
+.user-profile-menu {
+  position: relative;
+  margin-left: auto;
+  flex-shrink: 0;
+  z-index: 800;
+}
+
+.user-profile-menu__trigger {
+  min-width: 165px;
+  height: 68px;
+  padding: 12px 18px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #ffffff;
+  border: 1px solid #dbe4f0;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.1);
+  cursor: pointer;
+}
+
+.user-profile-menu__avatar {
+  width: 46px;
+  height: 46px;
+  min-width: 46px;
+  border-radius: 999px;
+  background: #eef5ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #1d4ed8;
+}
+
+.user-profile-menu__avatar svg {
+  width: 26px;
+  height: 26px;
+}
+
+.user-profile-menu__text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.1;
+}
+
+.user-profile-menu__text strong {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.user-profile-menu__trigger > svg {
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+}
+
+.user-profile-menu__dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 270px;
+  max-width: calc(100vw - 32px);
+  background: #ffffff;
+  border: 1px solid #e5edf6;
+  border-radius: 18px;
+  padding: 14px;
+  z-index: 9999;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.18);
+}
+
+.user-profile-menu__info {
+  border-bottom: 1px solid #eef2f7;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.user-profile-menu__info p {
+  margin: 0 0 6px;
+  font-size: 0.92rem;
+  color: #334155;
+}
+
+.user-profile-menu__item {
+  width: 100%;
+  border: none;
+  background: transparent;
+  padding: 10px 12px;
+  text-align: left;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  color: #334155;
+}
+
+.user-profile-menu__item:hover {
+  background: #f8fbff;
+}
+
+.user-profile-menu__item--danger {
+  color: #b91c1c;
+}
+
+.user-profile-menu__item--danger:hover {
+  background: #fee2e2;
+}
+
+
+/* ============================================
+   USER DASHBOARD - HOME
+   ============================================ */
+
+.user-home-v2 {
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #f4f7fb;
+}
+
+.user-home-v2__center {
+  flex: 1;
+  min-height: calc(100% - 112px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.user-home-v2__center--banner {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.user-home-v2__center--banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(244, 247, 251, 0.04);
+  pointer-events: none;
+}
+
+.user-home-v2__buttons {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  flex-wrap: wrap;
+}
+
+.user-home-v2__buttons--four {
+  display: grid;
+  grid-template-columns: repeat(2, 180px);
+  justify-content: center;
+  align-items: center;
+  gap: 34px 42px;
+  max-width: none;
+}
+
+.user-circle-access {
+  width: 180px;
+  height: 180px;
+  border: 1px solid rgba(219, 230, 243, 0.95);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.11);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  padding: 20px;
+}
+
+.user-circle-access:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 26px 56px rgba(15, 23, 42, 0.18);
+}
+
+.user-circle-access__icon {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef5ff;
+  color: #1d4ed8;
+  transition: all 0.2s ease;
+}
+
+.user-circle-access:hover .user-circle-access__icon {
+  transform: scale(1.08);
+}
+
+.user-circle-access span {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.user-circle-access:nth-child(1) .user-circle-access__icon {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.user-circle-access:nth-child(2) .user-circle-access__icon {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.user-circle-access:nth-child(3) .user-circle-access__icon {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.user-circle-access:nth-child(4) .user-circle-access__icon,
+.user-circle-access__icon--booking {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.user-circle-access:nth-child(1):hover {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.28);
+}
+
+.user-circle-access:nth-child(2):hover {
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.28);
+}
+
+.user-circle-access:nth-child(3):hover {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.28);
+}
+
+.user-circle-access:nth-child(4):hover {
+  background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.28);
+}
+
+.user-circle-access__badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ============================================
+   USER DASHBOARD - BOTTOM NAV
+   ============================================ */
+
+.user-bottom-nav {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  z-index: 200;
+  width: fit-content;
+  max-width: calc(100% - 40px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #dbe6f3;
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
+  backdrop-filter: blur(10px);
+}
+
+.user-bottom-nav--four .user-bottom-nav__item {
+  min-width: 112px;
+}
+
+.user-bottom-nav__item {
+  min-width: 122px;
+  height: 56px;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+  color: #475569;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-bottom-nav__item svg {
+  width: 21px;
+  height: 21px;
+}
+
+.user-bottom-nav__item:hover {
+  transform: translateY(-2px);
+  color: #0f172a;
+}
+
+.user-bottom-nav__item:nth-child(1):hover {
+  background: rgba(245, 158, 11, 0.12);
+}
+
+.user-bottom-nav__item:nth-child(2):hover {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.user-bottom-nav__item:nth-child(3):hover {
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.user-bottom-nav__item:nth-child(4):hover {
+  background: rgba(168, 85, 247, 0.12);
+}
+
+.user-bottom-nav__item.active {
+  background: #eaf2ff;
+  color: #1d4ed8;
+  box-shadow: inset 0 0 0 1px #d7e6ff;
+}
+
+.user-bottom-nav__item:nth-child(1).active {
+  background: rgba(245, 158, 11, 0.14);
+  color: #b45309;
+  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.25);
+}
+
+.user-bottom-nav__item:nth-child(2).active {
+  background: rgba(59, 130, 246, 0.14);
+  color: #1d4ed8;
+  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.25);
+}
+
+.user-bottom-nav__item:nth-child(3).active {
+  background: rgba(16, 185, 129, 0.14);
+  color: #047857;
+  box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.25);
+}
+
+.user-bottom-nav__item:nth-child(4).active {
+  background: rgba(168, 85, 247, 0.14);
+  color: #7c3aed;
+  box-shadow: inset 0 0 0 1px rgba(168, 85, 247, 0.25);
+}
+
+.user-bottom-nav__icon-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.user-bottom-nav__badge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #dc2626;
+  color: #ffffff;
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ============================================
+   USER DASHBOARD - FONDO SECCIONES
+   ============================================ */
+
+.user-dashboard-v2__content--section-bg {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: local;
+}
+
+.user-dashboard-v2__content--section-bg > * {
+  position: relative;
+  z-index: 1;
+}
+
+.user-dashboard-v2__content--section-bg .dashboard-panel {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(232, 238, 245, 0.9);
+}
+
+
+/* ============================================
+   USER DASHBOARD - INCIDENCIAS
+   ============================================ */
+
+.incidents-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+  margin-top: 12px;
+}
+
+.user-incidents-grid {
+  margin-top: 8px;
+}
+
+.incident-card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #e5edf6;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.incident-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.incident-card__top h4 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.incident-card__meta p {
+  margin: 0 0 6px;
+  color: #334155;
+}
+
+.incident-card__description {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e8eef5;
+}
+
+.incident-card__description p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.incident-card__image {
+  margin-top: 12px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #e8eef5;
+  background: #f8fafc;
+}
+
+.incident-card__image img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+.incident-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.incident-detail-block {
+  background: #f8fbff;
+  border: 1px solid #e8eef5;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.incident-detail-block label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #475569;
+  margin-bottom: 6px;
+}
+
+.incident-detail-block p {
+  margin: 0;
+  color: #0f172a;
+  line-height: 1.5;
+}
+
+.incident-detail-block--full {
+  grid-column: 1 / -1;
+}
+
+
+/* ============================================
+   USER DASHBOARD - DOCUMENTOS
+   ============================================ */
+
+.user-documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.user-document-card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #e8eef5;
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.user-document-card__icon {
+  width: 58px;
+  height: 58px;
+  border-radius: 16px;
+  background: #eef5ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-document-card__body h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.user-document-card__body p {
+  margin: 0 0 6px;
+  color: #475569;
+}
+
+.user-document-card__body span {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+
+/* ============================================
+   USER DASHBOARD - NOVEDADES
+   ============================================ */
+
+.user-announcements-list {
+  display: grid;
+  gap: 16px;
+}
+
+.user-announcement-card {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  border: 1px solid #e8eef5;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.05);
+}
+
+.user-announcement-card__media {
+  min-height: 160px;
+  background: #f8fbff;
+}
+
+.user-announcement-card__media img {
+  width: 100%;
+  height: 100%;
+  min-height: 160px;
+  object-fit: cover;
+}
+
+.user-announcement-card__placeholder {
+  height: 100%;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-announcement-card__content {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-announcement-card__top {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.user-announcement-card__type,
+.user-announcement-card__pinned {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.user-announcement-card h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.user-announcement-card__description {
+  margin: 0;
+  color: #334155;
+  white-space: pre-wrap;
+}
+
+.user-announcement-card__meta {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.user-announcement-card--info {
+  border-left: 5px solid #2563eb;
+  background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+}
+
+.user-announcement-card--info .user-announcement-card__placeholder {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1d4ed8;
+}
+
+.user-announcement-card--info .user-announcement-card__type {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.user-announcement-card--warning {
+  border-left: 5px solid #d97706;
+  background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+}
+
+.user-announcement-card--warning .user-announcement-card__placeholder {
+  background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+  color: #c2410c;
+}
+
+.user-announcement-card--warning .user-announcement-card__type {
+  background: #ffedd5;
+  color: #9a3412;
+}
+
+.user-announcement-card--urgent {
+  border-left: 5px solid #dc2626;
+  background: linear-gradient(135deg, #ffffff 0%, #fef2f2 100%);
+}
+
+.user-announcement-card--urgent .user-announcement-card__placeholder {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #b91c1c;
+}
+
+.user-announcement-card--urgent .user-announcement-card__type {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.user-announcement-card--urgent .user-announcement-card__pinned {
+  background: #fecaca;
+  color: #7f1d1d;
+}
+
+.user-announcement-card--meeting {
+  border-left: 5px solid #7c3aed;
+  background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
+}
+
+.user-announcement-card__media--meeting {
+  background: linear-gradient(135deg, #ede9fe 0%, #f5f3ff 100%);
+}
+
+.user-announcement-card__placeholder--meeting {
+  background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 100%);
+  color: #6d28d9;
+}
+
+.user-announcement-card__type--meeting {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.user-announcement-card__pinned--meeting {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
+.user-meeting-info-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #f5f3ff;
+  color: #4c1d95;
+  border: 1px solid #ddd6fe;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+
+/* ============================================
+   USER DASHBOARD - MODALES
+   ============================================ */
+
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  padding: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.58);
+  backdrop-filter: blur(7px);
+  overflow: hidden;
+  z-index: 999999;
+}
+
+.admin-modal-card {
+  position: relative;
+  width: min(820px, calc(100vw - 48px));
+  max-width: calc(100vw - 48px);
+  max-height: calc(100vh - 48px);
+  margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 26px;
+  box-shadow: 0 26px 70px rgba(15, 23, 42, 0.28);
+  border: 1px solid #e8eef5;
+}
+
+.incident-create-modal {
+  width: min(920px, calc(100vw - 56px));
+  max-width: calc(100vw - 56px);
+  max-height: calc(100vh - 56px);
+  display: flex;
+  flex-direction: column;
+  padding: 30px 32px;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e8eef5;
+  border-radius: 28px;
+  box-shadow: 0 28px 80px rgba(15, 23, 42, 0.3);
+}
+
+.incident-create-modal__header {
+  flex-shrink: 0;
+  margin: 0 0 20px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid #e8eef5;
+  background: #ffffff;
+}
+
+.incident-create-form {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.incident-create-form__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 8px;
+}
+
+.incident-create-form__body .row.g-3 {
+  row-gap: 20px;
+}
+
+.incident-create-modal .form-label {
+  font-weight: 900;
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+.incident-create-modal .form-control,
+.incident-create-modal .form-select {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid #d8e2ef;
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.incident-create-modal textarea.form-control {
+  min-height: 190px;
+  max-height: 240px;
+  resize: vertical;
+}
+
+.incident-create-modal input[type="file"] {
+  padding: 10px 12px;
+}
+
+.incident-create-form__actions {
+  flex-shrink: 0;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid #e8eef5;
+  background: #ffffff;
+}
+
+.reservation-form-modal {
+  width: min(700px, calc(100vw - 48px));
+}
+
+
+/* ============================================
+   USER DASHBOARD - RESERVAS
+   ============================================ */
+
+.reservations-system {
+  margin-top: 0;
+}
+
+.reservations-calendar-layout {
+  display: grid;
+  grid-template-columns: 1.15fr 0.9fr;
+  gap: 22px;
+  align-items: start;
+}
+
+.reservations-calendar-card,
+.reservations-detail-card {
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #e8eef5;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.reservations-calendar-card__header {
+  margin-bottom: 12px;
+}
+
+.reservations-calendar-card__header h3,
+.reservations-detail-card__header h3 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.reservations-calendar-card__header p,
+.reservations-detail-card__header p {
+  margin: 0 0 10px;
+  color: #64748b;
+}
+
+.reservations-detail-card__header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.reservations-detail-card__icon {
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.reservations-empty-day {
+  padding: 16px;
+  margin-bottom: 14px;
+  border-radius: 16px;
+  border: 1px dashed #cbd5e1;
+  background: #f8fbff;
+}
+
+.reservations-empty-day strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #0f172a;
+}
+
+.reservations-empty-day p {
+  margin: 0;
+  color: #64748b;
+}
+
+.reservations-day-list {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.reservation-day-item {
+  border-radius: 16px;
+  border: 1px solid #e8eef5;
+  background: #ffffff;
+  padding: 14px 16px;
+}
+
+.reservation-day-item__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.reservation-day-item p {
+  margin: 0 0 8px;
+  color: #475569;
+}
+
+.reservation-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.reservation-status--pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.reservation-status--approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.reservation-status--rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.reservation-status--cancelled {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.reservations-main-action {
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+
+/* ============================================
+   RESERVAS - LEYENDA
+   ============================================ */
+
+.reservation-calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  margin-top: 12px;
+}
+
+.reservation-calendar-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.reservation-calendar-legend__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  display: inline-block;
+  flex-shrink: 0;
+  border: 2px solid transparent;
+}
+
+.reservation-calendar-legend__dot--today {
+  background: #d2e5fd;
+}
+
+.reservation-calendar-legend__dot--selected {
+  background: #d8b4fe;
+  border-color: #a855f7;
+}
+
+.reservation-calendar-legend__dot--pending {
+  background: #fef3c7;
+}
+
+.reservation-calendar-legend__dot--approved {
+  background: #b4ffce;
+}
+
+
+/* ============================================
+   RESERVAS - CALENDARIO
+   ============================================ */
+
+.reservations-calendar-card .react-calendar {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+}
+
+.reservations-calendar-card .react-calendar__navigation {
+  margin-bottom: 10px;
+  height: 34px;
+}
+
+.reservations-calendar-card .react-calendar__navigation button {
+  min-width: 44px;
+  min-height: 34px;
+  background: transparent;
+  color: #18213c;
+  font-size: 0.95rem;
+  font-weight: 800;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.reservations-calendar-card .react-calendar__navigation button:hover {
+  background: rgba(99, 102, 241, 0.08);
+}
+
+.reservations-calendar-card .react-calendar__month-view__weekdays {
+  text-transform: lowercase;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.reservations-calendar-card
+  .react-calendar__month-view__weekdays__weekday {
+  padding: 4px 0;
+  text-align: center;
+}
+
+.reservations-calendar-card
+  .react-calendar__month-view__weekdays__weekday abbr {
+  text-decoration: none;
+}
+
+.reservations-calendar-card .react-calendar__tile {
+  position: relative;
+  min-height: 48px;
+  padding: 10px 6px;
+  border-radius: 14px;
+  border: 2px solid transparent;
+  background: #ffffff;
+  color: #1f2937;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.reservations-calendar-card .react-calendar__tile:hover {
+  background: #f3f4f6;
+  border-color: transparent;
+}
+
+.reservations-calendar-card .react-calendar__tile--now {
+  background: #dbeafe !important;
+  color: #1e3a8a !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.reservations-calendar-card .react-calendar__tile--active,
+.reservations-calendar-card .react-calendar__tile--active:hover,
+.reservations-calendar-card .react-calendar__tile--active:focus {
+  background: #d8b4fe !important;
+  color: #5b178a !important;
+  border: 2px solid #7c3aed !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.reservations-calendar-card .reservation-calendar-day--pending {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.reservations-calendar-card .reservation-calendar-day--approved {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.reservations-calendar-card
+  .reservation-calendar-day--pending.react-calendar__tile--active,
+.reservations-calendar-card
+  .reservation-calendar-day--approved.react-calendar__tile--active {
+  background: #d8b4fe !important;
+  color: #5b178a !important;
+  border: 2px solid #7c3aed !important;
+}
+
+.reservation-calendar-badge {
+  position: absolute;
+  bottom: 4px;
+  right: 6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* ============================================
+   RESPONSIVE USER DASHBOARD
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .incidents-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 980px) {
+  .reservations-calendar-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .dashboard-header-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .user-app-header {
+    --logo-left: 105px;
+    height: 96px;
+    min-height: 96px;
+    padding: 0 18px;
+    grid-template-columns: 72px 1fr 80px;
+  }
+
+  .user-app-header__left {
+    width: 72px;
+    min-width: 72px;
+  }
+
+  .user-app-home-btn {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    border-radius: 17px;
+  }
+
+  .user-app-brand__logo-block,
+  .user-app-brand__logo-block img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .user-app-brand span {
+    font-size: 1.35rem;
+    max-width: calc(100% - 300px);
+  }
+
+  .user-profile-menu__trigger {
+    min-width: auto;
+    height: 58px;
+    padding: 10px 12px;
+    border-radius: 18px;
+  }
+
+  .user-profile-menu__avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+
+  .user-profile-menu__text {
+    display: none;
+  }
+
+  .user-dashboard-v2__content {
+    height: calc(100% - 96px);
+    padding: 18px 18px 115px;
+  }
+
+  .user-home-v2__center {
+    min-height: calc(100% - 96px);
+  }
+
+  .user-bottom-nav {
+    bottom: 18px;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .user-bottom-nav--four .user-bottom-nav__item {
+    min-width: 92px;
+    font-size: 0.76rem;
+  }
+
+  .user-home-v2__buttons {
+    gap: 20px;
+  }
+
+  .user-circle-access {
+    width: 160px;
+    height: 160px;
+  }
+
+  .admin-modal-backdrop {
+    padding: 18px;
+  }
+
+  .incident-create-modal {
+    width: calc(100vw - 36px);
+    max-width: calc(100vw - 36px);
+    max-height: calc(100vh - 36px);
+    padding: 24px;
+    border-radius: 24px;
+  }
+
+  .incident-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .user-announcement-card {
+    grid-template-columns: 1fr;
+  }
+
+  .user-announcement-card__media,
+  .user-announcement-card__media img,
+  .user-announcement-card__placeholder {
+    min-height: 180px;
+  }
+}
+
+@media (max-width: 700px) {
+  .incidents-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-modal-backdrop {
+    padding: 12px;
+  }
+
+  .incident-create-modal {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+    padding: 20px;
+    border-radius: 20px;
+  }
+
+  .incident-create-form__actions {
+    flex-direction: column;
+  }
+
+  .incident-create-form__actions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 560px) {
+  .dashboard-panel {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .user-app-header {
+    --logo-left: 76px;
+    height: 82px;
+    min-height: 82px;
+    padding: 0 12px;
+    grid-template-columns: 52px 1fr 52px;
+  }
+
+  .user-app-header__left {
+    width: 52px;
+    min-width: 52px;
+  }
+
+  .user-app-home-btn {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 14px;
+  }
+
+  .user-app-brand__logo-block,
+  .user-app-brand__logo-block img {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    max-width: 44px;
+    max-height: 44px;
+  }
+
+  .user-app-brand span {
+    font-size: 0.95rem;
+    max-width: 145px;
+  }
+
+  .user-profile-menu__trigger {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 14px;
+  }
+
+  .user-profile-menu__avatar {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+  }
+
+  .user-dashboard-v2__content {
+    height: calc(100% - 82px);
+    padding: 14px 14px 105px;
+  }
+
+  .user-home-v2__center {
+    min-height: calc(100% - 82px);
+  }
+
+  .user-bottom-nav {
+    bottom: 12px;
+    width: calc(100% - 24px);
+    max-width: none;
+    justify-content: space-between;
+    border-radius: 20px;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .user-bottom-nav--four .user-bottom-nav__item {
+    min-width: 0;
+    flex: 1;
+    font-size: 0.66rem;
+    height: 54px;
+  }
+
+  .user-bottom-nav__item svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .user-home-v2__buttons--four {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .user-circle-access {
+    width: 165px;
+    height: 165px;
+  }
+
+  .admin-modal-backdrop {
+    padding: 10px;
+  }
+
+  .admin-modal-card,
+  .incident-create-modal {
+    width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+    padding: 18px;
+    border-radius: 18px;
+  }
+
+  .reservations-calendar-card,
+  .reservations-detail-card {
+    padding: 16px;
+  }
+}
