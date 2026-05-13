@@ -390,6 +390,12 @@ export default function CalendarReservations({ mode = "user" }) {
             </div>
 
             <Calendar
+              locale="es-ES"
+              formatShortWeekday={(locale, date) =>
+                date
+                  .toLocaleDateString("es-ES", { weekday: "short" })
+                  .replace(".", "")
+              }
               value={selectedDate}
               onChange={handleDateSelect}
               onClickDay={handleDateSelect}
