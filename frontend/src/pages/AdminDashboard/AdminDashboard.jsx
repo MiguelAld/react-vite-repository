@@ -27,8 +27,7 @@ import {
   updateAnnouncement,
   deleteAnnouncement,
 } from "../../services/api";
-
-import "../../assets/dashboard.css";
+import "./AdminDashboard.css";
 
 import {
   Pencil,
