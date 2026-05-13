@@ -1,6 +1,6 @@
 import LoginForm from "../../components/LoginForm/LoginForm";
-import logoComunidad from "../../assets/logo-comunidad.png";
-import bannerComunidad from "../../assets/banner-comunidad.png";
+import logoComunidad from "../../assets/images/logo-comunidad.png";
+import bannerComunidad from "../../assets/images/banner-comunidad.png";
 import "./Login.css";
 
 export default function Login() {

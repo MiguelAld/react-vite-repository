@@ -16,9 +16,9 @@ import {
   createReservation,
   createAdminReservation,
   updateReservationStatus,
-} from "../services/api";
+} from "../../services/api";
 
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function CalendarReservations({ mode = "user" }) {
   const { user } = useAuth();

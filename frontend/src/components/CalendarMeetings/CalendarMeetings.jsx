@@ -6,8 +6,8 @@ import {
   createMeeting,
   updateMeeting,
   deleteMeeting,
-} from "../services/api";
-import { useAuth } from "../context/AuthContext";
+} from "../../services/api";
+import { useAuth } from "../../context/AuthContext";
 import { Edit2, Trash2, X, Plus } from "lucide-react";
 
 export default function CalendarMeetings() {

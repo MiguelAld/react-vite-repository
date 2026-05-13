@@ -25,9 +25,9 @@ import {
 
 import { useAuth } from "../../context/AuthContext";
 import "./UserDashboard.css";
-import headerBg from "../../assets/header-bg.png";
-import logoComunidad from "../../assets/logo-comunidad.png";
-import CalendarReservations from "../../components/CalendarReservations";
+import headerBg from "../../assets/images/header-bg.png";
+import logoComunidad from "../../assets/images/logo-comunidad.png";
+import CalendarReservations from "../../components/CalendarReservations/CalendarReservations";
 
 export default function UserDashboard() {
   const [activeSection, setActiveSection] = useState("inicio");

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import CalendarMeetings from "../../components/CalendarMeetings";
-import CalendarReservations from "../../components/CalendarReservations";
+import CalendarMeetings from "../../components/CalendarMeetings/CalendarMeetings";
+import CalendarReservations from "../../components/CalendarReservations/CalendarReservations";
 import { useAuth } from "../../context/AuthContext";
-import logoComunidad from "../../assets/logo-comunidad.png";
+import logoComunidad from "../../assets/images/logo-comunidad.png";
 import "./AdminDashboard.css";
 
 import {
