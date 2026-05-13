@@ -1,4 +1,3 @@
-import Background from "../../components/Background/Background";
 import LoginForm from "../../components/LoginForm/LoginForm";
 import logoComunidad from "../../assets/logo-comunidad.png";
 import bannerComunidad from "../../assets/banner-comunidad.png";
@@ -7,7 +6,6 @@ import "./Login.css";
 export default function Login() {
   return (
     <div className="login-page">
-      <Background />
 
       <div className="login-overlay" />
 

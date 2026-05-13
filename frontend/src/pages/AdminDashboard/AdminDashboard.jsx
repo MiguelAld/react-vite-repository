@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import SidebarAdmin from "../../components/layout/SidebarAdmin";
+import { useNavigate } from "react-router-dom";
 import CalendarMeetings from "../../components/CalendarMeetings";
 import CalendarReservations from "../../components/CalendarReservations";
 import { useAuth } from "../../context/AuthContext";
+import logoComunidad from "../../assets/logo-comunidad.png";
+import "./AdminDashboard.css";
 
 import {
   getUsers,
@@ -27,7 +29,6 @@ import {
   updateAnnouncement,
   deleteAnnouncement,
 } from "../../services/api";
-import "./AdminDashboard.css";
 
 import {
   Pencil,
@@ -37,7 +38,148 @@ import {
   Megaphone,
   Image as ImageIcon,
   Edit3,
+  Wrench,
+  CalendarDays,
+  CalendarCheck,
+  Users,
+  MapPinned,
+  LogOut,
 } from "lucide-react";
+
+function AdminSidebar({
+  activeSection,
+  setActiveSection,
+  userName,
+  userDni,
+  userHouse,
+}) {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
+  return (
+    <aside className="sidebar-user">
+      <div className="sidebar-user__top">
+        <div className="sidebar-user__brand">
+          <img
+            src={logoComunidad}
+            alt="Logo Jardines de las Ramblas"
+            className="sidebar-user__brand-logo"
+          />
+
+          <h2 className="sidebar-user__logo">Jardines de las Ramblas</h2>
+        </div>
+
+        <nav className="sidebar-user__nav">
+          <button
+            type="button"
+            className={`sidebar-user__link ${
+              activeSection === "comunicados" || activeSection === "reportes"
+                ? "active"
+                : ""
+            }`}
+            onClick={() => setActiveSection("comunicados")}
+          >
+            <Megaphone size={18} />
+            <span>Comunicados</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-user__link ${
+              activeSection === "incidencias" ? "active" : ""
+            }`}
+            onClick={() => setActiveSection("incidencias")}
+          >
+            <Wrench size={18} />
+            <span>Incidencias</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-user__link ${
+              activeSection === "zonas" ? "active" : ""
+            }`}
+            onClick={() => setActiveSection("zonas")}
+          >
+            <MapPinned size={18} />
+            <span>Zonas Públicas</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-user__link ${
+              activeSection === "reuniones" ? "active" : ""
+            }`}
+            onClick={() => setActiveSection("reuniones")}
+          >
+            <CalendarDays size={18} />
+            <span>Reuniones</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-user__link ${
+              activeSection === "reservas" ? "active" : ""
+            }`}
+            onClick={() => setActiveSection("reservas")}
+          >
+            <CalendarCheck size={18} />
+            <span>Reservas</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-user__link ${
+              activeSection === "documentos" ? "active" : ""
+            }`}
+            onClick={() => setActiveSection("documentos")}
+          >
+            <FileText size={18} />
+            <span>Documentos</span>
+          </button>
+
+          <button
+            type="button"
+            className={`sidebar-user__link ${
+              activeSection === "usuarios" ? "active" : ""
+            }`}
+            onClick={() => setActiveSection("usuarios")}
+          >
+            <Users size={18} />
+            <span>Usuarios</span>
+          </button>
+        </nav>
+      </div>
+
+      <div className="sidebar-user__bottom">
+        <div className="sidebar-user__profile">
+          <div className="sidebar-user__avatar">{userName?.[0] || "A"}</div>
+
+          <div className="sidebar-user__info">
+            <strong>{userName}</strong>
+            <span>DNI: {userDni}</span>
+            <span>Propiedad: {userHouse}</span>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="btn btn-sm btn-outline-danger w-100 mt-3"
+          title="Cerrar sesión"
+        >
+          <LogOut size={16} />
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+  );
+}
 
 export default function AdminDashboard() {
   const { user } = useAuth();
@@ -316,17 +458,17 @@ export default function AdminDashboard() {
     setShowUserModal(true);
   };
 
-  const openEditModal = (user) => {
-    setEditingUser(user);
+  const openEditModal = (selectedUser) => {
+    setEditingUser(selectedUser);
     setUserForm({
-      dni: user.dni || "",
-      name: user.name || "",
-      apellidos: user.apellidos || "",
-      phone: user.phone || "",
-      email: user.email || "",
-      portal: user.portal || "",
-      vivienda: user.vivienda || "",
-      role: user.role || "VECINO",
+      dni: selectedUser.dni || "",
+      name: selectedUser.name || "",
+      apellidos: selectedUser.apellidos || "",
+      phone: selectedUser.phone || "",
+      email: selectedUser.email || "",
+      portal: selectedUser.portal || "",
+      vivienda: selectedUser.vivienda || "",
+      role: selectedUser.role || "VECINO",
     });
     setShowUserModal(true);
   };
@@ -345,7 +487,9 @@ export default function AdminDashboard() {
         const updated = await updateUser(editingUser.id, userForm);
 
         setUsers((prev) =>
-          prev.map((u) => (u.id === editingUser.id ? updated : u))
+          prev.map((currentUser) =>
+            currentUser.id === editingUser.id ? updated : currentUser
+          )
         );
 
         setEditingUser(updated);
@@ -366,10 +510,13 @@ export default function AdminDashboard() {
       const response = await updateUserActive(userId, !currentState);
 
       setUsers((prev) =>
-        prev.map((u) =>
-          u.id === userId
-            ? { ...u, is_active: response.user?.is_active ?? !currentState }
-            : u
+        prev.map((currentUser) =>
+          currentUser.id === userId
+            ? {
+                ...currentUser,
+                is_active: response.user?.is_active ?? !currentState,
+              }
+            : currentUser
         )
       );
 
@@ -476,10 +623,10 @@ export default function AdminDashboard() {
       const response = await updateZoneActive(zoneId, !currentState);
 
       setZones((prev) =>
-        prev.map((z) =>
-          z.id === zoneId
-            ? { ...z, is_active: response.zone?.is_active ?? !currentState }
-            : z
+        prev.map((zone) =>
+          zone.id === zoneId
+            ? { ...zone, is_active: response.zone?.is_active ?? !currentState }
+            : zone
         )
       );
     } catch (err) {
@@ -488,9 +635,9 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleDeleteZone = async (zoneId, zoneName) => {
+  const handleDeleteZone = async (zoneId, selectedZoneName) => {
     const ok = window.confirm(
-      `¿Seguro que quieres eliminar la zona "${zoneName}"? Esta acción no se puede deshacer.`
+      `¿Seguro que quieres eliminar la zona "${selectedZoneName}"? Esta acción no se puede deshacer.`
     );
 
     if (!ok) return;
@@ -640,7 +787,9 @@ export default function AdminDashboard() {
         );
 
         setAnnouncements((prev) =>
-          prev.map((a) => (a.id === editingAnnouncement.id ? updated : a))
+          prev.map((announcement) =>
+            announcement.id === editingAnnouncement.id ? updated : announcement
+          )
         );
       } else {
         const created = await createAnnouncement(payload);
@@ -663,7 +812,9 @@ export default function AdminDashboard() {
 
     try {
       await deleteAnnouncement(announcementId, user.id);
-      setAnnouncements((prev) => prev.filter((a) => a.id !== announcementId));
+      setAnnouncements((prev) =>
+        prev.filter((announcement) => announcement.id !== announcementId)
+      );
     } catch (err) {
       console.error(err);
       alert(err.message || "Error eliminando comunicado");
@@ -676,21 +827,21 @@ export default function AdminDashboard() {
     const filter = userSearchFilter.toLowerCase();
 
     return users.filter(
-      (user) =>
-        user.name?.toLowerCase().includes(filter) ||
-        user.apellidos?.toLowerCase().includes(filter) ||
-        user.dni?.toLowerCase().includes(filter) ||
-        user.email?.toLowerCase().includes(filter) ||
-        user.phone?.toLowerCase().includes(filter) ||
-        user.portal?.toLowerCase().includes(filter) ||
-        user.vivienda?.toLowerCase().includes(filter) ||
-        user.role?.toLowerCase().includes(filter)
+      (currentUser) =>
+        currentUser.name?.toLowerCase().includes(filter) ||
+        currentUser.apellidos?.toLowerCase().includes(filter) ||
+        currentUser.dni?.toLowerCase().includes(filter) ||
+        currentUser.email?.toLowerCase().includes(filter) ||
+        currentUser.phone?.toLowerCase().includes(filter) ||
+        currentUser.portal?.toLowerCase().includes(filter) ||
+        currentUser.vivienda?.toLowerCase().includes(filter) ||
+        currentUser.role?.toLowerCase().includes(filter)
     );
   };
 
   return (
     <div className="dashboard-shell">
-      <SidebarAdmin
+      <AdminSidebar
         activeSection={section}
         setActiveSection={setSection}
         userName={adminFullName}
@@ -713,7 +864,7 @@ export default function AdminDashboard() {
                   <p className="summary-number">
                     {incidentsLoading
                       ? "..."
-                      : incidents.filter((i) => i.status === "PENDIENTE")
+                      : incidents.filter((incident) => incident.status === "PENDIENTE")
                           .length}
                   </p>
                 </div>
@@ -731,7 +882,7 @@ export default function AdminDashboard() {
                     {meetingsLoading
                       ? "..."
                       : meetings.filter(
-                          (m) => new Date(m.meeting_date) > new Date()
+                          (meeting) => new Date(meeting.meeting_date) > new Date()
                         ).length}
                   </p>
                 </div>
@@ -818,15 +969,12 @@ export default function AdminDashboard() {
                             <div className="announcement-admin-card__meta">
                               <span>
                                 <strong>Autor:</strong>{" "}
-                                {getFullName(announcement.creator) ||
-                                  "Administración"}
+                                {getFullName(announcement.creator) || "Administración"}
                               </span>
                               <span>
                                 <strong>Fecha:</strong>{" "}
                                 {announcement.created_at
-                                  ? new Date(
-                                      announcement.created_at
-                                    ).toLocaleDateString("es-ES")
+                                  ? new Date(announcement.created_at).toLocaleDateString("es-ES")
                                   : "—"}
                               </span>
                             </div>
@@ -834,9 +982,7 @@ export default function AdminDashboard() {
                             <div className="announcement-admin-card__actions">
                               <button
                                 className="btn btn-sm btn-outline-primary"
-                                onClick={() =>
-                                  openEditAnnouncementModal(announcement)
-                                }
+                                onClick={() => openEditAnnouncementModal(announcement)}
                                 type="button"
                               >
                                 <Edit3 size={14} className="me-1" />
@@ -870,17 +1016,11 @@ export default function AdminDashboard() {
                   <div className="admin-modal-card admin-modal-card--xl">
                     <div className="dashboard-header-row">
                       <div>
-                        <h2
-                          className="dashboard-title"
-                          style={{ fontSize: "1.5rem" }}
-                        >
-                          {editingAnnouncement
-                            ? "Editar comunicado"
-                            : "Nuevo comunicado"}
+                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
+                          {editingAnnouncement ? "Editar comunicado" : "Nuevo comunicado"}
                         </h2>
                         <p className="dashboard-subtitle mb-0">
-                          Configura el comunicado y revisa la vista previa antes
-                          de publicarlo.
+                          Configura el comunicado y revisa la vista previa antes de publicarlo.
                         </p>
                       </div>
 
@@ -937,27 +1077,21 @@ export default function AdminDashboard() {
                         </div>
 
                         <div className="mb-3">
-                          <label className="form-label">
-                            Imagen del comunicado
-                          </label>
+                          <label className="form-label">Imagen del comunicado</label>
                           <input
                             type="file"
                             className="form-control"
                             accept="image/*"
                             onChange={(e) =>
-                              setAnnouncementImageFile(
-                                e.target.files?.[0] || null
-                              )
+                              setAnnouncementImageFile(e.target.files?.[0] || null)
                             }
                           />
 
-                          {editingAnnouncement?.image_url &&
-                            !announcementImageFile && (
-                              <small className="text-muted">
-                                Este comunicado ya tiene una imagen. Si
-                                seleccionas otra, se sustituirá.
-                              </small>
-                            )}
+                          {editingAnnouncement?.image_url && !announcementImageFile && (
+                            <small className="text-muted">
+                              Este comunicado ya tiene una imagen. Si seleccionas otra, se sustituirá.
+                            </small>
+                          )}
                         </div>
 
                         <div className="d-flex gap-2 justify-content-end">
@@ -969,17 +1103,13 @@ export default function AdminDashboard() {
                             Cancelar
                           </button>
                           <button type="submit" className="btn btn-success">
-                            {editingAnnouncement
-                              ? "Guardar cambios"
-                              : "Publicar comunicado"}
+                            {editingAnnouncement ? "Guardar cambios" : "Publicar comunicado"}
                           </button>
                         </div>
                       </form>
 
                       <div className="announcement-preview-panel">
-                        <h4 className="announcement-preview-panel__title">
-                          Vista previa
-                        </h4>
+                        <h4 className="announcement-preview-panel__title">Vista previa</h4>
 
                         <article
                           className={`announcement-preview-card announcement-preview-card--${announcementForm.type}`}
@@ -1003,16 +1133,11 @@ export default function AdminDashboard() {
                               <span
                                 className={`announcement-type-badge announcement-type-badge--${announcementForm.type}`}
                               >
-                                {getAnnouncementTypeLabel(
-                                  announcementForm.type
-                                )}
+                                {getAnnouncementTypeLabel(announcementForm.type)}
                               </span>
                             </div>
 
-                            <h3>
-                              {announcementForm.title ||
-                                "Título del comunicado"}
-                            </h3>
+                            <h3>{announcementForm.title || "Título del comunicado"}</h3>
                             <p>
                               {announcementForm.description ||
                                 "Aquí se verá la descripción del comunicado para el vecino."}
@@ -1020,9 +1145,7 @@ export default function AdminDashboard() {
 
                             <div className="announcement-preview-card__meta">
                               <span>{adminFullName}</span>
-                              <span>
-                                {new Date().toLocaleDateString("es-ES")}
-                              </span>
+                              <span>{new Date().toLocaleDateString("es-ES")}</span>
                             </div>
                           </div>
                         </article>
@@ -1040,8 +1163,7 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Gestión de incidencias</h1>
                   <p className="dashboard-subtitle">
-                    Aquí puedes revisar quién envió cada incidencia, consultar
-                    su ficha completa y cambiar su estado.
+                    Aquí puedes revisar quién envió cada incidencia, consultar su ficha completa y cambiar su estado.
                   </p>
                 </div>
               </div>
@@ -1051,27 +1173,21 @@ export default function AdminDashboard() {
                   <div className="dashboard-card summary-accent-yellow">
                     <h5>Pendientes</h5>
                     <p className="summary-number">
-                      {
-                        incidents.filter((i) => i.status === "PENDIENTE")
-                          .length
-                      }
+                      {incidents.filter((incident) => incident.status === "PENDIENTE").length}
                     </p>
                   </div>
 
                   <div className="dashboard-card summary-accent-blue">
                     <h5>En proceso</h5>
                     <p className="summary-number">
-                      {
-                        incidents.filter((i) => i.status === "EN_PROCESO")
-                          .length
-                      }
+                      {incidents.filter((incident) => incident.status === "EN_PROCESO").length}
                     </p>
                   </div>
 
                   <div className="dashboard-card summary-accent-green">
                     <h5>Resueltas</h5>
                     <p className="summary-number">
-                      {incidents.filter((i) => i.status === "RESUELTA").length}
+                      {incidents.filter((incident) => incident.status === "RESUELTA").length}
                     </p>
                   </div>
                 </div>
@@ -1079,16 +1195,12 @@ export default function AdminDashboard() {
 
               {incidentsLoading && <p>Cargando incidencias...</p>}
 
-              {incidentsError && (
-                <div className="alert alert-danger">{incidentsError}</div>
-              )}
+              {incidentsError && <div className="alert alert-danger">{incidentsError}</div>}
 
               {!incidentsLoading && !incidentsError && (
                 <>
                   {incidents.length === 0 ? (
-                    <p className="dashboard-empty">
-                      No hay incidencias registradas.
-                    </p>
+                    <p className="dashboard-empty">No hay incidencias registradas.</p>
                   ) : (
                     <div className="incidents-grid">
                       {incidents.map((incident) => (
@@ -1105,20 +1217,16 @@ export default function AdminDashboard() {
                                   : "text-bg-success"
                               }`}
                             >
-                              {incident.status === "EN_PROCESO"
-                                ? "EN PROCESO"
-                                : incident.status}
+                              {incident.status === "EN_PROCESO" ? "EN PROCESO" : incident.status}
                             </span>
                           </div>
 
                           <div className="incident-card__meta">
                             <p>
-                              <strong>Creado por:</strong>{" "}
-                              {getFullName(incident.creator)}
+                              <strong>Creado por:</strong> {getFullName(incident.creator)}
                             </p>
                             <p>
-                              <strong>Fecha y hora:</strong>{" "}
-                              {formatDateTime(incident.created_at)}
+                              <strong>Fecha y hora:</strong> {formatDateTime(incident.created_at)}
                             </p>
                           </div>
 
@@ -1152,10 +1260,7 @@ export default function AdminDashboard() {
                   <div className="admin-modal-card incident-detail-modal">
                     <div className="dashboard-header-row">
                       <div>
-                        <h2
-                          className="dashboard-title"
-                          style={{ fontSize: "1.5rem" }}
-                        >
+                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
                           Detalle de incidencia
                         </h2>
                         <p className="dashboard-subtitle mb-0">
@@ -1237,16 +1342,9 @@ export default function AdminDashboard() {
                           <button
                             type="button"
                             className={`incident-status-btn incident-status-btn--pending ${
-                              selectedIncident.status === "PENDIENTE"
-                                ? "active"
-                                : ""
+                              selectedIncident.status === "PENDIENTE" ? "active" : ""
                             }`}
-                            onClick={() =>
-                              handleStatusChange(
-                                selectedIncident.id,
-                                "PENDIENTE"
-                              )
-                            }
+                            onClick={() => handleStatusChange(selectedIncident.id, "PENDIENTE")}
                           >
                             Pendiente
                           </button>
@@ -1254,16 +1352,9 @@ export default function AdminDashboard() {
                           <button
                             type="button"
                             className={`incident-status-btn incident-status-btn--progress ${
-                              selectedIncident.status === "EN_PROCESO"
-                                ? "active"
-                                : ""
+                              selectedIncident.status === "EN_PROCESO" ? "active" : ""
                             }`}
-                            onClick={() =>
-                              handleStatusChange(
-                                selectedIncident.id,
-                                "EN_PROCESO"
-                              )
-                            }
+                            onClick={() => handleStatusChange(selectedIncident.id, "EN_PROCESO")}
                           >
                             En proceso
                           </button>
@@ -1271,16 +1362,9 @@ export default function AdminDashboard() {
                           <button
                             type="button"
                             className={`incident-status-btn incident-status-btn--resolved ${
-                              selectedIncident.status === "RESUELTA"
-                                ? "active"
-                                : ""
+                              selectedIncident.status === "RESUELTA" ? "active" : ""
                             }`}
-                            onClick={() =>
-                              handleStatusChange(
-                                selectedIncident.id,
-                                "RESUELTA"
-                              )
-                            }
+                            onClick={() => handleStatusChange(selectedIncident.id, "RESUELTA")}
                           >
                             Resuelta
                           </button>
@@ -1309,16 +1393,12 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Zonas Públicas</h1>
                   <p className="dashboard-subtitle">
-                    Crea, ordena, activa, desactiva o elimina las zonas que
-                    verán los usuarios al crear incidencias.
+                    Crea, ordena, activa, desactiva o elimina las zonas que verán los usuarios al crear incidencias.
                   </p>
                 </div>
               </div>
 
-              <form
-                onSubmit={handleCreateZone}
-                className="dashboard-block mb-4"
-              >
+              <form onSubmit={handleCreateZone} className="dashboard-block mb-4">
                 <div className="row g-3 align-items-end">
                   <div className="col-md-9">
                     <label className="form-label">Nueva zona</label>
@@ -1342,9 +1422,7 @@ export default function AdminDashboard() {
 
               {zonesLoading && <p>Cargando zonas...</p>}
 
-              {zonesError && (
-                <div className="alert alert-danger">{zonesError}</div>
-              )}
+              {zonesError && <div className="alert alert-danger">{zonesError}</div>}
 
               {!zonesLoading && !zonesError && (
                 <>
@@ -1360,9 +1438,7 @@ export default function AdminDashboard() {
                             {zone.is_active ? (
                               <span className="badge bg-success">ACTIVA</span>
                             ) : (
-                              <span className="badge bg-secondary">
-                                INACTIVA
-                              </span>
+                              <span className="badge bg-secondary">INACTIVA</span>
                             )}
                           </div>
 
@@ -1390,13 +1466,9 @@ export default function AdminDashboard() {
                             <button
                               type="button"
                               className={`btn btn-sm ${
-                                zone.is_active
-                                  ? "btn-outline-danger"
-                                  : "btn-outline-success"
+                                zone.is_active ? "btn-outline-danger" : "btn-outline-success"
                               }`}
-                              onClick={() =>
-                                handleToggleZoneActive(zone.id, zone.is_active)
-                              }
+                              onClick={() => handleToggleZoneActive(zone.id, zone.is_active)}
                             >
                               {zone.is_active ? "Desactivar" : "Activar"}
                             </button>
@@ -1404,9 +1476,7 @@ export default function AdminDashboard() {
                             <button
                               type="button"
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() =>
-                                handleDeleteZone(zone.id, zone.name)
-                              }
+                              onClick={() => handleDeleteZone(zone.id, zone.name)}
                               title="Eliminar zona"
                             >
                               <Trash2 size={16} />
@@ -1425,8 +1495,7 @@ export default function AdminDashboard() {
             <section className="dashboard-panel">
               <h1 className="dashboard-title">Reuniones</h1>
               <p className="dashboard-subtitle">
-                Crea y organiza reuniones para la comunidad con el calendario
-                interactivo.
+                Crea y organiza reuniones para la comunidad con el calendario interactivo.
               </p>
 
               <CalendarMeetings />
@@ -1437,12 +1506,9 @@ export default function AdminDashboard() {
             <section className="dashboard-panel">
               <div className="dashboard-header-row">
                 <div>
-                  <h1 className="dashboard-title">
-                    Reservas del salón social
-                  </h1>
+                  <h1 className="dashboard-title">Reservas del salón social</h1>
                   <p className="dashboard-subtitle">
-                    Gestiona las solicitudes de reserva, aprueba o rechaza
-                    peticiones y controla qué días están ocupados.
+                    Gestiona las solicitudes de reserva, aprueba o rechaza peticiones y controla qué días están ocupados.
                   </p>
                 </div>
               </div>
@@ -1457,16 +1523,12 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Documentos</h1>
                   <p className="dashboard-subtitle">
-                    Aquí puedes subir PDFs, ver los documentos publicados y
-                    eliminarlos.
+                    Aquí puedes subir PDFs, ver los documentos publicados y eliminarlos.
                   </p>
                 </div>
               </div>
 
-              <form
-                onSubmit={handleUploadDocument}
-                className="dashboard-block mb-4"
-              >
+              <form onSubmit={handleUploadDocument} className="dashboard-block mb-4">
                 <div className="row g-3 align-items-end">
                   <div className="col-md-5">
                     <label className="form-label">Título del documento</label>
@@ -1487,9 +1549,7 @@ export default function AdminDashboard() {
                       type="file"
                       className="form-control"
                       accept="application/pdf"
-                      onChange={(e) =>
-                        setDocumentFile(e.target.files?.[0] || null)
-                      }
+                      onChange={(e) => setDocumentFile(e.target.files?.[0] || null)}
                       required
                     />
                   </div>
@@ -1505,16 +1565,12 @@ export default function AdminDashboard() {
 
               {documentsLoading && <p>Cargando documentos...</p>}
 
-              {documentsError && (
-                <div className="alert alert-danger">{documentsError}</div>
-              )}
+              {documentsError && <div className="alert alert-danger">{documentsError}</div>}
 
               {!documentsLoading && !documentsError && (
                 <>
                   {documents.length === 0 ? (
-                    <p className="dashboard-empty">
-                      No hay documentos subidos todavía.
-                    </p>
+                    <p className="dashboard-empty">No hay documentos subidos todavía.</p>
                   ) : (
                     <div className="documents-grid">
                       {documents.map((doc) => (
@@ -1529,15 +1585,12 @@ export default function AdminDashboard() {
                               <strong>Archivo:</strong> {doc.original_name}
                             </p>
                             <p>
-                              <strong>Subido por:</strong>{" "}
-                              {getFullName(doc.uploader) || "Administración"}
+                              <strong>Subido por:</strong> {getFullName(doc.uploader) || "Administración"}
                             </p>
                             <p>
                               <strong>Fecha:</strong>{" "}
                               {doc.created_at
-                                ? new Date(doc.created_at).toLocaleDateString(
-                                    "es-ES"
-                                  )
+                                ? new Date(doc.created_at).toLocaleDateString("es-ES")
                                 : "—"}
                             </p>
                           </div>
@@ -1555,9 +1608,7 @@ export default function AdminDashboard() {
                             <button
                               type="button"
                               className="btn btn-sm btn-outline-danger"
-                              onClick={() =>
-                                handleDeleteDocument(doc.id, doc.title)
-                              }
+                              onClick={() => handleDeleteDocument(doc.id, doc.title)}
                             >
                               <Trash2 size={16} />
                             </button>
@@ -1577,21 +1628,18 @@ export default function AdminDashboard() {
                 <div>
                   <h1 className="dashboard-title">Usuarios</h1>
                   <p className="dashboard-subtitle">
-                    Aquí podrás ver, crear, editar y activar o desactivar
-                    vecinos y administradores.
+                    Aquí podrás ver, crear, editar y activar o desactivar vecinos y administradores.
                   </p>
                 </div>
 
-                <button className="btn btn-primary" onClick={openCreateModal}>
+                <button className="btn btn-primary" onClick={openCreateModal} type="button">
                   Nuevo usuario
                 </button>
               </div>
 
               {usersLoading && <p>Cargando usuarios...</p>}
 
-              {usersError && (
-                <div className="alert alert-danger">{usersError}</div>
-              )}
+              {usersError && <div className="alert alert-danger">{usersError}</div>}
 
               {!usersLoading && !usersError && (
                 <>
@@ -1627,35 +1675,27 @@ export default function AdminDashboard() {
                             </td>
                           </tr>
                         ) : (
-                          getFilteredUsers().map((user) => (
+                          getFilteredUsers().map((currentUser) => (
                             <tr
-                              key={user.id}
-                              className={
-                                !user.is_active ? "user-row-inactive" : ""
-                              }
+                              key={currentUser.id}
+                              className={!currentUser.is_active ? "user-row-inactive" : ""}
                             >
-                              <td>{user.dni}</td>
-                              <td>{user.name}</td>
-                              <td>{user.apellidos || "—"}</td>
-                              <td>{user.phone || "—"}</td>
-                              <td>{user.portal || "—"}</td>
-                              <td>{user.vivienda || "—"}</td>
+                              <td>{currentUser.dni}</td>
+                              <td>{currentUser.name}</td>
+                              <td>{currentUser.apellidos || "—"}</td>
+                              <td>{currentUser.phone || "—"}</td>
+                              <td>{currentUser.portal || "—"}</td>
+                              <td>{currentUser.vivienda || "—"}</td>
                               <td>
                                 <div className="user-role-state-wrap">
-                                  {user.role === "ADMIN" ? (
-                                    <span className="badge bg-dark">
-                                      ADMIN
-                                    </span>
+                                  {currentUser.role === "ADMIN" ? (
+                                    <span className="badge bg-dark">ADMIN</span>
                                   ) : (
-                                    <span className="badge bg-primary">
-                                      VECINO
-                                    </span>
+                                    <span className="badge bg-primary">VECINO</span>
                                   )}
 
-                                  {!user.is_active && (
-                                    <span className="user-inactive-badge">
-                                      INACTIVO
-                                    </span>
+                                  {!currentUser.is_active && (
+                                    <span className="user-inactive-badge">INACTIVO</span>
                                   )}
                                 </div>
                               </td>
@@ -1663,7 +1703,7 @@ export default function AdminDashboard() {
                                 <div className="user-action-buttons">
                                   <button
                                     className="btn btn-sm btn-outline-primary"
-                                    onClick={() => openEditModal(user)}
+                                    onClick={() => openEditModal(currentUser)}
                                     title="Editar usuario"
                                     type="button"
                                   >
@@ -1674,8 +1714,8 @@ export default function AdminDashboard() {
                                     className="btn btn-sm btn-outline-danger"
                                     onClick={() =>
                                       handleDeleteUser(
-                                        user.id,
-                                        getFullName(user)
+                                        currentUser.id,
+                                        getFullName(currentUser)
                                       )
                                     }
                                     title="Borrar usuario"
@@ -1699,10 +1739,7 @@ export default function AdminDashboard() {
                   <div className="admin-modal-card">
                     <div className="dashboard-header-row">
                       <div>
-                        <h2
-                          className="dashboard-title"
-                          style={{ fontSize: "1.5rem" }}
-                        >
+                        <h2 className="dashboard-title" style={{ fontSize: "1.5rem" }}>
                           {editingUser ? "Editar usuario" : "Nuevo usuario"}
                         </h2>
                         <p className="dashboard-subtitle mb-0">
@@ -1804,18 +1841,14 @@ export default function AdminDashboard() {
                             disabled={!userForm.portal}
                           >
                             <option value="">
-                              {userForm.portal
-                                ? "Selecciona vivienda"
-                                : "Primero selecciona portal"}
+                              {userForm.portal ? "Selecciona vivienda" : "Primero selecciona portal"}
                             </option>
 
-                            {(viviendasPorPortal[userForm.portal] || []).map(
-                              (vivienda) => (
-                                <option key={vivienda} value={vivienda}>
-                                  {vivienda}
-                                </option>
-                              )
-                            )}
+                            {(viviendasPorPortal[userForm.portal] || []).map((vivienda) => (
+                              <option key={vivienda} value={vivienda}>
+                                {vivienda}
+                              </option>
+                            ))}
                           </select>
                         </div>
 
@@ -1841,9 +1874,7 @@ export default function AdminDashboard() {
                             {editingUser.is_active ? (
                               <span className="badge bg-success">ACTIVO</span>
                             ) : (
-                              <span className="badge bg-secondary">
-                                INACTIVO
-                              </span>
+                              <span className="badge bg-secondary">INACTIVO</span>
                             )}
                           </div>
 
@@ -1855,10 +1886,7 @@ export default function AdminDashboard() {
                                 : "btn-outline-success"
                             }`}
                             onClick={() =>
-                              handleToggleUserActive(
-                                editingUser.id,
-                                editingUser.is_active
-                              )
+                              handleToggleUserActive(editingUser.id, editingUser.is_active)
                             }
                           >
                             {editingUser.is_active
