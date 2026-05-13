@@ -360,6 +360,36 @@ body,
   white-space: nowrap;
 }
 
+/* ============================================
+   SIDEBAR ADMIN - BADGES DE NOTIFICACIÓN
+   ============================================ */
+
+.sidebar-user__notification-badge {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 999px;
+  background: #ef4444;
+  color: #ffffff;
+
+  font-size: 0.72rem;
+  font-weight: 900;
+  line-height: 1;
+
+  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.28);
+}
+
+.sidebar-user__notification-badge--reservation {
+  background: #f59e0b;
+  box-shadow: 0 6px 14px rgba(245, 158, 11, 0.28);
+}
+
 
 /* ============================================
    3. INCIDENCIAS ADMIN

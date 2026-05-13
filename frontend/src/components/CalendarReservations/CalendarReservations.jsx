@@ -20,7 +20,7 @@ import {
 
 import { useAuth } from "../../context/AuthContext";
 
-export default function CalendarReservations({ mode = "user" }) {
+export default function CalendarReservations({ mode = "user", onReservationsChange, }) {
   const { user } = useAuth();
 
   const [reservations, setReservations] = useState([]);
@@ -47,7 +47,10 @@ export default function CalendarReservations({ mode = "user" }) {
       setError("");
 
       const data = await getReservations();
-      setReservations(data || []);
+      const safeReservations = data || [];
+
+      setReservations(safeReservations);
+      onReservationsChange?.(safeReservations);
     } catch (err) {
       console.error(err);
       setError(err.message || "Error cargando reservas");
