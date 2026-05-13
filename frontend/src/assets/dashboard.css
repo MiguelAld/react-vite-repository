@@ -3548,25 +3548,50 @@ body,
 }
 
 /* ============================================
-   CALENDARIO RESERVAS - SIN BORDES OSCUROS
+   CALENDARIO RESERVAS - SIN BORDES EN ESTADOS
    Solo el día seleccionado lleva borde
    ============================================ */
 
-.reservation-calendar-day--pending,
-.reservation-calendar-day--approved,
+/* Día actual sin borde */
 .reservations-calendar-card .react-calendar__tile--now {
-  border: none !important;
+  border: 2px solid transparent !important;
   outline: none !important;
   box-shadow: none !important;
+}
+
+/* Pendiente sin borde */
+.reservations-calendar-card .reservation-calendar-day--pending {
+  border: 2px solid transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Ocupado/aprobado sin borde */
+.reservations-calendar-card .reservation-calendar-day--approved {
+  border: 2px solid transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Si haces hover en pendiente u ocupado, tampoco aparece borde gris */
+.reservations-calendar-card .reservation-calendar-day--pending:hover,
+.reservations-calendar-card .reservation-calendar-day--approved:hover {
+  border: 2px solid transparent !important;
 }
 
 /* Día seleccionado: único con borde visible */
 .reservations-calendar-card .react-calendar__tile--active,
 .reservations-calendar-card .react-calendar__tile--active:hover,
-.reservations-calendar-card .react-calendar__tile--active:focus {
-  border: 2px solid #7c3aed !important;
+.reservations-calendar-card .react-calendar__tile--active:focus,
+.reservations-calendar-card
+  .reservation-calendar-day--pending.react-calendar__tile--active,
+.reservations-calendar-card
+  .reservation-calendar-day--approved.react-calendar__tile--active {
+  background: #d8b4fe !important;
+  color: #5b178a !important;
+  border: 2px solid #a855f7 !important;
   outline: none !important;
-  box-shadow: none !important;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.16) !important;
 }
 
 /* ============================================
@@ -3706,4 +3731,70 @@ body,
     padding-top: 14px;
     padding-bottom: 98px;
   }
+}
+
+/* ============================================
+   BOTTOM NAV - HOVER POR COLOR DE SECCIÓN
+   El icono/texto solo cambian cuando está activo
+   ============================================ */
+
+.user-bottom-nav__item:hover {
+  color: #475569;
+}
+
+/* Incidencias - Hover naranja suave */
+.user-bottom-nav__item--incidencias:hover {
+  background: rgba(245, 158, 11, 0.12);
+  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.18);
+}
+
+/* Novedades - Hover azul suave */
+.user-bottom-nav__item--novedades:hover {
+  background: rgba(37, 99, 235, 0.11);
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.16);
+}
+
+/* Documentos - Hover verde suave */
+.user-bottom-nav__item--documentos:hover {
+  background: rgba(5, 150, 105, 0.11);
+  box-shadow: inset 0 0 0 1px rgba(5, 150, 105, 0.16);
+}
+
+/* Reservas - Hover morado suave */
+.user-bottom-nav__item--reservas:hover {
+  background: rgba(124, 58, 237, 0.11);
+  box-shadow: inset 0 0 0 1px rgba(124, 58, 237, 0.16);
+}
+
+
+/* ============================================
+   BOTTOM NAV - COLOR CUANDO LA SECCIÓN ESTÁ ACTIVA
+   ============================================ */
+
+/* Incidencias activa */
+.user-bottom-nav__item--incidencias.active {
+  background: rgba(245, 158, 11, 0.16);
+  color: #ea580c;
+  box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.28);
+}
+
+/* Novedades activa */
+.user-bottom-nav__item--novedades.active {
+  background: rgba(37, 99, 235, 0.14);
+  color: #2563eb;
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.24);
+}
+
+/* Documentos activa */
+.user-bottom-nav__item--documentos.active {
+  background: rgba(5, 150, 105, 0.14);
+  color: #059669;
+  box-shadow: inset 0 0 0 1px rgba(5, 150, 105, 0.24);
+}
+
+/* Reservas activa */
+.user-bottom-nav__item--reservas.active {
+  background: rgba(124, 58, 237, 0.14);
+  color: #7c3aed;
+  box-shadow: inset 0 0 0 1px rgba(124, 58, 237, 0.24);
 }

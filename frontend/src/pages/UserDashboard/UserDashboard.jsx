@@ -787,7 +787,7 @@ export default function UserDashboard() {
   const renderBottomNav = () => (
     <nav className="user-bottom-nav user-bottom-nav--four">
       <button
-        className={`user-bottom-nav__item ${
+        className={`user-bottom-nav__item user-bottom-nav__item--incidencias ${
           activeSection === "incidencias" ? "active" : ""
         }`}
         onClick={() => setActiveSection("incidencias")}
@@ -798,7 +798,7 @@ export default function UserDashboard() {
       </button>
 
       <button
-        className={`user-bottom-nav__item ${
+        className={`user-bottom-nav__item user-bottom-nav__item--novedades ${
           activeSection === "novedades" ? "active" : ""
         }`}
         onClick={() => setActiveSection("novedades")}
@@ -816,7 +816,7 @@ export default function UserDashboard() {
       </button>
 
       <button
-        className={`user-bottom-nav__item ${
+        className={`user-bottom-nav__item user-bottom-nav__item--documentos ${
           activeSection === "documentos" ? "active" : ""
         }`}
         onClick={() => setActiveSection("documentos")}
@@ -827,7 +827,7 @@ export default function UserDashboard() {
       </button>
 
       <button
-        className={`user-bottom-nav__item ${
+        className={`user-bottom-nav__item user-bottom-nav__item--reservas ${
           activeSection === "reservas" ? "active" : ""
         }`}
         onClick={() => setActiveSection("reservas")}
@@ -838,7 +838,6 @@ export default function UserDashboard() {
       </button>
     </nav>
   );
-
   const renderCreateIncidentModal = () => {
     if (!showCreateIncidentModal) return null;
 
