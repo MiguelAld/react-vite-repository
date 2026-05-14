@@ -861,21 +861,28 @@ export default function AdminDashboard() {
   };
 
   const getFilteredUsers = () => {
-    if (!userSearchFilter.trim()) return users;
+    const filter = userSearchFilter.trim().toLowerCase();
 
-    const filter = userSearchFilter.toLowerCase();
+    const filteredUsers = !filter
+      ? users
+      : users.filter(
+          (currentUser) =>
+            currentUser.name?.toLowerCase().includes(filter) ||
+            currentUser.apellidos?.toLowerCase().includes(filter) ||
+            currentUser.dni?.toLowerCase().includes(filter) ||
+            currentUser.email?.toLowerCase().includes(filter) ||
+            currentUser.phone?.toLowerCase().includes(filter) ||
+            currentUser.portal?.toLowerCase().includes(filter) ||
+            currentUser.vivienda?.toLowerCase().includes(filter) ||
+            currentUser.role?.toLowerCase().includes(filter)
+        );
 
-    return users.filter(
-      (currentUser) =>
-        currentUser.name?.toLowerCase().includes(filter) ||
-        currentUser.apellidos?.toLowerCase().includes(filter) ||
-        currentUser.dni?.toLowerCase().includes(filter) ||
-        currentUser.email?.toLowerCase().includes(filter) ||
-        currentUser.phone?.toLowerCase().includes(filter) ||
-        currentUser.portal?.toLowerCase().includes(filter) ||
-        currentUser.vivienda?.toLowerCase().includes(filter) ||
-        currentUser.role?.toLowerCase().includes(filter)
-    );
+    return [...filteredUsers].sort((a, b) => {
+      if (a.role === "ADMIN" && b.role !== "ADMIN") return -1;
+      if (a.role !== "ADMIN" && b.role === "ADMIN") return 1;
+
+      return 0;
+    });
   };
 
   return (
