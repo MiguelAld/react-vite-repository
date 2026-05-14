@@ -68,3 +68,25 @@ select {
     border-radius: 0;
   }
 }
+
+/* Evita seleccionar textos de la interfaz */
+body,
+button,
+a,
+span,
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+strong,
+small,
+img,
+div {
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
