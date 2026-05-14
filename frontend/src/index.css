@@ -15,32 +15,35 @@
 }
 
 html,
-body,
-#root {
+body {
   margin: 0;
   padding: 0;
-}
-
-html,
-body {
   width: 100%;
   min-width: 320px;
   min-height: 100dvh;
-  height: 100dvh;
   background: #e9eef5;
 }
 
 body {
+  height: 100dvh;
   overflow: hidden;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 40px 48px;
 }
 
 #root {
-  width: min(1320px, calc(100vw - 96px));
-  height: calc(100dvh - 80px);
-  margin: 40px auto;
+  width: min(1320px, 100%);
+  height: 100%;
+  max-height: calc(100dvh - 80px);
+
   background: #f8fbff;
   border-radius: 32px;
   overflow: hidden;
+
   box-shadow: 0 28px 80px rgba(15, 23, 42, 0.16);
 }
 
@@ -56,25 +59,37 @@ select {
   font-family: inherit;
 }
 
+/* ============================================
+   TABLET
+   ============================================ */
+
 @media (max-width: 1100px) {
+  body {
+    padding: 16px;
+  }
+
   #root {
-    width: min(100%, calc(100vw - 32px));
-    height: calc(100dvh - 32px);
-    margin: 16px auto;
+    width: 100%;
+    max-height: calc(100dvh - 32px);
     border-radius: 24px;
   }
 }
 
-@media (max-width: 560px) {
+/* ============================================
+   MÓVIL
+   ============================================ */
+
+@media (max-width: 700px) {
   body {
-    overflow: hidden;
+    padding: 0;
   }
 
   #root {
     width: 100%;
     height: 100dvh;
-    margin: 0;
+    max-height: 100dvh;
     border-radius: 0;
+    box-shadow: none;
   }
 }
 
@@ -103,7 +118,7 @@ div {
   -ms-user-select: none;
 }
 
-/* Mantiene seleccionable y editable el texto de formularios */
+/* Formularios sí deben permitir escribir y seleccionar */
 input,
 textarea,
 select {
