@@ -725,8 +725,11 @@ body,
 }
 
 .calendar-meetings__calendar .react-calendar__tile--now {
-  background: #fef3c7;
-  color: #92400e;
+  background: #dbeafe !important;
+  color: #1e3a8a !important;
+  border: 2px solid transparent !important;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .calendar-meetings__calendar .react-calendar__tile--active,
