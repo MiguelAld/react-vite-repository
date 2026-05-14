@@ -375,19 +375,22 @@ body,
   justify-content: center;
 
   border-radius: 999px;
-  background: #ef4444;
-  color: #ffffff;
+  background: #facc15;
+  color: #78350f;
 
   font-size: 0.72rem;
   font-weight: 900;
   line-height: 1;
 
-  box-shadow: 0 6px 14px rgba(239, 68, 68, 0.28);
+  border: 1px solid rgba(217, 119, 6, 0.28);
+  box-shadow: 0 6px 14px rgba(234, 179, 8, 0.24);
 }
 
 .sidebar-user__notification-badge--reservation {
-  background: #f59e0b;
-  box-shadow: 0 6px 14px rgba(245, 158, 11, 0.28);
+  background: #facc15;
+  color: #78350f;
+  border: 1px solid rgba(217, 119, 6, 0.28);
+  box-shadow: 0 6px 14px rgba(234, 179, 8, 0.24);
 }
 
 
