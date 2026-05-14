@@ -776,7 +776,7 @@ export default function UserDashboard() {
                           </span>
 
                           <span>
-                            {formatLongDate(announcement.created_at)}
+                            Publicado: {formatLongDate(announcement.created_at)}
                           </span>
                         </div>
                       </div>
