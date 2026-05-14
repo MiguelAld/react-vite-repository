@@ -13,7 +13,7 @@ import { Edit2, Trash2, X, Plus } from "lucide-react";
 export default function CalendarMeetings() {
   const { user } = useAuth();
   const [meetings, setMeetings] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -67,6 +67,11 @@ export default function CalendarMeetings() {
   };
 
   const handleOpenCreate = () => {
+    if (!selectedDate) {
+      setError("Selecciona primero un día del calendario.");
+      return;
+    }
+
     setEditingId(null);
     setFormData({
       title: "",
@@ -153,12 +158,20 @@ export default function CalendarMeetings() {
     }
   };
 
-  const dateMeetings = getMeetingsForDate(selectedDate);
+  const dateMeetings = selectedDate
+  ? getMeetingsForDate(selectedDate)
+  : [];
 
   return (
     <div className="calendar-meetings calendar-meetings--stacked">
       <div className="calendar-meetings__calendar calendar-meetings__calendar--full">
         <Calendar
+          locale="es-ES"
+          formatShortWeekday={(locale, date) =>
+            date
+              .toLocaleDateString("es-ES", { weekday: "short" })
+              .replace(".", "")
+          }
           value={selectedDate}
           onChange={handleDateSelect}
           onClickDay={handleDateSelect}
@@ -172,15 +185,17 @@ export default function CalendarMeetings() {
       <div className="calendar-meetings__below">
         <div className="calendar-meetings__header calendar-meetings__header--column">
           <h3>
-            {selectedDate.toLocaleDateString("es-ES", {
-              weekday: "long",
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
+            {selectedDate
+              ? selectedDate.toLocaleDateString("es-ES", {
+                  weekday: "long",
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })
+              : "Selecciona un día"}
           </h3>
 
-          <button className="btn btn-primary" onClick={handleOpenCreate}>
+          <button className="btn btn-primary" onClick={handleOpenCreate } disabled={!selectedDate}>
             <Plus size={16} />
             Crear reunión
           </button>
@@ -229,7 +244,11 @@ export default function CalendarMeetings() {
           </div>
         ) : (
           <div className="calendar-meetings__empty">
-            <p className="text-muted">No hay reuniones para este día.</p>
+            <p className="text-muted">
+              {selectedDate
+                ? "No hay reuniones para este día."
+                : "Selecciona una fecha del calendario para ver sus reuniones."}
+            </p>
           </div>
         )}
       </div>

@@ -290,6 +290,7 @@ export default function UserDashboard() {
       kind: "announcement",
       id: `announcement-${announcement.id}`,
       dateValue: announcement.created_at || "",
+      priority: announcement.type === "urgente" ? 1 : 0,
       data: announcement,
     }));
 
@@ -297,12 +298,18 @@ export default function UserDashboard() {
       kind: "meeting",
       id: `meeting-${meeting.id}`,
       dateValue: meeting.created_at || meeting.meeting_date || "",
+      priority: 0,
       data: meeting,
     }));
 
     return [...announcementItems, ...meetingItems].sort((a, b) => {
+      if (b.priority !== a.priority) {
+        return b.priority - a.priority;
+      }
+
       const dateA = new Date(a.dateValue || 0).getTime();
       const dateB = new Date(b.dateValue || 0).getTime();
+
       return dateB - dateA;
     });
   };

@@ -24,7 +24,7 @@ export default function CalendarReservations({ mode = "user", onReservationsChan
   const { user } = useAuth();
 
   const [reservations, setReservations] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const [showForm, setShowForm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -86,22 +86,33 @@ export default function CalendarReservations({ mode = "user", onReservationsChan
     );
   };
 
-  const selectedDateReservations = getReservationsForDate(selectedDate);
+  const selectedDateReservations = selectedDate
+    ? getReservationsForDate(selectedDate)
+    : [];
 
-  const selectedDateActiveReservations =
-    getActiveReservationsForDate(selectedDate);
+  const selectedDateActiveReservations = selectedDate
+    ? getActiveReservationsForDate(selectedDate)
+    : [];
 
   const hasBlockedReservation = selectedDateActiveReservations.length > 0;
 
-  const isPastSelectedDate = useMemo(() => {
+  const isInvalidReservationDate = useMemo(() => {
+    if (!selectedDate) return false;
+
     const target = new Date(selectedDate);
     target.setHours(0, 0, 0, 0);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    return target < today;
-  }, [selectedDate]);
+    // Admin: puede reservar hoy, pero no días pasados
+    if (isAdminMode) {
+      return target < today;
+    }
+
+    // Usuario: no puede reservar hoy ni días pasados
+    return target <= today;
+  }, [selectedDate, isAdminMode]);
 
   const formatLongDate = (date) => {
     return date.toLocaleDateString("es-ES", {
@@ -148,6 +159,11 @@ export default function CalendarReservations({ mode = "user", onReservationsChan
   };
 
   const handleOpenForm = () => {
+    if (!selectedDate) {
+      setError("Selecciona primero un día del calendario.");
+      return;
+    }
+
     setError("");
     setFormData({
       purpose: "",
@@ -246,7 +262,7 @@ export default function CalendarReservations({ mode = "user", onReservationsChan
                   style={{ fontSize: "1.5rem" }}
                 >
                   {isAdminMode
-                    ? "Crear reserva manual"
+                    ? "Crear reserva"
                     : "Solicitar reserva del salón social"}
                 </h2>
 
@@ -444,8 +460,17 @@ export default function CalendarReservations({ mode = "user", onReservationsChan
               </div>
 
               <div>
-                <h3>{formatLongDate(selectedDate)}</h3>
-                <p>Disponibilidad y reservas para este día.</p>
+                <h3>
+                  {selectedDate
+                    ? formatLongDate(selectedDate)
+                    : "Selecciona un día"}
+                </h3>
+
+                <p>
+                  {selectedDate
+                    ? "Disponibilidad y reservas para este día."
+                    : "Pulsa una fecha del calendario para consultar su disponibilidad."}
+                </p>
               </div>
             </div>
 
@@ -453,14 +478,21 @@ export default function CalendarReservations({ mode = "user", onReservationsChan
 
             {loading && <p className="text-muted">Cargando...</p>}
 
-            {!loading && selectedDateReservations.length === 0 && (
+            {!loading && !selectedDate && (
+              <div className="reservations-empty-day">
+                <strong>Ningún día seleccionado</strong>
+                <p>Selecciona una fecha del calendario para ver sus reservas.</p>
+              </div>
+            )}
+
+            {!loading && selectedDate && selectedDateReservations.length === 0 && (
               <div className="reservations-empty-day">
                 <strong>Día disponible</strong>
                 <p>No hay solicitudes ni reservas registradas.</p>
               </div>
             )}
 
-            {!loading && selectedDateReservations.length > 0 && (
+            {!loading && selectedDate && selectedDateReservations.length > 0 && (
               <div className="reservations-day-list">
                 {selectedDateReservations.map((reservation) => (
                   <div key={reservation.id} className="reservation-day-item">
@@ -556,21 +588,29 @@ export default function CalendarReservations({ mode = "user", onReservationsChan
               type="button"
               className="btn btn-primary reservations-main-action"
               onClick={handleOpenForm}
-              disabled={hasBlockedReservation || isPastSelectedDate}
+              disabled={!selectedDate || hasBlockedReservation || isInvalidReservationDate}
             >
               <Plus size={16} />
-              {isAdminMode ? "Crear reserva manual" : "Solicitar reserva"}
+              {isAdminMode ? "Crear reserva" : "Solicitar reserva"}
             </button>
 
-            {hasBlockedReservation && (
+            {!selectedDate && (
               <small className="text-muted">
-                Este día ya tiene una reserva.
+                Selecciona un día para poder crear una reserva.
               </small>
             )}
 
-            {isPastSelectedDate && (
+            {hasBlockedReservation && (
               <small className="text-muted">
-                No se pueden crear reservas para fechas pasadas.
+                Este día ya tiene una reserva pendiente o aprobada.
+              </small>
+            )}
+
+            {selectedDate && isInvalidReservationDate && (
+              <small className="text-muted">
+                {isAdminMode
+                  ? "No se pueden crear reservas para fechas pasadas."
+                  : "Las reservas deben solicitarse a partir del día siguiente."}
               </small>
             )}
           </article>
