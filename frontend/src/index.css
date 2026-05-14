@@ -69,16 +69,11 @@ select {
   }
 
   #root {
-    width: min(1320px, calc(100vw - 96px));
-    height: min(calc(100dvh - 80px), 920px);
-    margin: 40px auto;
-    background: #f8fbff;
-    border-radius: 32px;
-    overflow: hidden;
-    box-shadow: 0 28px 80px rgba(15, 23, 42, 0.16);
+    width: 100%;
+    max-height: calc(100dvh - 32px);
+    border-radius: 24px;
   }
 }
-
 
 /* ============================================
    MÓVIL
