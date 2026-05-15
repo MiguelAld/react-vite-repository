@@ -471,7 +471,7 @@ body,
   border-color: rgba(168, 85, 247, 0.28);
 }
 
-.user-circle-access__badge {
+.user-circle-access .user-circle-access__badge {
   position: absolute;
   top: -6px;
   right: -6px;
