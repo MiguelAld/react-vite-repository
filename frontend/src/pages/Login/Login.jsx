@@ -71,7 +71,7 @@ export default function Login() {
               </div>
 
               <div>
-                <strong>3</strong>
+                <strong>4</strong>
                 <span>Áreas principales</span>
               </div>
 
